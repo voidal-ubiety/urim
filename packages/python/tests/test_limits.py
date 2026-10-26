@@ -51,6 +51,13 @@ def test_c013_read_error_after_open_is_cannot_read() -> None:
     assert check_file("/proc/self/mem").line == "/proc/self/mem: error: cannot read file"
 
 
+def test_c013_nul_in_the_path_is_cannot_read() -> None:
+    # Bug B-3: os.open raises ValueError (not OSError) for an embedded NUL, which escaped the API.
+    result = check_file("a\x00b")
+    assert (result.ok, result.exit_code) == (False, 1)
+    assert result.line == "a\\u{0000}b: error: cannot read file"
+
+
 def test_c089_unsafe_characters_in_the_file_name_are_escaped() -> None:
     line = check_text("a\x1b[31mb\u202e\x85", "[]").line
     assert line == "a\\u{001B}[31mb\\u{202E}\\u{0085}: error: root must be a mapping"

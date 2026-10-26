@@ -65,6 +65,14 @@ fn c013_read_error_after_open_is_cannot_read() {
 }
 
 #[test]
+fn c013_nul_in_the_path_is_cannot_read() {
+    // Bug B-3 parity: the OS refuses a path with an embedded NUL before any open.
+    let result = check_file("a\0b");
+    assert!(!result.is_ok());
+    assert_eq!(result.line(), "a\\u{0000}b: error: cannot read file");
+}
+
+#[test]
 fn c089_unsafe_characters_in_the_file_name_are_escaped() {
     let line = check_text("a\u{1b}[31mb\u{202e}\u{85}", "[]").into_line();
     assert_eq!(line, "a\\u{001B}[31mb\\u{202E}\\u{0085}: error: root must be a mapping");

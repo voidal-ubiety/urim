@@ -90,10 +90,10 @@ This is the living contract for every behavior of `urim check` and the three lib
 
 ### C-013 Strict UTF-8
 
-- **Behavior:** Bytes that are not valid UTF-8 (Latin-1, UTF-16 with BOM, CESU-encoded surrogates) → `<file>: error: file is not valid UTF-8`. A read that fails after the file has opened (for example `EIO` from `/proc/self/mem`) → `<file>: error: cannot read file`.
+- **Behavior:** Bytes that are not valid UTF-8 (Latin-1, UTF-16 with BOM, CESU-encoded surrogates) → `<file>: error: file is not valid UTF-8`. A read that fails after the file has opened (for example `EIO` from `/proc/self/mem`) → `<file>: error: cannot read file`. So does a path with an embedded NUL passed to the library API (`check_file("a\0b")` → `a\u{0000}b: error: cannot read file`; argv cannot carry a NUL, so the CLI never sees one).
 - **Spec:** §5.1 says contracts are YAML; strict UTF-8 is an implementation assumption.
 - **Fixtures (3):** `invalid/encoded-surrogate.lock`, `invalid/not-utf8.yaml`, `invalid/utf16.lock`
-- **Tests:** JS `C-013 shared file cases`, `limits.test.mjs` › `C-013 a read error after a successful open …` · Python `test_shared_file_cases[C-013]`, `test_limits.py::test_c013_read_error_after_open_is_cannot_read` · Rust `contract/files.rs::c013_not_utf8`, `contract/limits.rs::c013_read_error_after_open_is_cannot_read`
+- **Tests:** JS `C-013 shared file cases`, `limits.test.mjs` › `C-013 a read error after a successful open …`, `C-013 a NUL in the path …` · Python `test_shared_file_cases[C-013]`, `test_limits.py::test_c013_read_error_after_open_is_cannot_read`, `test_c013_nul_in_the_path_is_cannot_read` · Rust `contract/files.rs::c013_not_utf8`, `contract/limits.rs::c013_read_error_after_open_is_cannot_read`, `c013_nul_in_the_path_is_cannot_read`
 
 ### C-014 Leading BOM
 
@@ -543,6 +543,7 @@ Each fix is its own commit, with the fixture failing before the fix and passing 
 
 - **B-1 (Python): keys of different types compared equal.** `{true: a, 1: b}` and `{1: a, 1.0: b}` were rejected as duplicate keys (→ `invalid YAML`) because Python's `True == 1 == 1.0`. YAML node equality includes the tag, and JS and Rust accept both. Pinned as **C-035**; fixed in `src/urim/check.py` by comparing keys as `(type, value)`. Separate commit, failing then passing.
 - **B-2 (Rust): a collection key under a local tag was accepted.** `? !t [1]` as a key passed in Rust, against C-023; JS and Python reject it. Pinned as fixture `invalid/tagged-collection-key.yaml` under C-023; fixed in `src/lib.rs` (`is_collection` looks through tags). Separate commit, failing then passing. Since v0.0.2 the fixture is refused earlier as a tag (C-085). `has_collection_key` in `src/profile.rs` still guards untagged collection keys (C-023).
+- **B-3 (Python API): a NUL in the path raised `ValueError`.** `check_file("a\0b")` let a `ValueError` from `os.open` escape, instead of returning `cannot read file` as JS and Rust do (C-013). This bug has been there since the first Python port (`open()` caught only `OSError`). It is API-only, because a NUL cannot reach the CLI through argv. The test came first and failed (`test_limits.py::test_c013_nul_in_the_path_is_cannot_read`). The fix is in `src/urim/read.py` (`except (OSError, ValueError)`), in a separate commit. JS and Rust got the same test to keep the ports in parity.
 
 ## X. Coverage exclusions
 

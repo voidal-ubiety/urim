@@ -22,7 +22,7 @@ def read_text(path: str) -> str:
     """Return the UTF-8 text of the regular file at ``path``; raises ``Failure`` otherwise."""
     try:
         fd = os.open(path, _FLAGS)
-    except OSError:
+    except (OSError, ValueError):  # ValueError: embedded NUL in the path (bug B-3)
         raise Failure(CANNOT_READ) from None
     try:
         if not stat.S_ISREG(os.fstat(fd).st_mode):

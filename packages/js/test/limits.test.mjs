@@ -54,6 +54,12 @@ test("C-013 a read error after a successful open reports cannot read file", () =
   assert.equal(urim.checkFile("/proc/self/mem").line, "/proc/self/mem: error: cannot read file");
 });
 
+test("C-013 a NUL in the path reports cannot read file (bug B-3 parity)", () => {
+  const result = urim.checkFile("a\0b");
+  assert.deepEqual([result.ok, result.exitCode], [false, 1]);
+  assert.equal(result.line, "a\\u{0000}b: error: cannot read file");
+});
+
 test("C-089 control and invisible characters in the file name are escaped", () => {
   assert.equal(
     urim.checkText("a\u001b[31mb\u202e\u0085", "[]").line,
