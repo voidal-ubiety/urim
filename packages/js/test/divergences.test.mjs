@@ -1,4 +1,4 @@
-// D-008..D-011: pinned JS behavior for known cross-language divergences (fixtures/divergences.json).
+// D-008, D-009, D-011, D-013: pinned JS behavior for known cross-language divergences (fixtures/divergences.json).
 import assert from "node:assert/strict";
 import { join } from "node:path";
 import { test } from "node:test";

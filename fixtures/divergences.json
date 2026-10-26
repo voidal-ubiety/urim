@@ -28,8 +28,8 @@
           "output": "{file}: ok (lockfile, hoshen 1, urim x)"
         },
         "rust": {
-          "exit": 1,
-          "output": "{file}: error: invalid YAML"
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
         },
         "python": {
           "exit": 0,
@@ -46,8 +46,8 @@
           "output": "{file}: ok (lockfile, hoshen 1, urim x)"
         },
         "rust": {
-          "exit": 1,
-          "output": "{file}: error: invalid YAML"
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
         },
         "python": {
           "exit": 0,
@@ -66,6 +66,24 @@
         "rust": {
           "exit": 1,
           "output": "{file}: error: invalid YAML"
+        },
+        "python": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        }
+      }
+    },
+    {
+      "id": "D-013",
+      "path": "divergent/empty-implicit-key.lock",
+      "expect": {
+        "js": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        },
+        "rust": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
         },
         "python": {
           "exit": 1,

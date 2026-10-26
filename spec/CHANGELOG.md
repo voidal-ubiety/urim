@@ -22,7 +22,7 @@ Adds the Urim YAML profile to the spec. The reference checker (`urim check`, in 
   - A `<<` key is refused instead of being read as a literal key (C-086). C-033 is retired.
   - NEL, LS, PS and a non-leading byte order mark are `invalid YAML` (C-082).
   - An undefined alias is `invalid YAML`, and so is a syntax error that comes before nesting gets too deep (C-090).
-- Cross-language divergences D-001…D-007 and D-010 are resolved by the profile, so all three ports now agree on them. D-008, D-009, D-011 and D-012 remain open for David to decide.
+- Cross-language divergences D-001…D-007 and D-010 are resolved by the profile, so all three ports now agree on them. D-008, D-009, D-011 and D-012 remain open for David to decide, and the cross-port scalar corpus found D-013 (empty implicit keys). Since the Rust port moved to saphyr-parser, all three ports agree on D-009 (they accept), but it stays open until David chooses.
 
 ## v0.1.1-draft (lockfile rename) — 2026-10-25, ~21:25 ET
 

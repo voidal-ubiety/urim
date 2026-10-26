@@ -25,8 +25,13 @@ wildcards = "deny"
 allow-wildcard-paths = false
 highlight = "all"
 deny = [
-    # deprecated/archived; replaced by serde_norway (see DESIGN.md)
-    { crate = "serde_yaml", reason = "archived upstream; use the vetted parser in DESIGN.md" },
+    # One YAML parser only: saphyr-parser (research/yaml-crate-eval.md). These would bring back a
+    # second parser, and with it unsafe-libyaml (C transpiled to unsafe Rust).
+    { crate = "serde_yaml", reason = "archived upstream; the Rust port uses saphyr-parser only" },
+    { crate = "serde_norway", reason = "replaced by saphyr-parser events (src/value.rs)" },
+    { crate = "unsafe-libyaml", reason = "libyaml transpiled to unsafe Rust; second YAML parser" },
+    { crate = "unsafe-libyaml-norway", reason = "libyaml transpiled to unsafe Rust; second YAML parser" },
+    { crate = "yaml-rust", reason = "unmaintained; second YAML parser" },
 ]
 
 [sources]

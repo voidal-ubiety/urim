@@ -6,12 +6,12 @@
 //!    non-leading U+FEFF) (C-082);
 //! 2. well-formedness, in stream order: nesting deeper than the limit (C-083) is reported if
 //!    it comes before the first syntax error, undefined alias or second document (C-020,
-//!    C-022); those are `invalid YAML`. A parser's own nesting-limit error is `too deep`;
+//!    C-022); those are `invalid YAML`, and so is a `...` before the first document (D-008). A parser's own nesting-limit error is `too deep`;
 //! 3. profile violations over the complete event stream, first in stream order: an anchor or
 //!    alias (C-084), a tag (C-085), a `<<` key (C-086), an invisible character in a key
 //!    (C-087). When one node has both an anchor and a tag, the anchor is reported (C-090);
-//! 4. value building: duplicate keys, collection keys and out-of-range integers are
-//!    `invalid YAML` (C-021, C-023, C-024).
+//! 4. value building from the same events ([`crate::value`]): duplicate keys, collection keys
+//!    and out-of-range integers are `invalid YAML` (C-021, C-023, C-024).
 //!
 //! The event pass keeps its own stack, so it never recurses: deep input cannot overflow
 //! the native stack.
@@ -20,11 +20,11 @@
 //! C-090
 
 use saphyr_parser::{Event, Parser};
-use serde_norway::{Mapping, Value};
 
 use crate::Problem;
 use crate::display::{is_invisible, is_profile_char};
 use crate::limits::{MAX_BYTES, MAX_DEPTH};
+use crate::value::{Mapping, Value, build};
 
 /// Parse `text` as one Urim-profile YAML document whose root is a mapping.
 pub(crate) fn parse_root(text: &str) -> Result<Mapping, Problem> {
@@ -35,12 +35,11 @@ pub(crate) fn parse_root(text: &str) -> Result<Mapping, Problem> {
     if !text.chars().all(is_profile_char) {
         return Err(Problem::InvalidYaml);
     }
-    check_events(&well_formed(text)?)?;
-    match serde_norway::from_str::<Value>(text) {
-        Ok(v) if has_collection_key(&v) => Err(Problem::InvalidYaml),
-        Ok(Value::Mapping(m)) => Ok(m),
-        Ok(_) => Err(Problem::RootNotMapping),
-        Err(_) => Err(Problem::InvalidYaml),
+    let events = well_formed(text)?;
+    check_events(&events)?;
+    match build(&events)? {
+        Value::Mapping(m) => Ok(m),
+        _ => Err(Problem::RootNotMapping),
     }
 }
 
@@ -86,7 +85,7 @@ fn well_formed(text: &str) -> Result<Vec<Event<'_>>, Problem> {
     let mut depth = 0_usize;
     let mut documents = 0_u8;
     while let Some(next) = parser.next_event() {
-        let (event, _span) = next.map_err(|e| {
+        let (event, span) = next.map_err(|e| {
             if e.info() == PARSER_DEPTH_ERROR || too_deep_before(text, e.marker().index()) {
                 Problem::TooDeep
             } else {
@@ -95,10 +94,13 @@ fn well_formed(text: &str) -> Result<Vec<Event<'_>>, Problem> {
         })?;
         match event {
             Event::DocumentStart(_) => {
-                if documents > 0 {
+                if documents > 0 || end_marker_before(text, span.start.index()) {
                     return Err(Problem::InvalidYaml);
                 }
                 documents = 1;
+            }
+            Event::StreamEnd if documents == 0 && end_marker_before(text, span.start.index()) => {
+                return Err(Problem::InvalidYaml);
             }
             Event::SequenceStart(..) | Event::MappingStart(..) => {
                 if depth >= MAX_DEPTH {
@@ -112,6 +114,15 @@ fn well_formed(text: &str) -> Result<Vec<Event<'_>>, Problem> {
         events.push(event);
     }
     Ok(events)
+}
+
+/// Whether a document end marker (`...`) comes before the first document, which starts at char
+/// `first_document`. The YAML 1.2 grammar allows it, but libyaml, `PyYAML` and the JS `yaml`
+/// package reject it, so this keeps the Rust port with them (D-008): only comments, blank lines
+/// and `...` lines can come before the first document here, so a line starting `...` is one.
+fn end_marker_before(text: &str, first_document: usize) -> bool {
+    let end = text.char_indices().nth(first_document).map_or(text.len(), |(at, _)| at);
+    text.get(..end).unwrap_or_default().lines().any(|line| line.starts_with("..."))
 }
 
 /// The scanner looks ahead along a flow line and can fail on a later token before it hands over
@@ -176,9 +187,9 @@ fn check_events(events: &[Event<'_>]) -> Result<(), Problem> {
 }
 
 /// The value as an integer, if it is one (`1.0` is a float, not an integer).
-pub(crate) fn as_int(v: &Value) -> Option<i128> {
+pub(crate) const fn as_int(v: &Value) -> Option<i128> {
     match v {
-        Value::Number(n) => n.as_i64().map(i128::from).or_else(|| n.as_u64().map(i128::from)),
+        Value::Int(n) => Some(*n),
         _ => None,
     }
 }
@@ -188,20 +199,5 @@ pub(crate) fn as_str(v: &Value) -> Option<&str> {
     match v {
         Value::String(s) => Some(s.as_str()),
         _ => None,
-    }
-}
-
-const fn is_collection(v: &Value) -> bool {
-    matches!(v, Value::Sequence(_) | Value::Mapping(_))
-}
-
-/// Mapping keys must be scalars. JS and Python cannot represent collection keys
-/// faithfully, so every port rejects them (C-023). Tags never reach this point (C-085),
-/// and depth is bounded by [`MAX_DEPTH`], so the recursion is bounded too.
-fn has_collection_key(v: &Value) -> bool {
-    match v {
-        Value::Mapping(m) => m.iter().any(|(k, val)| is_collection(k) || has_collection_key(val)),
-        Value::Sequence(s) => s.iter().any(has_collection_key),
-        _ => false,
     }
 }

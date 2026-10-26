@@ -24,6 +24,7 @@ mod limits;
 mod problem;
 mod profile;
 mod read;
+mod value;
 
 pub use check::{CheckResult, check_file, check_text};
 pub use limits::{MAX_BYTES, MAX_DEPTH};

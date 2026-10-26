@@ -37,8 +37,8 @@ path ─read bytes─▶ strict UTF-8 ─strip BOM─▶ YAML (1 document, core 
 * **Mappings:**
   * JS: the `yaml` library's document tree, then plain JS values.
   * Python: `dict`, built by a `SafeLoader` subclass with core-schema resolvers.
-  * Rust: `serde_norway::Mapping`, an insertion-ordered `IndexMap`. Key lookups use `&str` without allocating.
-* **Integers:** all three read integers losslessly. JS uses `bigint`, Python `int`, and Rust `i64`/`u64` widened to `i128`. Leading-zero integers stay strings (see CONTRACT.md).
+  * Rust: `value::Mapping`, the entries in document order, built from saphyr-parser events by `src/value.rs` (no DOM or serde layer). Duplicate keys are found with a hash set while building. Key lookups scan the entries with a `&str`, without allocating.
+* **Integers:** all three read integers losslessly. JS uses `bigint`, Python `int`, and Rust `i128`. Leading-zero integers stay strings (see CONTRACT.md).
 
 ## 3. Complexity
 
@@ -48,11 +48,11 @@ Let *n* be the input size in bytes and *k* the number of top-level keys.
 |---|---|---|
 | read + UTF-8 validation | O(n) | O(n) |
 | YAML parse | O(n) for the libraries' normal inputs (see note) | O(n) |
-| key lookups | O(1) expected per lookup in Rust/Python (hash); O(k) in JS document maps | O(1) |
+| key lookups | O(1) expected per lookup in Python (hash); O(k) in Rust (entry scan) and JS document maps; at most six lookups | O(1) |
 | required-key scan | O(1): fixed key list | O(missing keys) |
 
-Note: the libraries' worst cases are not linear. Deep flow nesting is superlinear in
-unsafe-libyaml-norway, and PyYAML and JS `yaml` recurse. Those inputs are bounded by the
+Note: the libraries' worst cases are not linear. Deep flow nesting was superlinear in
+unsafe-libyaml-norway (no longer used), and PyYAML and JS `yaml` recurse. Those inputs are bounded by the
 Urim YAML profile's size and depth limits (SECURITY.md). Benchmarks are in
 `packages/rust/benches/`.
 

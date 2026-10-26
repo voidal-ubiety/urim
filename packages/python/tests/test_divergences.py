@@ -1,4 +1,4 @@
-"""D-008..D-011: pinned Python behavior for known cross-language divergences."""
+"""D-008, D-009, D-011, D-013: pinned Python behavior for known cross-language divergences."""
 
 from __future__ import annotations
 

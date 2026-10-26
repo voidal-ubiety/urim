@@ -9,7 +9,7 @@
 use std::fmt;
 use std::path::Path;
 
-use serde_norway::{Mapping, Value};
+use crate::value::{Mapping, Value};
 
 use crate::display::{is_invisible, sanitize};
 use crate::profile::{as_int, as_str, parse_root};
@@ -138,7 +138,7 @@ fn lockfile(root: &Mapping, hoshen: &Value) -> Result<String, Problem> {
 fn contract(root: &Mapping, spec: (&'static str, &Value)) -> Result<String, Problem> {
     let spec_version = identifier(Some(spec.1), spec.0)?;
     let missing: Vec<&'static str> =
-        CONTRACT_REQUIRED.into_iter().filter(|k| !root.contains_key(*k)).collect();
+        CONTRACT_REQUIRED.into_iter().filter(|k| !root.contains_key(k)).collect();
     if !missing.is_empty() {
         return Err(Problem::MissingKeys(missing));
     }

@@ -92,6 +92,12 @@
       "output": "{file}: error: invalid YAML"
     },
     {
+      "id": "C-022",
+      "path": "invalid/document-end-before-document.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
       "id": "C-023",
       "path": "invalid/collection-key.lock",
       "exit": 1,
@@ -218,6 +224,36 @@
       "output": "{file}: ok (lockfile, hoshen 1, urim -007)"
     },
     {
+      "id": "C-027",
+      "path": "invalid/hoshen-binary-prefix.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-027",
+      "path": "invalid/hoshen-signed-hex.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-027",
+      "path": "invalid/hoshen-signed-octal.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-027",
+      "path": "valid/urim-signed-hex-is-string.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim +0x1)"
+    },
+    {
+      "id": "C-027",
+      "path": "valid/urim-bare-hex-prefix-is-string.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0x)"
+    },
+    {
       "id": "C-028",
       "path": "invalid/hoshen-exponent.lock",
       "exit": 1,
@@ -234,6 +270,24 @@
       "path": "invalid/hoshen-inf.lock",
       "exit": 1,
       "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-028",
+      "path": "invalid/urim-overflowing-float.lock",
+      "exit": 1,
+      "output": "{file}: error: urim must be a string"
+    },
+    {
+      "id": "C-028",
+      "path": "invalid/hoshen-negative-inf.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-028",
+      "path": "valid/urim-lone-dot-is-string.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim .)"
     },
     {
       "id": "C-030",

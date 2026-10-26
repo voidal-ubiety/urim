@@ -23,11 +23,10 @@ name = "urim"
 path = "src/main.rs"
 
 [dependencies]
-# serde_yaml is deprecated (archived by its author in 2024). serde_norway is the
-# maintained drop-in fork (same API, YAML 1.2 core scalars, rejects duplicate keys).
-serde_norway = "0.9"
-# Event-level parser used to enforce the Urim YAML profile before values are built.
-# Pure Rust, no `unsafe` (see research/yaml-crate-eval.md). Exact pin: see CONTRIBUTING.md.
+# The only YAML dependency: its events are checked against the Urim YAML profile and then
+# built into values by src/value.rs (no DOM or serde layer). saphyr-parser itself has no
+# `unsafe`; its dependency arraydeque does. Why this crate and not serde_norway:
+# research/yaml-crate-eval.md. Exact pin: see CONTRIBUTING.md.
 saphyr-parser = "=0.2.2"
 
 [dev-dependencies]

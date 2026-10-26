@@ -227,9 +227,9 @@ Output is sanitized in every result line (C-089).
 
 ### C-022 Exactly one document
 
-- **Behavior:** More than one document (including a trailing `---` that opens an empty second document) → `invalid YAML`.
+- **Behavior:** More than one document (including a trailing `---` that opens an empty second document) → `invalid YAML`. So is a document end marker (`...`) before the document (see D-008 for a stream with no document).
 - **Spec:** Implementation assumption, not in spec.
-- **Fixtures (2):** `invalid/multi-document.yaml`, `invalid/trailing-empty-document.lock`
+- **Fixtures (3):** `invalid/document-end-before-document.lock`, `invalid/multi-document.yaml`, `invalid/trailing-empty-document.lock`
 - **Tests:** JS `C-022 shared file cases` · Python `test_shared_file_cases[C-022]` · Rust `contract/files.rs::c022_single_document`
 
 ### C-023 Scalar keys only
@@ -262,16 +262,16 @@ Output is sanitized in every result line (C-089).
 
 ### C-027 Non-integer lookalikes
 
-- **Behavior:** Decimal with leading zeros (`01`, `-007`), `0X1`, and `1_0` stay strings, so `hoshen: 01` → `hoshen must be an integer` and `urim: 01` is the string `01`. Leading zeros are an implementation assumption that matches serde_norway. A float needs a dot or an exponent, so `01` is not a float either (bug B-4).
+- **Behavior:** Decimal with leading zeros (`01`, `-007`), `0X1`, `1_0`, a sign on `0x`/`0o` (`+0x1`, `-0o7`) and `0b1` stay strings, so `hoshen: 01` → `hoshen must be an integer` and `urim: 01` is the string `01`. Leading zeros are an implementation assumption that all three ports share. A float needs a dot or an exponent, so `01` is not a float either (bug B-4). Signed `0x`/`0o` and `0b` follow the core schema (bug B-5).
 - **Spec:** §5.3 (core schema) plus implementation assumption.
-- **Fixtures (5):** `invalid/hoshen-leading-zero.lock`, `invalid/hoshen-underscore.lock`, `invalid/hoshen-uppercase-hex-prefix.lock`, `valid/urim-leading-zero-is-string.lock`, `valid/urim-signed-leading-zero-is-string.lock`
+- **Fixtures (10):** `invalid/hoshen-binary-prefix.lock`, `invalid/hoshen-leading-zero.lock`, `invalid/hoshen-signed-hex.lock`, `invalid/hoshen-signed-octal.lock`, `invalid/hoshen-underscore.lock`, `invalid/hoshen-uppercase-hex-prefix.lock`, `valid/urim-bare-hex-prefix-is-string.lock`, `valid/urim-leading-zero-is-string.lock`, `valid/urim-signed-hex-is-string.lock`, `valid/urim-signed-leading-zero-is-string.lock`
 - **Tests:** JS `C-027 shared file cases` · Python `test_shared_file_cases[C-027]` · Rust `contract/files.rs::c027_non_int_forms`
 
 ### C-028 Floats are not integers
 
-- **Behavior:** `1.0`, `1e0`, `.inf` are floats, so `hoshen` → `hoshen must be an integer`.
+- **Behavior:** `1.0`, `1e0`, `.inf` are floats, so `hoshen` → `hoshen must be an integer`. So is an exponent too large for a double (`1e400`, infinity), so `urim: 1e400` → `urim must be a string` (bug B-6). A lone `.` is a string.
 - **Spec:** §6.2 ("Integer format version").
-- **Fixtures (3):** `invalid/hoshen-exponent.lock`, `invalid/hoshen-float.lock`, `invalid/hoshen-inf.lock`
+- **Fixtures (6):** `invalid/hoshen-exponent.lock`, `invalid/hoshen-float.lock`, `invalid/hoshen-inf.lock`, `invalid/hoshen-negative-inf.lock`, `invalid/urim-overflowing-float.lock`, `valid/urim-lone-dot-is-string.lock`
 - **Tests:** JS `C-028 shared file cases` · Python `test_shared_file_cases[C-028]` · Rust `contract/files.rs::c028_floats`
 
 ### C-029 Explicit core tags (retired)
@@ -463,7 +463,7 @@ Output is sanitized in every result line (C-089).
 
 ## D. Known cross-language divergences (outside the conformance set)
 
-These inputs behave differently across the three ports because the underlying YAML libraries differ. D-001..D-007 and D-010 were resolved by the v0.0.2 profile (§3) and are kept as stubs. D-008, D-009, D-011 and D-012 remain open. Every port **pins its own current behavior** from [`fixtures/divergences.json`](fixtures/divergences.json), so any change is deliberate. `parity.sh` skips them. Resolving each one is a behavior change for David to decide; a recommendation is given for each.
+These inputs behave differently across the three ports because the underlying YAML libraries differ. D-001..D-007 and D-010 were resolved by the v0.0.2 profile (§3) and are kept as stubs. D-008, D-009, D-011, D-012 and D-013 remain open. Every port **pins its own current behavior** from [`fixtures/divergences.json`](fixtures/divergences.json), so any change is deliberate. `parity.sh` skips them. Resolving each one is a behavior change for David to decide; a recommendation is given for each.
 
 Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `tests/test_divergences.py::test_pinned_python_behavior[D-0xx]` · Rust `tests/contract/divergences.rs::d000_divergences_pin_rust_behavior` (all D cases).
 
@@ -501,17 +501,17 @@ Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `
 |---|---|---|---|
 | `divergent/document-end-only.yaml` | exit 1: `error: root must be a mapping` | exit 1: `error: invalid YAML` | exit 1: `error: invalid YAML` |
 
-- **Why:** JS reads it as an empty document (null root); PyYAML and libyaml reject the stray document-end marker.
+- **Why:** JS reads it as an empty document (null root); PyYAML and libyaml reject the stray document-end marker. The Rust parser (saphyr-parser) accepts it, as the YAML 1.2 grammar does, so `profile.rs` rejects a `...` before the first document to keep Rust where it was. This keeps `...` followed by a document out too, which JS and PyYAML both reject.
 - **Recommendation:** Reject as `invalid YAML` (2 of 3).
 
 ### D-009 `%YAML 1.3` / unknown `%` directives
 
 | fixture | JS | Python | Rust |
 |---|---|---|---|
-| `divergent/yaml-1.3-directive.lock` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 1: `error: invalid YAML` |
-| `divergent/unknown-directive.lock` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 1: `error: invalid YAML` |
+| `divergent/yaml-1.3-directive.lock` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 0: `ok (lockfile, hoshen 1, urim x)` |
+| `divergent/unknown-directive.lock` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 0: `ok (lockfile, hoshen 1, urim x)` |
 
-- **Why:** libyaml rejects them; JS's yaml and PyYAML accept the document.
+- **Why:** libyaml rejected them; JS's yaml and PyYAML accept the document. Since the Rust port moved from serde_norway (libyaml) to saphyr-parser, Rust accepts them too, so the three agree today. The entry stays open: accepting everywhere is one of the two options below, and it has not been chosen. Until it is, each port pins `ok`.
 - **Recommendation:** Accept with a 1.2 reading everywhere, or reject everywhere. Low priority.
 
 ### D-010 Alias expansion over 100 nodes (resolved)
@@ -524,7 +524,7 @@ Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `
 |---|---|---|---|
 | `divergent/duplicate-nan-key.lock` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 1: `error: invalid YAML` | exit 1: `error: invalid YAML` |
 
-- **Why:** NaN ≠ NaN, so JS's uniqueness check passes them; PyYAML and serde_norway treat the two `.nan` keys as duplicates.
+- **Why:** NaN ≠ NaN, so JS's uniqueness check passes them; PyYAML and the Rust port treat the two `.nan` keys as duplicates (Rust's `src/value.rs` keeps the serde_norway behavior it replaced).
 - **Recommendation:** Reject as duplicates (2 of 3, matching YAML's node-equality rule).
 
 ### D-012 Non-UTF-8 bytes in the path argument (POSIX)
@@ -537,6 +537,15 @@ Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `
 - **Recommendation:** Keep this. It's a platform limit in Node.
 - **Tests:** JS `cli.test.mjs` "D-012 …", Python `test_cli.py::test_d012_non_utf8_path_argument`, Rust `contract/cli.rs::d012_non_utf8_path_argument`
 
+### D-013 Empty implicit mapping key (`: value`)
+
+| fixture | JS | Python | Rust |
+|---|---|---|---|
+| `divergent/empty-implicit-key.lock` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 1: `error: invalid YAML` | exit 0: `ok (lockfile, hoshen 1, urim x)` |
+
+- **Why:** YAML 1.2 allows an empty implicit key (spec example 8.18, `: # Both empty`; also `{: 1}` in flow), and JS's yaml and saphyr-parser accept it as a null key. PyYAML rejects it, and libyaml did too, so before the Rust port moved to saphyr-parser it was JS against Python and Rust. Found by the scalar differential corpus, which no fixture covered.
+- **Recommendation:** Reject everywhere as a profile rule (a null key is never useful in a lockfile or contract and the ports cannot agree on it), or accept everywhere and make the Python loader accept it. Low priority.
+
 ## B. Bugs found by this suite
 
 Each fix is its own commit, with the fixture failing before the fix and passing after it.
@@ -545,6 +554,9 @@ Each fix is its own commit, with the fixture failing before the fix and passing 
 - **B-2 (Rust): a collection key under a local tag was accepted.** `? !t [1]` as a key passed in Rust, against C-023; JS and Python reject it. Pinned as fixture `invalid/tagged-collection-key.yaml` under C-023; fixed in `src/lib.rs` (`is_collection` looks through tags). Separate commit, failing then passing. Since v0.0.2 the fixture is refused earlier as a tag (C-085). `has_collection_key` in `src/profile.rs` still guards untagged collection keys (C-023).
 - **B-3 (Python API): a NUL in the path raised `ValueError`.** `check_file("a\0b")` let a `ValueError` from `os.open` escape, instead of returning `cannot read file` as JS and Rust do (C-013). This bug has been there since the first Python port (`open()` caught only `OSError`). It is API-only, because a NUL cannot reach the CLI through argv. The test came first and failed (`test_limits.py::test_c013_nul_in_the_path_is_cannot_read`). The fix is in `src/urim/read.py` (`except (OSError, ValueError)`), in a separate commit. JS and Rust got the same test to keep the ports in parity.
 - **B-4 (Python): decimals with leading zeros resolved as floats.** The float resolver accepted `01`, `-007` and `00` (no dot, no exponent), so `urim: 01` said `urim must be a string` while JS and Rust accept the string `01` (C-027), and `1.0` and `01` collided as duplicate keys (C-035). The existing fixture `hoshen: 01` could not catch it, because a float is not an integer either. A cross-port scalar differential corpus found it. The tests came first and failed (`test_shared_file_cases[C-027]`, `[C-035]`); the fix (a float needs a dot or an exponent, as in JS) is in `src/urim/profile.py`, in a separate commit.
+- **B-5 (Rust): signed hex/octal and `0b` binary resolved as integers.** serde_norway read `+0x1`, `-0o7` and `0b1` as integers, so `hoshen: +0x1` passed as hoshen 1 and `urim: 0b1` said `urim must be a string`. The YAML 1.2 core schema has unsigned `0x`/`0o` only and no `0b`; JS and Python keep them strings (C-027).
+- **B-6 (Rust): an overflowing float resolved as a string.** serde_norway read `1e400` as the string `1e400`, so `urim: 1e400` passed; under the core schema it is a float (infinity), as in JS and Python (C-028).
+- B-5 and B-6 came from serde_norway's scalar resolver, so the fix is the change that replaces it: the Rust port now builds values from saphyr-parser events and resolves plain scalars with the same core-schema rules as the other two ports (`src/value.rs`). Their tests came first and failed in Rust only (`contract/files.rs::c027_non_int_forms`, `::c028_floats`). The same commit removes serde_norway; that commit's message lists every behavior change it makes (B-5, B-6, D-009, D-013).
 
 ## X. Coverage exclusions
 
