@@ -1,0 +1,9 @@
+# C-040: hoshen selects the lockfile rules, so contract keys are unknown keys
+hoshen: 2
+urim: "0.2"
+generated_at: "2026-10-26T10:00:00-04:00"
+compiler: {name: urim, version: 0.2.0}
+integrity: "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+contracts: {}
+contract: 1
+questions: {}

@@ -1,0 +1,1139 @@
+{
+  "$comment": "Single source for the urim 0.2 contract and hoshen 2 lockfile schemas (SPEC.md §5.1.2, §5.10, §5.11, §6.2). scripts/gen-schema turns this into packages/js/src/schema.gen.ts, packages/python/src/urim/schema_gen.py and packages/rust/src/schema_gen.rs; verify.sh fails if they drift. Node kinds: str (fmt), int, num, bool, enum, list, map, obj, one, alt, opaque, and ref to a named type.",
+  "protocol": "0.2",
+  "experimental_question_types": [
+    "box",
+    "extract"
+  ],
+  "emulations": {
+    "limits.max_questions_per_request": [
+      "split"
+    ],
+    "refusal.typed": [
+      "map_error"
+    ]
+  },
+  "formats": {
+    "string": "a non-empty string",
+    "expr": "a non-empty expression string",
+    "id": "an id (a lowercase letter, then up to 63 of a-z, 0-9, _ and -)",
+    "target_id": "a target id (<provider>/<model>, each an id)",
+    "capability_path": "a capability path (dot-separated ids)",
+    "semver": "a SemVer version",
+    "semver_range": "a SemVer range",
+    "protocol_version": "a protocol version (\"MAJOR.MINOR\")",
+    "hash": "a hash (sha256:<64 lowercase hex digits>)",
+    "integrity": "an integrity value (sha256-<base64 of 32 bytes>)",
+    "timestamp": "an RFC 3339 timestamp with an offset",
+    "x_key": "an extension key (x-<provider>)",
+    "confidence_ref": "native or portable/<definition>"
+  },
+  "types": {
+    "fallback": {
+      "k": "alt",
+      "options": [
+        {
+          "k": "enum",
+          "values": [
+            "drop",
+            "fail"
+          ]
+        },
+        {
+          "k": "obj",
+          "fields": [
+            {
+              "name": "emulate",
+              "type": {
+                "k": "str",
+                "fmt": "id"
+              },
+              "req": true
+            }
+          ]
+        }
+      ]
+    },
+    "constraint": {
+      "k": "alt",
+      "options": [
+        {
+          "k": "str",
+          "fmt": "expr"
+        },
+        {
+          "k": "one",
+          "keys": [
+            {
+              "name": "includes",
+              "type": {
+                "k": "list",
+                "items": {
+                  "k": "str",
+                  "fmt": "string"
+                },
+                "min": 1
+              }
+            },
+            {
+              "name": "any_of",
+              "type": {
+                "k": "list",
+                "items": {
+                  "k": "str",
+                  "fmt": "string"
+                },
+                "min": 1
+              }
+            }
+          ],
+          "forbid": {
+            "fallback": "takes no fallback: requires is hard, so a feature with a fallback belongs in prefers (SPEC §5.10.2 rule 5)"
+          }
+        }
+      ]
+    },
+    "preference": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "value",
+          "type": {
+            "ref": "constraint"
+          }
+        },
+        {
+          "name": "fallback",
+          "type": {
+            "ref": "fallback"
+          },
+          "req": true
+        }
+      ]
+    },
+    "extension": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "fallback",
+          "type": {
+            "ref": "fallback"
+          }
+        },
+        {
+          "name": "with",
+          "type": {
+            "k": "opaque"
+          },
+          "req": true
+        }
+      ]
+    },
+    "state_field": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "type",
+          "type": {
+            "k": "enum",
+            "values": [
+              "string",
+              "markdown",
+              "json",
+              "image",
+              "audio",
+              "video"
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "required",
+          "type": {
+            "k": "bool"
+          }
+        },
+        {
+          "name": "max_bytes",
+          "type": {
+            "k": "int",
+            "min": 1
+          }
+        }
+      ],
+      "tag": {
+        "field": "type",
+        "variants": {
+          "json": [
+            {
+              "name": "schema",
+              "type": {
+                "k": "opaque"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "question": {
+      "k": "obj",
+      "ext": true,
+      "fields": [
+        {
+          "name": "type",
+          "type": {
+            "k": "enum",
+            "values": [
+              "choice",
+              "score",
+              "yesno",
+              "box",
+              "extract"
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "instructions",
+          "type": {
+            "k": "str",
+            "fmt": "string"
+          },
+          "req": true
+        }
+      ],
+      "tag": {
+        "field": "type",
+        "variants": {
+          "choice": [
+            {
+              "name": "options",
+              "type": {
+                "k": "map",
+                "key": "id",
+                "value": {
+                  "k": "str",
+                  "fmt": "string"
+                },
+                "min": 1
+              },
+              "req": true
+            }
+          ],
+          "score": [
+            {
+              "name": "levels",
+              "type": {
+                "k": "list",
+                "items": {
+                  "k": "str",
+                  "fmt": "string"
+                },
+                "min": 2
+              },
+              "req": true
+            }
+          ],
+          "yesno": [
+            {
+              "name": "yes",
+              "type": {
+                "k": "str",
+                "fmt": "string"
+              }
+            },
+            {
+              "name": "no",
+              "type": {
+                "k": "str",
+                "fmt": "string"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "policy_rule": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "question",
+          "type": {
+            "k": "str",
+            "fmt": "id"
+          },
+          "req": true
+        },
+        {
+          "name": "when",
+          "type": {
+            "k": "obj",
+            "fields": [
+              {
+                "name": "answer",
+                "type": {
+                  "k": "str",
+                  "fmt": "string"
+                },
+                "req": true
+              }
+            ]
+          }
+        },
+        {
+          "name": "applies_to",
+          "type": {
+            "k": "enum",
+            "values": [
+              "native",
+              "portable"
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "objective",
+          "type": {
+            "k": "one",
+            "keys": [
+              {
+                "name": "min_precision",
+                "type": {
+                  "k": "num",
+                  "min": 0,
+                  "max": 1,
+                  "min_open": true
+                }
+              },
+              {
+                "name": "escalation_rate",
+                "type": {
+                  "k": "num",
+                  "min": 0,
+                  "max": 1
+                }
+              }
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "action",
+          "type": {
+            "k": "str",
+            "fmt": "id"
+          },
+          "req": true
+        },
+        {
+          "name": "else",
+          "type": {
+            "k": "str",
+            "fmt": "id"
+          }
+        },
+        {
+          "name": "on_error",
+          "type": {
+            "k": "str",
+            "fmt": "id"
+          }
+        }
+      ]
+    },
+    "confidence_block": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "portable",
+          "type": {
+            "k": "enum",
+            "values": [
+              "top_probability",
+              "margin",
+              "margin_squared",
+              "one_minus_entropy",
+              "normalized_top"
+            ]
+          },
+          "req": true
+        }
+      ]
+    },
+    "eval_block": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "dataset",
+          "type": {
+            "k": "str",
+            "fmt": "string"
+          },
+          "req": true
+        },
+        {
+          "name": "dataset_hash",
+          "type": {
+            "k": "str",
+            "fmt": "hash"
+          },
+          "req": true
+        },
+        {
+          "name": "min_cases",
+          "type": {
+            "k": "int",
+            "min": 1
+          },
+          "req": true
+        },
+        {
+          "name": "repeats",
+          "type": {
+            "k": "int",
+            "min": 1
+          }
+        },
+        {
+          "name": "paraphrases",
+          "type": {
+            "k": "map",
+            "key": "id",
+            "value": {
+              "k": "list",
+              "items": {
+                "k": "str",
+                "fmt": "string"
+              },
+              "min": 1
+            },
+            "min": 1
+          }
+        },
+        {
+          "name": "accept",
+          "type": {
+            "k": "map",
+            "key": "id",
+            "value": {
+              "k": "str",
+              "fmt": "expr"
+            },
+            "min": 1
+          },
+          "req": true
+        }
+      ]
+    },
+    "lock_in_ack": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "extension",
+          "type": {
+            "k": "str",
+            "fmt": "x_key"
+          },
+          "req": true
+        },
+        {
+          "name": "locks_out",
+          "type": {
+            "k": "list",
+            "items": {
+              "k": "str",
+              "fmt": "target_id"
+            },
+            "min": 1,
+            "unique": true
+          },
+          "req": true
+        },
+        {
+          "name": "reason",
+          "type": {
+            "k": "str",
+            "fmt": "string"
+          },
+          "req": true
+        }
+      ]
+    },
+    "contract": {
+      "k": "obj",
+      "ext": true,
+      "fields": [
+        {
+          "name": "urim",
+          "type": {
+            "k": "str",
+            "fmt": "protocol_version"
+          },
+          "req": true
+        },
+        {
+          "name": "contract",
+          "type": {
+            "k": "str",
+            "fmt": "id"
+          },
+          "req": true
+        },
+        {
+          "name": "version",
+          "type": {
+            "k": "str",
+            "fmt": "semver"
+          },
+          "req": true
+        },
+        {
+          "name": "description",
+          "type": {
+            "k": "str",
+            "fmt": "string"
+          }
+        },
+        {
+          "name": "state",
+          "type": {
+            "k": "map",
+            "key": "id",
+            "value": {
+              "ref": "state_field"
+            },
+            "min": 1
+          },
+          "req": true
+        },
+        {
+          "name": "questions",
+          "type": {
+            "k": "map",
+            "key": "id",
+            "value": {
+              "ref": "question"
+            },
+            "min": 1
+          },
+          "req": true
+        },
+        {
+          "name": "policy",
+          "type": {
+            "k": "map",
+            "key": "id",
+            "value": {
+              "ref": "policy_rule"
+            },
+            "min": 1
+          }
+        },
+        {
+          "name": "confidence",
+          "type": {
+            "ref": "confidence_block"
+          }
+        },
+        {
+          "name": "eval",
+          "type": {
+            "ref": "eval_block"
+          }
+        },
+        {
+          "name": "targets",
+          "type": {
+            "k": "list",
+            "items": {
+              "k": "str",
+              "fmt": "target_id"
+            },
+            "min": 1,
+            "unique": true
+          }
+        },
+        {
+          "name": "targets_query",
+          "type": {
+            "k": "str",
+            "fmt": "expr"
+          }
+        },
+        {
+          "name": "requires",
+          "type": {
+            "k": "map",
+            "key": "capability_path",
+            "value": {
+              "ref": "constraint"
+            },
+            "min": 1
+          }
+        },
+        {
+          "name": "prefers",
+          "type": {
+            "k": "map",
+            "key": "capability_path",
+            "value": {
+              "ref": "preference"
+            },
+            "min": 1
+          }
+        },
+        {
+          "name": "accept_lock_in",
+          "type": {
+            "k": "list",
+            "items": {
+              "ref": "lock_in_ack"
+            },
+            "min": 1
+          }
+        },
+        {
+          "name": "selection",
+          "type": {
+            "k": "enum",
+            "values": [
+              "strict",
+              "available"
+            ]
+          }
+        },
+        {
+          "name": "atomic",
+          "type": {
+            "k": "bool"
+          }
+        }
+      ],
+      "removed": {
+        "required_capabilities": "is not a urim 0.2 key: rewrite it as requires and prefers (SPEC §5.10.4) with the migration command (proposed name: urim migrate)",
+        "fallbacks": "is not a urim 0.2 key: rewrite it as prefers fallbacks (SPEC §5.10.4) with the migration command (proposed name: urim migrate)"
+      }
+    },
+    "feature_outcome": {
+      "k": "alt",
+      "options": [
+        {
+          "k": "enum",
+          "values": [
+            "native"
+          ]
+        },
+        {
+          "k": "obj",
+          "fields": [
+            {
+              "name": "outcome",
+              "type": {
+                "k": "enum",
+                "values": [
+                  "emulated",
+                  "dropped"
+                ]
+              },
+              "req": true
+            },
+            {
+              "name": "declared",
+              "type": {
+                "k": "enum",
+                "values": [
+                  "requires",
+                  "prefers"
+                ]
+              },
+              "req": true
+            }
+          ],
+          "tag": {
+            "field": "outcome",
+            "variants": {
+              "emulated": [
+                {
+                  "name": "via",
+                  "type": {
+                    "k": "str",
+                    "fmt": "id"
+                  },
+                  "req": true
+                }
+              ],
+              "dropped": []
+            }
+          }
+        }
+      ]
+    },
+    "extension_outcome": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "outcome",
+          "type": {
+            "k": "enum",
+            "values": [
+              "applied",
+              "dropped",
+              "emulated"
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "effect",
+          "type": {
+            "k": "enum",
+            "values": [
+              "transport",
+              "behavioral"
+            ]
+          },
+          "req": true
+        }
+      ],
+      "tag": {
+        "field": "outcome",
+        "variants": {
+          "applied": [
+            {
+              "name": "schema_hash",
+              "type": {
+                "k": "str",
+                "fmt": "hash"
+              },
+              "req": true
+            }
+          ],
+          "dropped": [],
+          "emulated": []
+        }
+      }
+    },
+    "resolution": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "source",
+          "type": {
+            "k": "enum",
+            "values": [
+              "explicit",
+              "query"
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "mode",
+          "type": {
+            "k": "enum",
+            "values": [
+              "exact",
+              "emulated",
+              "degraded"
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "features",
+          "type": {
+            "k": "map",
+            "key": "capability_path",
+            "value": {
+              "ref": "feature_outcome"
+            }
+          },
+          "req": true
+        },
+        {
+          "name": "extensions",
+          "type": {
+            "k": "map",
+            "key": "x_key",
+            "value": {
+              "ref": "extension_outcome"
+            }
+          },
+          "req": true
+        },
+        {
+          "name": "hash",
+          "type": {
+            "k": "str",
+            "fmt": "hash"
+          },
+          "req": true
+        }
+      ]
+    },
+    "threshold": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "confidence",
+          "type": {
+            "k": "str",
+            "fmt": "confidence_ref"
+          },
+          "req": true
+        },
+        {
+          "name": "value",
+          "type": {
+            "k": "num",
+            "min": 0,
+            "max": 1
+          },
+          "req": true
+        },
+        {
+          "name": "method",
+          "type": {
+            "k": "str",
+            "fmt": "string"
+          },
+          "req": true
+        },
+        {
+          "name": "fitted_for",
+          "type": {
+            "k": "obj",
+            "fields": [
+              {
+                "name": "contract_version",
+                "type": {
+                  "k": "str",
+                  "fmt": "semver"
+                },
+                "req": true
+              },
+              {
+                "name": "model_version",
+                "type": {
+                  "k": "str",
+                  "fmt": "string"
+                },
+                "req": true
+              },
+              {
+                "name": "resolution",
+                "type": {
+                  "k": "str",
+                  "fmt": "hash"
+                },
+                "req": true
+              }
+            ]
+          },
+          "req": true
+        }
+      ]
+    },
+    "target_entry": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "camp",
+          "type": {
+            "k": "enum",
+            "values": [
+              "systemone",
+              "decisions",
+              "adapter"
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "model",
+          "type": {
+            "k": "str",
+            "fmt": "string"
+          },
+          "req": true
+        },
+        {
+          "name": "model_version",
+          "type": {
+            "k": "str",
+            "fmt": "string"
+          },
+          "req": true
+        },
+        {
+          "name": "descriptor",
+          "type": {
+            "k": "obj",
+            "fields": [
+              {
+                "name": "version",
+                "type": {
+                  "k": "str",
+                  "fmt": "semver"
+                },
+                "req": true
+              },
+              {
+                "name": "range",
+                "type": {
+                  "k": "str",
+                  "fmt": "semver_range"
+                },
+                "req": true
+              },
+              {
+                "name": "hash",
+                "type": {
+                  "k": "str",
+                  "fmt": "hash"
+                },
+                "req": true
+              }
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "split_strategy",
+          "type": {
+            "k": "enum",
+            "values": [
+              "none",
+              "split"
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "resolution",
+          "type": {
+            "ref": "resolution"
+          },
+          "req": true
+        },
+        {
+          "name": "thresholds",
+          "type": {
+            "k": "map",
+            "key": "id",
+            "value": {
+              "ref": "threshold"
+            }
+          },
+          "req": true
+        },
+        {
+          "name": "metrics",
+          "type": {
+            "k": "map",
+            "key": "id",
+            "value": {
+              "k": "alt",
+              "options": [
+                {
+                  "k": "num"
+                },
+                {
+                  "k": "bool"
+                }
+              ]
+            },
+            "entries": [
+              {
+                "name": "measured",
+                "type": {
+                  "k": "bool"
+                },
+                "req": true
+              }
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "plan_report",
+          "type": {
+            "k": "str",
+            "fmt": "hash"
+          },
+          "req": true
+        }
+      ]
+    },
+    "contract_entry": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "version",
+          "type": {
+            "k": "str",
+            "fmt": "semver"
+          },
+          "req": true
+        },
+        {
+          "name": "content_hash",
+          "type": {
+            "k": "str",
+            "fmt": "hash"
+          },
+          "req": true
+        },
+        {
+          "name": "eval",
+          "type": {
+            "k": "obj",
+            "fields": [
+              {
+                "name": "dataset_hash",
+                "type": {
+                  "k": "str",
+                  "fmt": "hash"
+                },
+                "req": true
+              },
+              {
+                "name": "cases",
+                "type": {
+                  "k": "int",
+                  "min": 1
+                },
+                "req": true
+              }
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "active",
+          "type": {
+            "k": "str",
+            "fmt": "target_id"
+          },
+          "req": true
+        },
+        {
+          "name": "standby",
+          "type": {
+            "k": "list",
+            "items": {
+              "k": "str",
+              "fmt": "target_id"
+            },
+            "unique": true
+          },
+          "req": true
+        },
+        {
+          "name": "selection",
+          "type": {
+            "k": "enum",
+            "values": [
+              "strict",
+              "available"
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "accept_lock_in",
+          "type": {
+            "k": "list",
+            "items": {
+              "ref": "lock_in_ack"
+            }
+          },
+          "req": true
+        },
+        {
+          "name": "targets",
+          "type": {
+            "k": "map",
+            "key": "target_id",
+            "value": {
+              "ref": "target_entry"
+            }
+          },
+          "req": true
+        }
+      ]
+    },
+    "lockfile": {
+      "k": "obj",
+      "fields": [
+        {
+          "name": "hoshen",
+          "type": {
+            "k": "int"
+          },
+          "req": true
+        },
+        {
+          "name": "urim",
+          "type": {
+            "k": "str",
+            "fmt": "protocol_version"
+          },
+          "req": true
+        },
+        {
+          "name": "generated_at",
+          "type": {
+            "k": "str",
+            "fmt": "timestamp"
+          },
+          "req": true
+        },
+        {
+          "name": "compiler",
+          "type": {
+            "k": "obj",
+            "fields": [
+              {
+                "name": "name",
+                "type": {
+                  "k": "str",
+                  "fmt": "id"
+                },
+                "req": true
+              },
+              {
+                "name": "version",
+                "type": {
+                  "k": "str",
+                  "fmt": "semver"
+                },
+                "req": true
+              }
+            ]
+          },
+          "req": true
+        },
+        {
+          "name": "integrity",
+          "type": {
+            "k": "str",
+            "fmt": "integrity"
+          },
+          "req": true
+        },
+        {
+          "name": "contracts",
+          "type": {
+            "k": "map",
+            "key": "id",
+            "value": {
+              "ref": "contract_entry"
+            }
+          },
+          "req": true
+        }
+      ]
+    }
+  }
+}

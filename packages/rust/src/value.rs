@@ -1,8 +1,8 @@
 //! Values built from the parser's events, with plain scalars resolved by the YAML 1.2 core
 //! schema (§5.3), exactly as the JS and Python ports resolve them.
 //!
-//! Only the parts the checker reads are kept: mapping entries, integers, strings, and the type
-//! of everything else. Value errors are all `invalid YAML`: a duplicate key at any depth
+//! Every node is kept: the closed schema (schema.rs) reads all of it, and the lockfile
+//! integrity (jcs.rs) hashes all of it. Value errors are all `invalid YAML`: a duplicate key at any depth
 //! (C-021), a collection key (C-023), an integer outside −2^63..2^64−1 (C-024).
 //!
 //! Resolution of a plain scalar (quoted and block scalars are always strings):
@@ -30,8 +30,7 @@ use crate::Problem;
 const INT_MIN: i128 = -(1_i128 << 63);
 const INT_MAX: i128 = (1_i128 << 64) - 1;
 
-/// A built value. Sequences keep no items: the checker never reads them, but every item is
-/// still built, so its value errors are reported.
+/// A built value.
 #[derive(Debug)]
 pub(crate) enum Value {
     Null,
@@ -39,8 +38,37 @@ pub(crate) enum Value {
     Int(i128),
     Float(f64),
     String(String),
-    Sequence,
+    Sequence(Vec<Self>),
     Mapping(Mapping),
+}
+
+/// The value an absent key reads as (see [`Value::get`]).
+pub(crate) static NULL: Value = Value::Null;
+
+impl Value {
+    /// `self[key]`: a mapping's value, or a sequence's item when `key` is a decimal index;
+    /// [`NULL`] when absent. After the closed schema no value is null, so null means absent.
+    pub(crate) fn get(&self, key: &str) -> &Self {
+        match self {
+            Self::Mapping(map) => map.get(key),
+            Self::Sequence(items) => key.parse::<usize>().ok().and_then(|i| items.get(i)),
+            _ => None,
+        }
+        .unwrap_or(&NULL)
+    }
+
+    /// A mapping's string-keyed entries, or a sequence's items (with empty keys); else none.
+    pub(crate) fn entries(&self) -> Vec<(&str, &Self)> {
+        match self {
+            Self::Mapping(map) => map.string_entries().unwrap_or_default(),
+            Self::Sequence(items) => items.iter().map(|item| ("", item)).collect(),
+            _ => Vec::new(),
+        }
+    }
+
+    pub(crate) const fn is_null(&self) -> bool {
+        matches!(self, Self::Null)
+    }
 }
 
 /// Mapping entries in document order; keys are unique (C-021).
@@ -57,8 +85,15 @@ impl Mapping {
         self.get(key).is_some()
     }
 
-    pub(crate) fn is_empty(&self) -> bool {
-        self.0.is_empty()
+    /// The entries in document order, or `None` if any key is not a string.
+    pub(crate) fn string_entries(&self) -> Option<Vec<(&str, &Value)>> {
+        self.0
+            .iter()
+            .map(|(k, v)| match k {
+                Value::String(s) => Some((s.as_str(), v)),
+                _ => None,
+            })
+            .collect()
     }
 }
 
@@ -83,15 +118,24 @@ impl Key {
             Value::Float(f) if f.is_nan() => Self::Float(f64::NAN.to_bits()),
             Value::Float(f) => Self::Float((f + 0.0).to_bits()),
             Value::String(s) => Self::String(s.clone()),
-            Value::Sequence | Value::Mapping(_) => return None,
+            Value::Sequence(_) | Value::Mapping(_) => return None,
         })
     }
 }
 
 /// One collection being built.
 enum Frame {
-    Sequence,
+    Sequence(Vec<Value>),
     Mapping { map: Mapping, seen: HashSet<Key>, key: Option<Value> },
+}
+
+impl Frame {
+    fn finish(self) -> Value {
+        match self {
+            Self::Sequence(items) => Value::Sequence(items),
+            Self::Mapping { map, .. } => Value::Mapping(map),
+        }
+    }
 }
 
 /// Build the document's root value from a well-formed, profile-clean event stream. An empty
@@ -104,22 +148,20 @@ pub(crate) fn build(events: &[Event<'_>]) -> Result<Value, Problem> {
             Event::Scalar(text, style, _, _) => resolve(text, *style)?,
             Event::SequenceStart(..) | Event::MappingStart(..) => {
                 stack.push(if matches!(event, Event::SequenceStart(..)) {
-                    Frame::Sequence
+                    Frame::Sequence(Vec::new())
                 } else {
                     Frame::Mapping { map: Mapping::default(), seen: HashSet::new(), key: None }
                 });
                 continue;
             }
-            Event::SequenceEnd | Event::MappingEnd => match stack.pop() {
-                Some(Frame::Mapping { map, .. }) => Value::Mapping(map),
-                _ => Value::Sequence,
-            },
+            // The parser balances every end with a start, so the stack is never empty here.
+            Event::SequenceEnd | Event::MappingEnd => stack.pop().map_or(Value::Null, Frame::finish),
             // Profile-clean streams carry no aliases; the rest are not nodes.
             _ => continue,
         };
         match stack.last_mut() {
             None => root = done,
-            Some(Frame::Sequence) => {}
+            Some(Frame::Sequence(items)) => items.push(done),
             Some(Frame::Mapping { map, seen, key }) => {
                 if let Some(k) = key.take() {
                     map.0.push((k, done));

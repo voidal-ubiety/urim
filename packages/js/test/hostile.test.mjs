@@ -13,8 +13,8 @@ const CANARY = JSON.parse(
 
 test("C-091 __proto__/constructor/prototype keys never touch Object.prototype", () => {
   const before = Object.getOwnPropertyNames(Object.prototype).sort();
-  const text = fixture("proto-pollution-nested.lock");
-  assert.equal(urim.checkText("p.lock", text).line, "p.lock: ok (lockfile, hoshen 2, urim x)");
+  const text = fixture("proto-pollution-nested.yaml");
+  assert.equal(urim.checkText("p.yaml", text).line, "p.yaml: ok (contract probe@1.0.0, urim 0.2)");
   const value = parseDocument(text);
   assert.deepEqual(Object.getOwnPropertyNames(Object.prototype).sort(), before);
   assert.equal({}.polluted, undefined);
@@ -23,11 +23,10 @@ test("C-091 __proto__/constructor/prototype keys never touch Object.prototype", 
   // ordinary key and no assignment to a prototype can happen.
   assert.deepEqual(Object.keys(value), ["strings", "size"]);
   assert.ok(value.strings instanceof Map);
-  assert.deepEqual(
-    [...value.strings.keys()],
-    ["hoshen", "urim", "__proto__", "constructor", "prototype", "q"],
-  );
-  assert.equal(value.strings.get("hoshen"), 2n); // the smuggled `hoshen: 3` stayed nested
+  assert.deepEqual([...value.strings.keys()], ["urim", "contract", "version", "state", "questions"]);
+  const schema = value.strings.get("state").strings.get("s").strings.get("schema");
+  assert.deepEqual([...schema.strings.keys()], ["__proto__", "constructor", "prototype", "q"]);
+  assert.equal(schema.strings.get("__proto__").strings.get("hoshen"), 3n); // stayed nested
 });
 
 test("C-085 deserialization-gadget tags are rejected and nothing executes", () => {

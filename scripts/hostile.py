@@ -88,12 +88,14 @@ def build(case: dict, tmp: Path) -> str:
     text = "".join(piece * n for piece, n in case.get("pieces", []))
     gen = case.get("generate")
     count = case.get("count", 0)
+    indent = case.get("generate_indent", "")
     if gen == "many-keys":
-        text += "hoshen: 2\nurim: x\n" + "".join(f"k{i}: {i}\n" for i in range(count))
+        value = case.get("generate_value")
+        text += "".join(f"{indent}k{i}: {i if value is None else value}\n" for i in range(count))
     elif gen == "block-nest":
         text += "".join("  " * (i + 1) + "a:\n" for i in range(count))
     elif gen == "invisible-keys":
-        text += "hoshen: 2\nurim: x\n" + "".join(f"k{i}\u200b: 1\n" for i in range(count))
+        text += "".join(f"{indent}k{i}\u200b: 1\n" for i in range(count))
     text += case.get("suffix", "")
     data = text.encode("utf-8")
     if "bytes_suffix_hex" in case:

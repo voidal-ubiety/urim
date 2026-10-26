@@ -1,0 +1,3 @@
+# C-100: urim 0.1 is well-formed but not supported; the gate runs before the schema
+urim: "0.1"
+contract: c

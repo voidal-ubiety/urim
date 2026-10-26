@@ -1,0 +1,16 @@
+{
+  "comment": "Written by scripts/sync-spec --write. sha256 of each file copied from upstream decision-contract-spec.",
+  "source": "decision-contract-spec (working tree; not a git repo, so there is no commit to pin)",
+  "files": {
+    "SPEC.md": "95bf0cc6f6c9400ac9b50682c8b2ea12795a6aa19f7081156554f8278068589c",
+    "CHANGELOG.md": "7e824ed1bcc430cc70fb5c07efe0bb26425a8a7e92efeab3264ae8a05fd5ecc7",
+    "examples/decision.lock.pre-hoshen.yaml": "84c86ee3c9f899318dfabf70edfc0b7100ab992ea7ba3c036543393ff23c8318",
+    "examples/decision.lock.v0.1.0.yaml": "7553fe59c050c5c5d95fa292f460bcd8ee2834c5b891c3ac0f67a403309505bf",
+    "examples/evals/incident-triage.sample.jsonl": "090142849ede534d3400eefc524478f88bee125157bed5f9b22d051efb816159",
+    "examples/incident-triage.decision.yaml": "561cdc764264e1e0a325111441db693385ff388efbe665320d06dcee846144cc",
+    "examples/kyc-document-check.decision.yaml": "9be0044c1314adc1d6e9e1c4b3f7b77d5b0fcfe320036e59919f662dffb06439",
+    "examples/providers/cloudflare-clef-flash.provider.v0.1.0.yaml": "58e9d9428287d6514a5f21b44484ab47f2f405862bf16e08f022f4e357585032",
+    "examples/providers/cloudflare-clef-flash.provider.yaml": "bc449de5966dbae9affd5d9f2113863373b83ee4080526d7e5746d44b9c8da70",
+    "examples/urim.lock": "816070e88aa6522301a084436b9e774a1f1cb3d4389ff72c203397bc3ac8dd4d"
+  }
+}

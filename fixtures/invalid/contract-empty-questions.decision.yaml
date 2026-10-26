@@ -1,5 +1,5 @@
-urim: "0.1"
+urim: "0.2"
 contract: x
 version: 1.0.0
-state: {}
+state: {s: {type: string}}
 questions: {}

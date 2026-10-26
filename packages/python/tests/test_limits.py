@@ -6,9 +6,10 @@ import os
 from pathlib import Path
 
 import urim
+from tests.sealed import SEALED_LOCK
 from urim.check import check_file, check_text
 
-LOCK = "hoshen: 2\nurim: x\n"
+LOCK = SEALED_LOCK
 TOO_LARGE = "error: file too large (max 1048576 bytes)"
 
 
@@ -24,7 +25,7 @@ def test_c080_limits_are_exported() -> None:
 def test_c080_exactly_max_bytes_is_accepted_one_more_is_too_large(tmp_path: Path) -> None:
     ok = tmp_path / "max.lock"
     ok.write_text(_padded(urim.MAX_BYTES), encoding="utf-8")
-    assert check_file(str(ok)).line == f"{ok}: ok (lockfile, hoshen 2, urim x)"
+    assert check_file(str(ok)).line == f"{ok}: ok (lockfile, hoshen 2, urim 0.2)"
     big = tmp_path / "big.lock"
     big.write_text(_padded(urim.MAX_BYTES + 1), encoding="utf-8")
     assert check_file(str(big)).line == f"{big}: {TOO_LARGE}"
@@ -43,7 +44,7 @@ def test_c081_fifos_and_devices_are_refused_symlinks_followed(tmp_path: Path) ->
     target.write_text(LOCK, encoding="utf-8")
     link = tmp_path / "link.lock"
     link.symlink_to(target)
-    assert check_file(str(link)).line == f"{link}: ok (lockfile, hoshen 2, urim x)"
+    assert check_file(str(link)).line == f"{link}: ok (lockfile, hoshen 2, urim 0.2)"
 
 
 def test_c013_read_error_after_open_is_cannot_read() -> None:

@@ -1,0 +1,190 @@
+{
+ "comment": "Golden RFC 8785 corpus (C-098). Each yaml is parsed by the port's own profile parser, then canonicalized; `error: non_finite` means canonicalization must fail. Integers are canonicalized as doubles (SPEC §13 item 5 is open). scripts/check-jcs-corpus cross-checks the jcs strings against the rfc8785 package; the port tests read this file.",
+ "cases": [
+  {
+   "name": "zero",
+   "yaml": "v: 0",
+   "jcs": "{\"v\":0}"
+  },
+  {
+   "name": "negative-zero",
+   "yaml": "v: -0.0",
+   "jcs": "{\"v\":0}"
+  },
+  {
+   "name": "one",
+   "yaml": "v: 1",
+   "jcs": "{\"v\":1}"
+  },
+  {
+   "name": "negative-int",
+   "yaml": "v: -42",
+   "jcs": "{\"v\":-42}"
+  },
+  {
+   "name": "int-above-2-pow-53",
+   "yaml": "v: 9007199254740993",
+   "jcs": "{\"v\":9007199254740992}"
+  },
+  {
+   "name": "int-max-i64",
+   "yaml": "v: 9223372036854775807",
+   "jcs": "{\"v\":9223372036854776000}"
+  },
+  {
+   "name": "float-simple",
+   "yaml": "v: 123.456",
+   "jcs": "{\"v\":123.456}"
+  },
+  {
+   "name": "float-sum",
+   "yaml": "v: 0.30000000000000004",
+   "jcs": "{\"v\":0.30000000000000004}"
+  },
+  {
+   "name": "float-1e20",
+   "yaml": "v: 1e20",
+   "jcs": "{\"v\":100000000000000000000}"
+  },
+  {
+   "name": "float-1e21",
+   "yaml": "v: 1.0e+21",
+   "jcs": "{\"v\":1e+21}"
+  },
+  {
+   "name": "float-micro",
+   "yaml": "v: 0.000001",
+   "jcs": "{\"v\":0.000001}"
+  },
+  {
+   "name": "float-1e-7",
+   "yaml": "v: 1e-7",
+   "jcs": "{\"v\":1e-7}"
+  },
+  {
+   "name": "float-negative-small",
+   "yaml": "v: -1.5e-10",
+   "jcs": "{\"v\":-1.5e-10}"
+  },
+  {
+   "name": "float-denormal-min",
+   "yaml": "v: 5e-324",
+   "jcs": "{\"v\":5e-324}"
+  },
+  {
+   "name": "float-max",
+   "yaml": "v: 1.7976931348623157e308",
+   "jcs": "{\"v\":1.7976931348623157e+308}"
+  },
+  {
+   "name": "float-integral",
+   "yaml": "v: 4.0",
+   "jcs": "{\"v\":4}"
+  },
+  {
+   "name": "float-digits-21",
+   "yaml": "v: 123456789012345678901.0",
+   "jcs": "{\"v\":123456789012345680000}"
+  },
+  {
+   "name": "float-mantissa-one-digit",
+   "yaml": "v: 2e25",
+   "jcs": "{\"v\":2e+25}"
+  },
+  {
+   "name": "hex-int",
+   "yaml": "v: 0x1F",
+   "jcs": "{\"v\":31}"
+  },
+  {
+   "name": "octal-int",
+   "yaml": "v: 0o17",
+   "jcs": "{\"v\":15}"
+  },
+  {
+   "name": "true",
+   "yaml": "v: true",
+   "jcs": "{\"v\":true}"
+  },
+  {
+   "name": "false",
+   "yaml": "v: false",
+   "jcs": "{\"v\":false}"
+  },
+  {
+   "name": "null",
+   "yaml": "v: null",
+   "jcs": "{\"v\":null}"
+  },
+  {
+   "name": "empty-map",
+   "yaml": "v: {}",
+   "jcs": "{\"v\":{}}"
+  },
+  {
+   "name": "empty-seq",
+   "yaml": "v: []",
+   "jcs": "{\"v\":[]}"
+  },
+  {
+   "name": "nested",
+   "yaml": "v: {b: [1, {d: x, c: y}], a: null}",
+   "jcs": "{\"v\":{\"a\":null,\"b\":[1,{\"c\":\"y\",\"d\":\"x\"}]}}"
+  },
+  {
+   "name": "key-order-ascii",
+   "yaml": "{b: 1, a: 2, aa: 3, B: 4, \"\": 5}",
+   "jcs": "{\"\":5,\"B\":4,\"a\":2,\"aa\":3,\"b\":1}"
+  },
+  {
+   "name": "key-order-utf16",
+   "yaml": "{\"\\uE000\": 1, \"\\U0001F600\": 2, \"\\u00e9\": 3, z: 4}",
+   "jcs": "{\"z\":4,\"é\":3,\"😀\":2,\"\":1}"
+  },
+  {
+   "name": "string-escapes",
+   "yaml": "v: \"q\\\" b\\\\ \\b\\f\\n\\r\\t\"",
+   "jcs": "{\"v\":\"q\\\" b\\\\ \\b\\f\\n\\r\\t\"}"
+  },
+  {
+   "name": "string-controls",
+   "yaml": "v: \"\\x01\\x1f\\x7f\"",
+   "jcs": "{\"v\":\"\\u0001\\u001f\"}"
+  },
+  {
+   "name": "string-non-ascii",
+   "yaml": "v: \"é 名前 \\U0001F600\"",
+   "jcs": "{\"v\":\"é 名前 😀\"}"
+  },
+  {
+   "name": "string-slash",
+   "yaml": "v: a/b",
+   "jcs": "{\"v\":\"a/b\"}"
+  },
+  {
+   "name": "string-line-separator",
+   "yaml": "v: \"\\u2028\\u2029\"",
+   "jcs": "{\"v\":\"  \"}"
+  },
+  {
+   "name": "infinity",
+   "yaml": "v: .inf",
+   "error": "non_finite"
+  },
+  {
+   "name": "negative-infinity",
+   "yaml": "v: -.inf",
+   "error": "non_finite"
+  },
+  {
+   "name": "nan",
+   "yaml": "v: .nan",
+   "error": "non_finite"
+  },
+  {
+   "name": "sequence-infinite",
+   "yaml": "a: [1, .inf]",
+   "error": "non_finite"
+  }
+ ]
+}

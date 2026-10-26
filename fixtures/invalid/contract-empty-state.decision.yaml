@@ -1,0 +1,6 @@
+# C-096: state needs at least one field
+urim: "0.2"
+contract: c
+version: 1.0.0
+state: {}
+questions: { q: {} }

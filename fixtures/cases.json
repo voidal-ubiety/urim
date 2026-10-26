@@ -59,19 +59,19 @@
       "id": "C-014",
       "path": "valid/bom.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
     },
     {
       "id": "C-015",
       "path": "valid/crlf.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
     },
     {
       "id": "C-015",
       "path": "hostile/mixed-crlf-lf.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
     },
     {
       "id": "C-020",
@@ -183,9 +183,9 @@
     },
     {
       "id": "C-023",
-      "path": "valid/explicit-key-without-value.lock",
+      "path": "valid/explicit-key-without-value.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+      "output": "{file}: ok (contract probe@1.0.0, urim 0.2)"
     },
     {
       "id": "C-024",
@@ -225,69 +225,69 @@
     },
     {
       "id": "C-025",
-      "path": "invalid/lock-urim-true.lock",
+      "path": "invalid/instructions-true.yaml",
       "exit": 1,
-      "output": "{file}: error: urim must be a string"
+      "output": "{file}: error: questions.q.instructions must be a non-empty string"
     },
     {
       "id": "C-025",
-      "path": "valid/urim-timestamp-is-a-string.lock",
+      "path": "valid/instructions-timestamp-is-a-string.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 2026-10-25)"
+      "output": "{file}: ok (contract probe@1.0.0, urim 0.2)"
     },
     {
       "id": "C-025",
-      "path": "valid/urim-yes-is-a-string.decision.yaml",
+      "path": "valid/contract-yes-is-a-string.decision.yaml",
       "exit": 0,
-      "output": "{file}: ok (contract x@1.0.0, urim yes)"
+      "output": "{file}: ok (contract yes@1.0.0, urim 0.2)"
     },
     {
       "id": "C-025",
-      "path": "valid/yaml-1.1-directive-keeps-core-schema.lock",
+      "path": "valid/yaml-1.1-directive-keeps-core-schema.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim yes)"
+      "output": "{file}: ok (contract yes@1.0.0, urim 0.2)"
     },
     {
       "id": "C-025",
-      "path": "hostile/yaml11-norway.lock",
+      "path": "hostile/yaml11-norway.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim NO)"
+      "output": "{file}: ok (contract no@1.0.0, urim 0.2)"
     },
     {
       "id": "C-025",
       "path": "hostile/yaml11-octal-version.yaml",
       "exit": 0,
-      "output": "{file}: ok (contract no@010, urim 0.1)"
+      "output": "{file}: ok (contract no@1.0.0, urim 0.2)"
     },
     {
       "id": "C-025",
-      "path": "hostile/yaml11-on-y.lock",
+      "path": "hostile/yaml11-on-y.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim on)"
+      "output": "{file}: ok (contract on@1.0.0, urim 0.2)"
     },
     {
       "id": "C-025",
       "path": "hostile/yaml11-sexagesimal-version.yaml",
       "exit": 0,
-      "output": "{file}: ok (contract x@1:30, urim 0.1)"
+      "output": "{file}: ok (contract probe@1.0.0, urim 0.2)"
     },
     {
       "id": "C-026",
       "path": "valid/hoshen-hex.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
     },
     {
       "id": "C-026",
       "path": "valid/hoshen-octal.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
     },
     {
       "id": "C-026",
       "path": "valid/hoshen-plus-sign.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
     },
     {
       "id": "C-027",
@@ -309,15 +309,15 @@
     },
     {
       "id": "C-027",
-      "path": "valid/urim-leading-zero-is-string.lock",
+      "path": "valid/instructions-leading-zero-is-string.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 01)"
+      "output": "{file}: ok (contract probe@1.0.0, urim 0.2)"
     },
     {
       "id": "C-027",
-      "path": "valid/urim-signed-leading-zero-is-string.lock",
+      "path": "valid/instructions-signed-leading-zero-is-string.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim -007)"
+      "output": "{file}: ok (contract probe@1.0.0, urim 0.2)"
     },
     {
       "id": "C-027",
@@ -339,15 +339,15 @@
     },
     {
       "id": "C-027",
-      "path": "valid/urim-signed-hex-is-string.lock",
+      "path": "valid/instructions-signed-hex-is-string.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim +0x1)"
+      "output": "{file}: ok (contract probe@1.0.0, urim 0.2)"
     },
     {
       "id": "C-027",
-      "path": "valid/urim-bare-hex-prefix-is-string.lock",
+      "path": "valid/instructions-bare-hex-prefix-is-string.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0x)"
+      "output": "{file}: ok (contract probe@1.0.0, urim 0.2)"
     },
     {
       "id": "C-027",
@@ -375,9 +375,9 @@
     },
     {
       "id": "C-028",
-      "path": "invalid/urim-overflowing-float.lock",
+      "path": "invalid/instructions-overflowing-float.yaml",
       "exit": 1,
-      "output": "{file}: error: urim must be a string"
+      "output": "{file}: error: questions.q.instructions must be a non-empty string"
     },
     {
       "id": "C-028",
@@ -387,9 +387,9 @@
     },
     {
       "id": "C-028",
-      "path": "valid/urim-lone-dot-is-string.lock",
+      "path": "valid/instructions-lone-dot-is-string.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim .)"
+      "output": "{file}: ok (contract probe@1.0.0, urim 0.2)"
     },
     {
       "id": "C-028",
@@ -405,9 +405,9 @@
     },
     {
       "id": "C-028",
-      "path": "hostile/urim-nan.lock",
+      "path": "hostile/instructions-nan.yaml",
       "exit": 1,
-      "output": "{file}: error: urim must be a string"
+      "output": "{file}: error: questions.q.instructions must be a non-empty string"
     },
     {
       "id": "C-030",
@@ -443,43 +443,43 @@
       "id": "C-031",
       "path": "valid/flow-mapping-root.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
     },
     {
       "id": "C-034",
       "path": "valid/key-spellings.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
     },
     {
       "id": "C-034",
-      "path": "valid/string-and-int-keys-distinct.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+      "path": "invalid/string-and-int-keys-distinct.yaml",
+      "exit": 1,
+      "output": "{file}: error: state.s.schema has a non-string key"
     },
     {
       "id": "C-035",
-      "path": "valid/bool-and-int-keys-distinct.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+      "path": "invalid/bool-and-int-keys-distinct.yaml",
+      "exit": 1,
+      "output": "{file}: error: state.s.schema has a non-string key"
     },
     {
       "id": "C-035",
-      "path": "valid/int-and-float-keys-distinct.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+      "path": "invalid/int-and-float-keys-distinct.yaml",
+      "exit": 1,
+      "output": "{file}: error: state.s.schema has a non-string key"
     },
     {
       "id": "C-035",
-      "path": "valid/float-and-leading-zero-keys-distinct.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+      "path": "invalid/float-and-leading-zero-keys-distinct.yaml",
+      "exit": 1,
+      "output": "{file}: error: state.s.schema has a non-string key"
     },
     {
       "id": "C-040",
-      "path": "valid/lockfile-wins-over-contract-keys.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+      "path": "invalid/lockfile-wins-over-contract-keys.lock",
+      "exit": 1,
+      "output": "{file}: error: unknown key contract"
     },
     {
       "id": "C-040",
@@ -560,40 +560,40 @@
       "output": "{file}: error: missing required key(s): urim"
     },
     {
-      "id": "C-044",
+      "id": "C-100",
       "path": "invalid/lock-urim-int.lock",
       "exit": 1,
-      "output": "{file}: error: urim must be a string"
+      "output": "{file}: error: urim must be a protocol version (\"MAJOR.MINOR\")"
     },
     {
-      "id": "C-044",
+      "id": "C-100",
       "path": "invalid/lock-urim-mapping.lock",
       "exit": 1,
-      "output": "{file}: error: urim must be a string"
+      "output": "{file}: error: urim must be a protocol version (\"MAJOR.MINOR\")"
     },
     {
-      "id": "C-044",
+      "id": "C-100",
       "path": "invalid/lock-urim-not-string.lock",
       "exit": 1,
-      "output": "{file}: error: urim must be a string"
+      "output": "{file}: error: urim must be a protocol version (\"MAJOR.MINOR\")"
     },
     {
-      "id": "C-044",
+      "id": "C-100",
       "path": "invalid/lock-urim-null.lock",
       "exit": 1,
-      "output": "{file}: error: urim must be a string"
+      "output": "{file}: error: urim must be a protocol version (\"MAJOR.MINOR\")"
     },
     {
-      "id": "C-045",
-      "path": "valid/lock-urim-empty-string.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim )"
+      "id": "C-100",
+      "path": "invalid/lock-urim-empty-string.lock",
+      "exit": 1,
+      "output": "{file}: error: urim must be a protocol version (\"MAJOR.MINOR\")"
     },
     {
       "id": "C-045",
       "path": "valid/minimal.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
     },
     {
       "id": "C-046",
@@ -608,100 +608,100 @@
       "output": "{file}: error: unsupported hoshen version 3 (supported: 2)"
     },
     {
-      "id": "C-051",
+      "id": "C-100",
       "path": "invalid/contract-urim-not-string.decision.yaml",
       "exit": 1,
-      "output": "{file}: error: urim must be a string"
+      "output": "{file}: error: urim must be a protocol version (\"MAJOR.MINOR\")"
     },
     {
-      "id": "C-052",
+      "id": "C-095",
       "path": "invalid/contract-missing-all.decision.yaml",
       "exit": 1,
       "output": "{file}: error: missing required key(s): contract, version, state, questions"
     },
     {
-      "id": "C-052",
+      "id": "C-095",
       "path": "invalid/contract-missing-keys.decision.yaml",
       "exit": 1,
       "output": "{file}: error: missing required key(s): version, state, questions"
     },
     {
-      "id": "C-052",
+      "id": "C-095",
       "path": "invalid/contract-missing-state-only.decision.yaml",
       "exit": 1,
       "output": "{file}: error: missing required key(s): state"
     },
     {
-      "id": "C-053",
+      "id": "C-096",
       "path": "invalid/contract-id-checked-before-version.decision.yaml",
       "exit": 1,
-      "output": "{file}: error: contract must be a string"
+      "output": "{file}: error: contract must be an id (a lowercase letter, then up to 63 of a-z, 0-9, _ and -)"
     },
     {
-      "id": "C-053",
+      "id": "C-096",
       "path": "invalid/contract-id-not-string.decision.yaml",
       "exit": 1,
-      "output": "{file}: error: contract must be a string"
+      "output": "{file}: error: contract must be an id (a lowercase letter, then up to 63 of a-z, 0-9, _ and -)"
     },
     {
-      "id": "C-053",
+      "id": "C-096",
       "path": "invalid/contract-version-not-string.decision.yaml",
       "exit": 1,
-      "output": "{file}: error: version must be a string"
+      "output": "{file}: error: version must be a SemVer version"
     },
     {
-      "id": "C-054",
+      "id": "C-096",
       "path": "invalid/contract-state-not-mapping.decision.yaml",
       "exit": 1,
-      "output": "{file}: error: state must be a mapping"
+      "output": "{file}: error: state must be a non-empty mapping"
     },
     {
-      "id": "C-054",
+      "id": "C-096",
       "path": "invalid/contract-state-null.decision.yaml",
       "exit": 1,
-      "output": "{file}: error: state must be a mapping"
+      "output": "{file}: error: state must be a non-empty mapping"
     },
     {
-      "id": "C-054",
-      "path": "valid/contract-empty-state.decision.yaml",
-      "exit": 0,
-      "output": "{file}: ok (contract c@v, urim 0.1)"
+      "id": "C-096",
+      "path": "invalid/contract-empty-state.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: state must be a non-empty mapping"
     },
     {
-      "id": "C-055",
+      "id": "C-096",
       "path": "invalid/contract-empty-questions.decision.yaml",
       "exit": 1,
       "output": "{file}: error: questions must be a non-empty mapping"
     },
     {
-      "id": "C-055",
+      "id": "C-096",
       "path": "invalid/contract-questions-null.decision.yaml",
       "exit": 1,
       "output": "{file}: error: questions must be a non-empty mapping"
     },
     {
-      "id": "C-055",
+      "id": "C-096",
       "path": "invalid/contract-questions-sequence.decision.yaml",
       "exit": 1,
       "output": "{file}: error: questions must be a non-empty mapping"
     },
     {
-      "id": "C-056",
-      "path": "valid/contract-multiline-id.decision.yaml",
-      "exit": 0,
-      "output": "{file}: ok (contract a\\u{000A}b@v, urim 0.1)"
+      "id": "C-096",
+      "path": "invalid/contract-multiline-id.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: contract must be an id (a lowercase letter, then up to 63 of a-z, 0-9, _ and -)"
     },
     {
       "id": "C-056",
       "path": "valid/minimal-urim.decision.yaml",
       "exit": 0,
-      "output": "{file}: ok (contract minimal@0.0.1, urim 0.1)"
+      "output": "{file}: ok (contract minimal@0.0.1, urim 0.2)"
     },
     {
       "id": "C-057",
       "path": "invalid/contract-order-key-type-first.decision.yaml",
       "exit": 1,
-      "output": "{file}: error: urim must be a string"
+      "output": "{file}: error: urim must be a protocol version (\"MAJOR.MINOR\")"
     },
     {
       "id": "C-057",
@@ -713,7 +713,7 @@
       "id": "C-057",
       "path": "invalid/contract-order-state-before-questions.decision.yaml",
       "exit": 1,
-      "output": "{file}: error: state must be a mapping"
+      "output": "{file}: error: state must be a non-empty mapping"
     },
     {
       "id": "C-060",
@@ -730,6 +730,12 @@
     {
       "id": "C-060",
       "path": "invalid/unrecognized.yaml",
+      "exit": 1,
+      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'urim'"
+    },
+    {
+      "id": "C-060",
+      "path": "../spec/examples/providers/cloudflare-clef-flash.provider.v0.1.0.yaml",
       "exit": 1,
       "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'urim'"
     },
@@ -813,9 +819,9 @@
     },
     {
       "id": "C-083",
-      "path": "valid/depth-64.lock",
+      "path": "valid/depth-64.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+      "output": "{file}: ok (contract probe@1.0.0, urim 0.2)"
     },
     {
       "id": "C-084",
@@ -1041,27 +1047,27 @@
     },
     {
       "id": "C-089",
-      "path": "valid/backslash-in-urim.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim a\\u{0041}b)"
+      "path": "invalid/backslash-in-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: unknown key [\"a\\\\u{0041}b\"]"
     },
     {
       "id": "C-089",
-      "path": "valid/escape-in-contract.yaml",
-      "exit": 0,
-      "output": "{file}: ok (contract a\\u{001B}[2Jb@v\\u{0000}, urim 0.1\\u{000D})"
+      "path": "invalid/escape-in-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: unknown key [\"a\\u{001B}[2Jb\\u{0000}\\u{000D}\"]"
     },
     {
       "id": "C-089",
-      "path": "valid/escape-in-urim.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim a\\u{001B}b\\u{007F}c\\u{0009})"
+      "path": "invalid/escape-in-extension-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: [\"x-a\\u{001B}b\\u{007F}c\\u{0009}\"] must be an extension key (x-<provider>)"
     },
     {
       "id": "C-089",
-      "path": "hostile/ansi-osc8-in-urim.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim \\u{001B}]8;;https://example.invalid\\u{001B}\\click\\u{001B}]8;;\\u{001B}\\)"
+      "path": "hostile/ansi-osc8-in-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: unknown key [\"\\u{001B}]8;;https://example.invalid\\u{001B}\\\\click\\u{001B}]8;;\\u{001B}\\\\\"]"
     },
     {
       "id": "C-090",
@@ -1145,7 +1151,7 @@
       "id": "C-090",
       "path": "invalid/precedence-schema-identifier-order.yaml",
       "exit": 1,
-      "output": "{file}: error: urim must be a string"
+      "output": "{file}: error: urim must be a protocol version (\"MAJOR.MINOR\")"
     },
     {
       "id": "C-090",
@@ -1203,9 +1209,9 @@
     },
     {
       "id": "C-091",
-      "path": "valid/proto-keys-inert.lock",
+      "path": "valid/proto-keys-inert.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+      "output": "{file}: ok (contract probe@1.0.0, urim 0.2)"
     },
     {
       "id": "C-091",
@@ -1215,15 +1221,15 @@
     },
     {
       "id": "C-091",
-      "path": "hostile/proto-pollution-nested.lock",
+      "path": "hostile/proto-pollution-nested.yaml",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+      "output": "{file}: ok (contract probe@1.0.0, urim 0.2)"
     },
     {
       "id": "C-092",
       "path": "invalid/homoglyph-hoshen-key.lock",
       "exit": 1,
-      "output": "{file}: error: missing required key(s): contract, version, state, questions"
+      "output": "{file}: error: urim must be a protocol version (\"MAJOR.MINOR\")"
     },
     {
       "id": "C-092",
@@ -1245,9 +1251,9 @@
     },
     {
       "id": "C-092",
-      "path": "valid/non-ascii-question-key.yaml",
-      "exit": 0,
-      "output": "{file}: ok (contract kyc-check@1.0.0, urim 0.1)"
+      "path": "invalid/non-ascii-question-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: non-ASCII character in questions[\"名前\"]"
     },
     {
       "id": "C-093",
@@ -1281,21 +1287,33 @@
     },
     {
       "id": "C-093",
-      "path": "../spec/examples/incident-triage.decision.yaml",
+      "path": "../spec/examples/decision.lock.pre-hoshen.yaml",
       "exit": 1,
       "output": "{file}: error: the dctp: key was renamed to urim: before 0.1; replace it"
     },
     {
       "id": "C-093",
-      "path": "../spec/examples/kyc-document-check.decision.yaml",
+      "path": "../spec/examples/decision.lock.v0.1.0.yaml",
       "exit": 1,
       "output": "{file}: error: the dctp: key was renamed to urim: before 0.1; replace it"
     },
     {
-      "id": "C-094",
+      "id": "C-056",
+      "path": "../spec/examples/incident-triage.decision.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.3.0, urim 0.2)"
+    },
+    {
+      "id": "C-056",
+      "path": "../spec/examples/kyc-document-check.decision.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract kyc-document-check@0.4.0, urim 0.2)"
+    },
+    {
+      "id": "C-098",
       "path": "../spec/examples/urim.lock",
       "exit": 1,
-      "output": "{file}: error: hoshen 1 was never released; the first lockfile format is hoshen 2"
+      "output": "{file}: error: integrity does not match the file's content (computed sha256-cM0OJP0p5Km2HSBVZ5NDwpT7kt5WvkS1wSJLoZmO8Ug=)"
     },
     {
       "id": "C-094",
@@ -1314,6 +1332,726 @@
       "path": "invalid/hoshen-never-released-no-urim.lock",
       "exit": 1,
       "output": "{file}: error: hoshen 1 was never released; the first lockfile format is hoshen 2"
+    },
+    {
+      "id": "C-045",
+      "path": "valid/full.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+    },
+    {
+      "id": "C-100",
+      "path": "invalid/lock-urim-unsupported.lock",
+      "exit": 1,
+      "output": "{file}: error: unsupported urim version 0.1 (supported: 0.2)"
+    },
+    {
+      "id": "C-100",
+      "path": "invalid/contract-urim-unsupported.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: unsupported urim version 0.1 (supported: 0.2)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-atomic-not-bool.yaml",
+      "exit": 1,
+      "output": "{file}: error: atomic must be true or false"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-confidence-enum.yaml",
+      "exit": 1,
+      "output": "{file}: error: confidence.portable must be one of top_probability, margin, margin_squared, one_minus_entropy, normalized_top"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-escalation-above-one.yaml",
+      "exit": 1,
+      "output": "{file}: error: policy.auto_route.objective.escalation_rate must be a number in [0, 1]"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-escalation-zero.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.3.0, urim 0.2)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-levels-one.yaml",
+      "exit": 1,
+      "output": "{file}: error: questions.severity.levels must be a list of at least 2 items"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-max-bytes-zero.yaml",
+      "exit": 1,
+      "output": "{file}: error: state.report.max_bytes must be an integer >= 1"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-min-cases-bool.yaml",
+      "exit": 1,
+      "output": "{file}: error: eval.min_cases must be an integer >= 1"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-min-cases-float.yaml",
+      "exit": 1,
+      "output": "{file}: error: eval.min_cases must be an integer >= 1"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-min-cases-zero.yaml",
+      "exit": 1,
+      "output": "{file}: error: eval.min_cases must be an integer >= 1"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-min-precision-one.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.3.0, urim 0.2)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-min-precision-zero.yaml",
+      "exit": 1,
+      "output": "{file}: error: policy.page_oncall.objective.min_precision must be a number in (0, 1]"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-paraphrases-empty-list.yaml",
+      "exit": 1,
+      "output": "{file}: error: eval.paraphrases.team must be a non-empty list"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-required-not-bool.yaml",
+      "exit": 1,
+      "output": "{file}: error: state.report.required must be true or false"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-state-field-null.yaml",
+      "exit": 1,
+      "output": "{file}: error: state.report must be a mapping"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-threshold-negative.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.thresholds.page_oncall.value must be a number in [0, 1]"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/bound-value-not-number.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.thresholds.page_oncall.value must be a number in [0, 1]"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/extension-bad-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: x-Acme must be an extension key (x-<provider>)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/extension-empty-with.yaml",
+      "exit": 1,
+      "output": "{file}: error: x-acme.with must be a non-empty mapping"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/extension-missing-with.yaml",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s) in x-acme: with"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/extension-ok.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.3.0, urim 0.2)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/extension-outcome-applied-ok.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/extension-outcome-missing-hash.lock",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s) in contracts.incident-triage.targets.typesafe/jev.resolution.extensions.x-acme: schema_hash"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/extension-outcome-reserved-key.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.resolution.extensions.x-urim-a uses the reserved prefix x-urim- (SPEC §5.11.2)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/extension-reserved.yaml",
+      "exit": 1,
+      "output": "{file}: error: x-urim-core uses the reserved prefix x-urim- (SPEC §5.11.2)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/fallback-bad-enum.yaml",
+      "exit": 1,
+      "output": "{file}: error: prefers.refusal.typed.fallback must be one of drop, fail"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/fallback-bool.yaml",
+      "exit": 1,
+      "output": "{file}: error: prefers.refusal.typed.fallback must be one of drop, fail or a mapping"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/fallback-drop-ok.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.3.0, urim 0.2)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/fallback-sequence.yaml",
+      "exit": 1,
+      "output": "{file}: error: prefers.refusal.typed.fallback must be one of drop, fail or a mapping"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-capability-path-bad.yaml",
+      "exit": 1,
+      "output": "{file}: error: key requires.question_types.Choice must be a capability path (dot-separated ids)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-confidence-ref-bad.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.thresholds.page_oncall.confidence must be native or portable/<definition>"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-confidence-ref-native.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.thresholds.page_oncall.confidence must be native or portable/<definition>"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-expr-empty.yaml",
+      "exit": 1,
+      "output": "{file}: error: eval.accept.brier must be a non-empty expression string"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-hash-short.yaml",
+      "exit": 1,
+      "output": "{file}: error: eval.dataset_hash must be a hash (sha256:<64 lowercase hex digits>)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-hash-uppercase.yaml",
+      "exit": 1,
+      "output": "{file}: error: eval.dataset_hash must be a hash (sha256:<64 lowercase hex digits>)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-id-64-ok.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@1.3.0, urim 0.2)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-id-invisible.yaml",
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in contract"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-id-reserved.yaml",
+      "exit": 1,
+      "output": "{file}: error: contract must be an id (a lowercase letter, then up to 63 of a-z, 0-9, _ and -)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-id-too-long.yaml",
+      "exit": 1,
+      "output": "{file}: error: contract must be an id (a lowercase letter, then up to 63 of a-z, 0-9, _ and -)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-id-uppercase-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: key questions.Team must be an id (a lowercase letter, then up to 63 of a-z, 0-9, _ and -)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-integrity-bad.lock",
+      "exit": 1,
+      "output": "{file}: error: integrity must be an integrity value (sha256-<base64 of 32 bytes>)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-semver-bad-prerelease.yaml",
+      "exit": 1,
+      "output": "{file}: error: version must be a SemVer version"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-semver-leading-zero.yaml",
+      "exit": 1,
+      "output": "{file}: error: version must be a SemVer version"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-semver-prerelease-ok.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.3.0-rc.1+build.5, urim 0.2)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-semver-range-bad.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.descriptor.range must be a SemVer range"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-semver-range-ok.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-semver-range-tilde.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.descriptor.range must be a SemVer range"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-string-invisible-ok.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.3.0, urim 0.2)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-target-id-bad.yaml",
+      "exit": 1,
+      "output": "{file}: error: targets[0] must be a target id (<provider>/<model>, each an id)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-timestamp-400-leap-ok.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-timestamp-april-31.lock",
+      "exit": 1,
+      "output": "{file}: error: generated_at must be an RFC 3339 timestamp with an offset"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-timestamp-bad.lock",
+      "exit": 1,
+      "output": "{file}: error: generated_at must be an RFC 3339 timestamp with an offset"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-timestamp-century-not-leap.lock",
+      "exit": 1,
+      "output": "{file}: error: generated_at must be an RFC 3339 timestamp with an offset"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-timestamp-leap-day-ok.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-timestamp-month-13.lock",
+      "exit": 1,
+      "output": "{file}: error: generated_at must be an RFC 3339 timestamp with an offset"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-timestamp-not-leap.lock",
+      "exit": 1,
+      "output": "{file}: error: generated_at must be an RFC 3339 timestamp with an offset"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/format-timestamp-z.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+    },
+    {
+      "id": "C-098",
+      "path": "mutations/integrity-stale.lock",
+      "exit": 1,
+      "output": "{file}: error: integrity does not match the file's content (computed sha256-B217HvytPR9ssh9BifJEz8mSmTHbUzk1a/2kkmEnTxg=)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/lock-in-ack-ok.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/lock-in-ack-repeats.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.accept_lock_in[0].locks_out[1] repeats contracts.incident-triage.accept_lock_in[0].locks_out[0]"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/lockfile-missing-integrity.lock",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s): integrity"
+    },
+    {
+      "id": "C-099",
+      "path": "mutations/lockfile-no-contracts-ok.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/lockfile-unknown-key.lock",
+      "exit": 1,
+      "output": "{file}: error: unknown key signature"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/metrics-measured-not-bool.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.metrics.measured must be true or false"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/metrics-missing-measured.lock",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s) in contracts.incident-triage.targets.typesafe/jev.metrics: measured"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/metrics-value-bool-ok.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+    },
+    {
+      "id": "C-096",
+      "path": "mutations/metrics-value-infinite.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.metrics.accuracy must be a number"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/metrics-value-mapping.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.metrics.accuracy must be a number or true or false"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/metrics-value-null.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.metrics.accuracy must be a number or true or false"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/metrics-value-sequence.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.metrics.accuracy must be a number or true or false"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/metrics-value-string.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.metrics.accuracy must be a number or true or false"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/objective-empty.yaml",
+      "exit": 1,
+      "output": "{file}: error: policy.auto_route.objective must be a mapping with exactly one of min_precision, escalation_rate"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/objective-scalar.yaml",
+      "exit": 1,
+      "output": "{file}: error: policy.auto_route.objective must be a mapping with exactly one of min_precision, escalation_rate"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/objective-two-keys.yaml",
+      "exit": 1,
+      "output": "{file}: error: policy.auto_route.objective must be a mapping with exactly one of min_precision, escalation_rate"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/only-when-options.yaml",
+      "exit": 1,
+      "output": "{file}: error: questions.page.options is only allowed when type is choice"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/only-when-schema.yaml",
+      "exit": 1,
+      "output": "{file}: error: state.report.schema is only allowed when type is json"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/outcome-bad-tag.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.resolution.features.refusal.typed.outcome must be one of emulated, dropped"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/outcome-dropped-has-via.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.targets.typesafe/jev.resolution.features.refusal.typed.via is only allowed when outcome is emulated"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/outcome-dropped-ok.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/outcome-emulated-missing-via.lock",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s) in contracts.incident-triage.targets.typesafe/jev.resolution.features.refusal.typed: via"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/preference-missing-fallback.yaml",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s) in prefers.refusal.typed: fallback"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/question-bad-type.yaml",
+      "exit": 1,
+      "output": "{file}: error: questions.team.type must be one of choice, score, yesno, box, extract"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/question-missing-options.yaml",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s) in questions.team: options"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/question-missing-type.yaml",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s) in questions.team: type"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/questions-empty-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: key questions[\"\"] must be an id (a lowercase letter, then up to 63 of a-z, 0-9, _ and -)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/removed-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: required_capabilities is not a urim 0.2 key: rewrite it as requires and prefers (SPEC §5.10.4) with the migration command (proposed name: urim migrate)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/requires-includes-ok.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.3.0, urim 0.2)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/requires-not-expr-or-mapping.yaml",
+      "exit": 1,
+      "output": "{file}: error: requires.question_types.choice must be a non-empty expression string or a mapping with exactly one of includes, any_of"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/requires-null.yaml",
+      "exit": 1,
+      "output": "{file}: error: requires.question_types.choice must be a non-empty expression string or a mapping with exactly one of includes, any_of"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/requires-takes-no-fallback.yaml",
+      "exit": 1,
+      "output": "{file}: error: requires.question_types.choice takes no fallback: requires is hard, so a feature with a fallback belongs in prefers (SPEC §5.10.2 rule 5)"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/requires-two-one-keys.yaml",
+      "exit": 1,
+      "output": "{file}: error: requires.question_types.choice must be a mapping with exactly one of includes, any_of"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/requires-unknown-one-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: unknown key requires.question_types.choice.all_of"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/resolution-missing-hash.lock",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s) in contracts.incident-triage.targets.typesafe/jev.resolution: hash"
+    },
+    {
+      "id": "C-099",
+      "path": "mutations/rule-active-not-a-target.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.active is not a key of contracts.incident-triage.targets: openai/decisions"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-experimental-preferred-ok.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.3.0, urim 0.2)"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-experimental-required-ok.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.3.0, urim 0.2)"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-experimental-undeclared.yaml",
+      "exit": 1,
+      "output": "{file}: error: questions.notes.type has experimental type extract: declare question_types.extract in requires or prefers"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-extension-emulation.yaml",
+      "exit": 1,
+      "output": "{file}: error: x-acme.fallback.emulate names no registered emulation: fake"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-paraphrase-unknown-question.yaml",
+      "exit": 1,
+      "output": "{file}: error: eval.paraphrases.owner names no declared question: owner"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-policy-box-answer.yaml",
+      "exit": 1,
+      "output": "{file}: error: policy.auto_route.when.answer is not an answer of question notes"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-policy-not-an-option.yaml",
+      "exit": 1,
+      "output": "{file}: error: policy.auto_route.when.answer is not an answer of question team"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-policy-option-ok.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.3.0, urim 0.2)"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-policy-score-not-canonical.yaml",
+      "exit": 1,
+      "output": "{file}: error: policy.auto_route.when.answer is not an answer of question severity"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-policy-score-ok.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.3.0, urim 0.2)"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-policy-score-out-of-range.yaml",
+      "exit": 1,
+      "output": "{file}: error: policy.auto_route.when.answer is not an answer of question severity"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-policy-unknown-question.yaml",
+      "exit": 1,
+      "output": "{file}: error: policy.auto_route.question names no declared question: owner"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-policy-yesno-bad.yaml",
+      "exit": 1,
+      "output": "{file}: error: policy.page_oncall.when.answer is not an answer of question page"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-prefers-unknown-emulation.yaml",
+      "exit": 1,
+      "output": "{file}: error: prefers.refusal.typed.fallback.emulate names no registered emulation: split"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-prefers-unregistered-capability.yaml",
+      "exit": 1,
+      "output": "{file}: error: prefers.streaming.partial.fallback.emulate names no registered emulation: buffer"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-question-extension-emulation.yaml",
+      "exit": 1,
+      "output": "{file}: error: questions.team.x-acme.fallback.emulate names no registered emulation: fake"
+    },
+    {
+      "id": "C-097",
+      "path": "mutations/rule-requires-also-preferred.yaml",
+      "exit": 1,
+      "output": "{file}: error: requires.question_types.choice is also in prefers; a capability is required or preferred, not both"
+    },
+    {
+      "id": "C-099",
+      "path": "mutations/rule-standby-empty-ok.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+    },
+    {
+      "id": "C-099",
+      "path": "mutations/rule-standby-not-a-target.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.standby[1] is not a key of contracts.incident-triage.targets: openai/decisions"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/standby-repeats.lock",
+      "exit": 1,
+      "output": "{file}: error: contracts.incident-triage.standby[1] repeats contracts.incident-triage.standby[0]"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/state-field-missing-type.yaml",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s) in state.report: type"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/target-version-key.lock",
+      "exit": 1,
+      "output": "{file}: error: unknown key contracts.incident-triage.targets.typesafe/jev.version"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/targets-repeat.yaml",
+      "exit": 1,
+      "output": "{file}: error: targets[2] repeats targets[0]"
+    },
+    {
+      "id": "C-095",
+      "path": "mutations/unknown-nested-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: unknown key questions.team.weight"
     }
   ]
 }

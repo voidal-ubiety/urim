@@ -1,0 +1,5 @@
+urim: "0.2"
+contract: kyc-check
+version: 1.0.0
+state: {s: {type: string}}
+questions: {名前: {type: yesno, instructions: Check it.}}

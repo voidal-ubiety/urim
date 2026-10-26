@@ -1,0 +1,5 @@
+urim: "0.2"
+contract: probe
+version: 1.0.0
+state: {s: {type: json, schema: {__proto__: {polluted: 1}, constructor: 2, hasOwnProperty: 3, toString: 4}}}
+questions: {q: {type: yesno, instructions: Check it.}}

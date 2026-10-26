@@ -1,7 +1,7 @@
 //! Urim: a contract language for decision models (pre-alpha).
 //!
-//! Version 0.0.1 provides the logic behind `urim check <file>`, which validates a hoshen
-//! lockfile or a contract's top-level shape. The behavior is catalogued in the
+//! Version 0.0.1 provides the logic behind `urim check <file>`, which validates a hoshen 2
+//! lockfile or a urim 0.2 contract against the closed schema of `schema/urim-0.2.json`. The behavior is catalogued in the
 //! repository's `CONTRACT.md`, and the TypeScript and Python ports produce
 //! byte-identical output.
 //!
@@ -9,9 +9,8 @@
 //!
 //! ```
 //! let result = urim::check_text("urim.lock", "hoshen: 2\nurim: \"0.1\"\n");
-//! assert!(result.is_ok());
-//! assert_eq!(result.line(), "urim.lock: ok (lockfile, hoshen 2, urim 0.1)");
-//! assert_eq!(result.exit_code(), 0);
+//! assert_eq!(result.line(), "urim.lock: error: unsupported urim version 0.1 (supported: 0.2)");
+//! assert_eq!(result.exit_code(), 1);
 //!
 //! let result = urim::check_text("urim.lock", "hoshen: 3\nurim: \"0.1\"\n");
 //! assert_eq!(result.problem(), Some(&urim::Problem::UnsupportedHoshen { version: 3 }));
@@ -20,10 +19,16 @@
 
 mod check;
 mod display;
+mod formats;
+mod jcs;
 mod limits;
 mod problem;
 mod profile;
 mod read;
+mod rules;
+mod schema;
+#[rustfmt::skip]
+mod schema_gen;
 mod value;
 
 pub use check::{CheckResult, check_file, check_text};

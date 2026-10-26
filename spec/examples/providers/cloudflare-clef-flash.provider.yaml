@@ -5,7 +5,7 @@ vendor: Cloudflare
 descriptor_version: 1.4.0
 camp: systemone
 models:
-  - { name: clef-flash, version: TODO, alias: null }
+  - { name: clef-flash, model_version: TODO, alias: null }
 endpoint: { base_url: TODO, path: /v1/systemone, auth: api_key }
 # NOTE (0.1.1): /v1/systemone is the SELF-HOSTED path (open weights via SGLang). Hosted Workers AI is
 # POST https://api.cloudflare.com/client/v4/accounts/{account_id}/ai/run/@cf/cloudflare/clef-flash

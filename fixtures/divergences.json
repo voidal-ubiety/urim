@@ -25,15 +25,15 @@
       "expect": {
         "js": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
         },
         "rust": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
         },
         "python": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
         }
       }
     },
@@ -43,15 +43,15 @@
       "expect": {
         "js": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
         },
         "rust": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
         },
         "python": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
         }
       }
     },
@@ -60,8 +60,8 @@
       "path": "divergent/duplicate-nan-key.lock",
       "expect": {
         "js": {
-          "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+          "exit": 1,
+          "output": "{file}: error: the root mapping has a non-string key"
         },
         "rust": {
           "exit": 1,
@@ -78,12 +78,12 @@
       "path": "divergent/empty-implicit-key.lock",
       "expect": {
         "js": {
-          "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+          "exit": 1,
+          "output": "{file}: error: the root mapping has a non-string key"
         },
         "rust": {
-          "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+          "exit": 1,
+          "output": "{file}: error: the root mapping has a non-string key"
         },
         "python": {
           "exit": 1,
@@ -101,11 +101,29 @@
         },
         "rust": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
         },
         "python": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+        }
+      }
+    },
+    {
+      "id": "D-015",
+      "path": "divergent/flow-plain-question-mark.decision.yaml",
+      "expect": {
+        "js": {
+          "exit": 0,
+          "output": "{file}: ok (contract minimal@0.0.1, urim 0.2)"
+        },
+        "rust": {
+          "exit": 0,
+          "output": "{file}: ok (contract minimal@0.0.1, urim 0.2)"
+        },
+        "python": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
         }
       }
     }

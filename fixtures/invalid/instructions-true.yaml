@@ -1,0 +1,6 @@
+# C-025: True is a core-schema boolean, not a string
+urim: "0.2"
+contract: probe
+version: 1.0.0
+state: {s: {type: string}}
+questions: {q: {type: yesno, instructions: True}}

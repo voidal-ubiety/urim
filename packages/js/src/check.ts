@@ -1,15 +1,17 @@
-// `urim check`: validate a hoshen lockfile or a contract's top-level shape. Same as
+// `urim check`: validate a hoshen 2 lockfile or a urim 0.2 contract against the closed schema. Same as
 // check.rs/check.py. Every string that reaches the output line goes through `sanitize` (C-089).
-// Implements: C-003, C-006, C-040..C-046, C-050..C-057, C-060, C-070, C-071, C-088, C-089, C-093, C-094
-import { hasInvisible, sanitize } from "./display.js";
+// Implements: C-003, C-006, C-040, C-041, C-042, C-060, C-070, C-071, C-088, C-089, C-093..C-099
+import { sanitize } from "./display.js";
+import { integrityOf } from "./jcs.js";
 import { Failure, Problem, RENAMED_KEY, SUPPORTED_HOSHEN } from "./problem.js";
 import type { Value, YamlMap } from "./profile.js";
 import { isYamlMap, parseDocument } from "./profile.js";
 import { readText } from "./read.js";
+import { contractRules, lockfileRules } from "./rules.js";
+import { CONTRACT, FORMATS, LOCKFILE, PROTOCOL } from "./schema.gen.js";
+import { checkString, validate } from "./schema.js";
 
 export { SUPPORTED_HOSHEN };
-
-const CONTRACT_REQUIRED = ["contract", "version", "state", "questions"] as const;
 
 export interface CheckResult {
   ok: boolean;
@@ -28,41 +30,42 @@ const pass = (file: string, detail: string): CheckResult => ({
   exitCode: 0,
 });
 
-/** The string value of identifier `name`; invisible (C-088), then non-ASCII (C-092), characters are refused. */
-function identifier(root: YamlMap, name: string): string {
-  const value = root.strings.get(name);
-  if (typeof value !== "string") throw new Failure(Problem.notAString(name));
-  if (hasInvisible(value)) throw new Failure(Problem.invisibleIn(name));
-  // Any UTF-16 code unit above 0x7F means a character above U+007F.
-  if (value.split("").some((unit) => unit.charCodeAt(0) > 0x7f)) throw new Failure(Problem.nonAsciiIn(name));
-  return value;
+/** The `urim` gate (SPEC §5.1.1): a protocol version, then exactly the one this checker supports. */
+function urimGate(root: YamlMap): void {
+  const value = checkString(
+    ["urim"],
+    root.strings.get("urim") ?? null,
+    "protocol_version",
+    FORMATS.protocol_version,
+  );
+  if (value !== PROTOCOL) throw new Failure(Problem.unsupportedUrim(value));
 }
 
 function lockfile(root: YamlMap, hoshen: Value): string {
   if (typeof hoshen !== "bigint") throw new Failure(Problem.hoshenNotInteger);
   if (hoshen === 1n) throw new Failure(Problem.hoshenNeverReleased);
   if (!SUPPORTED_HOSHEN.includes(hoshen)) throw new Failure(Problem.unsupportedHoshen(hoshen));
-  if (!root.strings.has("urim")) throw new Failure(Problem.missingKeys(["urim"]));
-  return `lockfile, hoshen ${hoshen}, urim ${sanitize(identifier(root, "urim"))}`;
+  if (!root.strings.has("urim")) throw new Failure(Problem.missingKeysIn("", ["urim"]));
+  urimGate(root);
+  validate(LOCKFILE, root);
+  const computed = integrityOf(root);
+  if (root.strings.get("integrity") !== computed) throw new Failure(Problem.integrityMismatch(computed));
+  lockfileRules(root);
+  return `lockfile, hoshen ${hoshen}, urim ${PROTOCOL}`;
 }
 
 function contract(root: YamlMap): string {
-  const specVersion = identifier(root, "urim");
-  const missing = CONTRACT_REQUIRED.filter((k) => !root.strings.has(k));
-  if (missing.length > 0) throw new Failure(Problem.missingKeys(missing));
-  const id = identifier(root, "contract");
-  const version = identifier(root, "version");
-  if (!isYamlMap(root.strings.get("state"))) throw new Failure(Problem.stateNotMapping);
-  const questions = root.strings.get("questions");
-  if (!isYamlMap(questions) || questions.size === 0) throw new Failure(Problem.questionsEmpty);
-  return `contract ${sanitize(id)}@${sanitize(version)}, urim ${sanitize(specVersion)}`;
+  urimGate(root);
+  validate(CONTRACT, root);
+  contractRules(root);
+  return `contract ${String(root.strings.get("contract"))}@${String(root.strings.get("version"))}, urim ${PROTOCOL}`;
 }
 
 function detail(text: string): string {
   const root = parseDocument(text);
   if (!isYamlMap(root)) throw new Failure(Problem.rootNotMapping);
   if (root.strings.has(RENAMED_KEY)) throw new Failure(Problem.renamedKey);
-  if (root.strings.has("hoshen")) return lockfile(root, root.strings.get("hoshen") as Value);
+  if (root.strings.has("hoshen")) return lockfile(root, root.strings.get("hoshen") ?? null);
   if (root.strings.has("urim")) return contract(root);
   throw new Failure(Problem.notUrim);
 }

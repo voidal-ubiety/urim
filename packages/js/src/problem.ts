@@ -1,6 +1,7 @@
 // Failure messages: the exact wording from CONTRACT.md, shared with problem.rs and problem.py.
 // Implements: the message of every C-xxx failure (C-010..C-094)
 import { MAX_BYTES, MAX_DEPTH } from "./limits.js";
+import { PROTOCOL } from "./schema.gen.js";
 
 export const SUPPORTED_HOSHEN: readonly bigint[] = [2n];
 
@@ -25,11 +26,30 @@ export const Problem = {
   hoshenNeverReleased: "hoshen 1 was never released; the first lockfile format is hoshen 2",
   unsupportedHoshen: (v: bigint) =>
     `unsupported hoshen version ${v} (supported: ${SUPPORTED_HOSHEN.join(", ")})`,
-  missingKeys: (keys: readonly string[]) => `missing required key(s): ${keys.join(", ")}`,
-  notAString: (key: string) => `${key} must be a string`,
+  mustBe: (path: string, desc: string) => `${path} must be ${desc}`,
+  unknownKey: (path: string) => `unknown key ${path}`,
+  missingKeysIn: (path: string, keys: readonly string[]) =>
+    `missing required key(s)${path === "" ? "" : ` in ${path}`}: ${keys.join(", ")}`,
+  nonStringKey: (path: string) => `${path === "" ? "the root mapping" : path} has a non-string key`,
+  badKey: (path: string, desc: string) => `key ${path} must be ${desc}`,
+  onlyWhen: (path: string, field: string, values: readonly string[]) =>
+    `${path} is only allowed when ${field} is ${values.join(" or ")}`,
+  repeats: (path: string, first: string) => `${path} repeats ${first}`,
+  reservedExtension: (path: string) => `${path} uses the reserved prefix x-urim- (SPEC §5.11.2)`,
+  unsupportedUrim: (v: string) => `unsupported urim version ${v} (supported: ${PROTOCOL})`,
+  integrityMismatch: (computed: string) =>
+    `integrity does not match the file's content (computed ${computed})`,
+  nonFinite: "a number that is not finite has no canonical JSON form",
+  undeclaredExperimental: (path: string, type: string) =>
+    `${path} has experimental type ${type}: declare question_types.${type} in requires or prefers`,
+  unknownQuestion: (path: string, name: string) => `${path} names no declared question: ${name}`,
+  notAnAnswer: (path: string, question: string) => `${path} is not an answer of question ${question}`,
+  alsoPreferred: (path: string) =>
+    `${path} is also in prefers; a capability is required or preferred, not both`,
+  noEmulation: (path: string, name: string) => `${path} names no registered emulation: ${name}`,
+  notATarget: (path: string, value: string, targets: string) =>
+    `${path} is not a key of ${targets}: ${value}`,
   renamedKey: `the ${RENAMED_KEY}: key was renamed to urim: before 0.1; replace it`,
-  stateNotMapping: "state must be a mapping",
-  questionsEmpty: "questions must be a non-empty mapping",
   notUrim: "not a urim document: expected a lockfile with 'hoshen' or a contract with 'urim'",
 } as const;
 

@@ -1,0 +1,5 @@
+urim: "0.2"
+contract: on
+version: 1.0.0
+state: {s: {type: string}}
+questions: {q: {type: yesno, instructions: y}}

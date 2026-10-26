@@ -1,0 +1,244 @@
+#!/usr/bin/env python3
+"""Generate fixtures/mutations/: one-change variants of the spec examples (CONTRACT.md C-095..C-099).
+
+    scripts/gen-mutations          (re)write every file in fixtures/mutations/
+    scripts/gen-mutations --check  exit 1 if a file is missing, stale or not generated here (verify.sh)
+
+Each fixture is the spec's incident-triage contract or the sealed valid/full.lock with exactly
+one change, written as JSON (which is YAML). Lockfile variants are re-sealed, so they reach the
+rule under test instead of stopping at the integrity check, unless the entry says `seal=False`.
+The expected output of each file is pinned in fixtures/cases.json, where it was reviewed by hand
+after all three ports agreed. This script only makes the inputs.
+"""
+from __future__ import annotations
+
+import copy
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "packages/python/src"))
+
+from urim.jcs import integrity_of  # noqa: E402
+from urim.profile import parse_document  # noqa: E402
+
+OUT = ROOT / "fixtures/mutations"
+DEL = object()
+INF = float("inf")
+H = "sha256:" + "0" * 64
+TEAM = ("questions", "team")
+JEV = ("contracts", "incident-triage", "targets", "typesafe/jev")
+ENTRY = ("contracts", "incident-triage")
+
+
+def load(rel: str) -> dict:
+    doc = parse_document((ROOT / rel).read_text(encoding="utf-8"))
+    assert isinstance(doc, dict)
+    return doc
+
+
+BASE = {"c": load("spec/examples/incident-triage.decision.yaml"), "l": load("fixtures/valid/full.lock")}
+
+# (file name, contract ID, base, {path: new value or DEL}, seal)
+M: list[tuple[str, str, str, dict[tuple, object], bool]] = [
+    # C-095 closed schema: unknown, removed, only-when, missing, one-of
+    ("removed-key", "C-095", "c", {("required_capabilities",): {"a": 1}}, True),
+    ("unknown-nested-key", "C-095", "c", {(*TEAM, "weight"): 1}, True),
+    ("only-when-options", "C-095", "c", {("questions", "page", "options"): {"a": "b"}}, True),
+    ("only-when-schema", "C-095", "c", {("state", "report", "schema"): {"a": 1}}, True),
+    ("question-missing-type", "C-095", "c", {(*TEAM, "type"): DEL}, True),
+    ("question-missing-options", "C-095", "c", {(*TEAM, "options"): DEL}, True),
+    ("question-bad-type", "C-095", "c", {(*TEAM, "type"): "pick"}, True),
+    ("requires-takes-no-fallback", "C-095", "c",
+     {("requires", "question_types.choice"): {"includes": ["a"], "fallback": "drop"}}, True),
+    ("requires-unknown-one-key", "C-095", "c", {("requires", "question_types.choice"): {"all_of": ["a"]}}, True),
+    ("requires-two-one-keys", "C-095", "c",
+     {("requires", "question_types.choice"): {"includes": ["a"], "any_of": ["b"]}}, True),
+    ("requires-includes-ok", "C-095", "c", {("requires", "question_types.choice"): {"any_of": ["ga"]}}, True),
+    ("requires-not-expr-or-mapping", "C-095", "c", {("requires", "question_types.choice"): 3}, True),
+    ("objective-two-keys", "C-095", "c",
+     {("policy", "auto_route", "objective"): {"escalation_rate": 0.1, "min_precision": 0.9}}, True),
+    ("objective-empty", "C-095", "c", {("policy", "auto_route", "objective"): {}}, True),
+    ("objective-scalar", "C-095", "c", {("policy", "auto_route", "objective"): 0.15}, True),
+    ("questions-empty-key", "C-095", "c", {("questions", ""): {"type": "yesno"}}, True),
+    ("fallback-bad-enum", "C-095", "c", {("prefers", "refusal.typed", "fallback"): "skip"}, True),
+    ("fallback-drop-ok", "C-095", "c", {("prefers", "refusal.typed", "fallback"): "drop"}, True),
+    ("preference-missing-fallback", "C-095", "c", {("prefers", "refusal.typed"): {"value": ">= 1"}}, True),
+    ("extension-reserved", "C-095", "c", {("x-urim-core",): {"with": {}}}, True),
+    ("extension-bad-key", "C-095", "c", {("x-Acme",): {"with": {}}}, True),
+    ("extension-empty-with", "C-095", "c", {("x-acme",): {"with": {}}}, True),
+    ("extension-missing-with", "C-095", "c", {("x-acme",): {}}, True),
+    ("extension-ok", "C-095", "c", {("x-acme",): {"with": {"k": 1}}, (*TEAM, "x-acme"): {"with": {"k": 1}, "fallback": "fail"}}, True),
+    ("metrics-missing-measured", "C-095", "l", {(*JEV, "metrics"): {"accuracy": 0.9}}, True),
+    ("metrics-measured-not-bool", "C-095", "l", {(*JEV, "metrics", "measured"): 1}, True),
+    ("metrics-value-string", "C-095", "l", {(*JEV, "metrics", "accuracy"): "high"}, True),
+    ("metrics-value-mapping", "C-095", "l", {(*JEV, "metrics", "accuracy"): {"a": 1}}, True),
+    ("metrics-value-sequence", "C-095", "l", {(*JEV, "metrics", "accuracy"): [1]}, True),
+    ("metrics-value-null", "C-095", "l", {(*JEV, "metrics", "accuracy"): None}, True),
+    ("metrics-value-bool-ok", "C-095", "l", {(*JEV, "metrics", "accuracy"): True}, True),
+    ("requires-null", "C-095", "c", {("requires", "question_types.choice"): None}, True),
+    ("fallback-sequence", "C-095", "c", {("prefers", "refusal.typed", "fallback"): ["drop"]}, True),
+    ("fallback-bool", "C-095", "c", {("prefers", "refusal.typed", "fallback"): False}, True),
+    ("outcome-emulated-missing-via", "C-095", "l",
+     {(*JEV, "resolution", "features", "refusal.typed"): {"outcome": "emulated", "declared": "prefers"}}, True),
+    ("outcome-dropped-has-via", "C-095", "l",
+     {(*JEV, "resolution", "features", "refusal.typed"): {"outcome": "dropped", "via": "x", "declared": "prefers"}}, True),
+    ("outcome-dropped-ok", "C-095", "l",
+     {(*JEV, "resolution", "features", "refusal.typed"): {"outcome": "dropped", "declared": "prefers"}}, True),
+    ("outcome-bad-tag", "C-095", "l",
+     {(*JEV, "resolution", "features", "refusal.typed"): {"outcome": "lost", "declared": "prefers"}}, True),
+    ("extension-outcome-applied-ok", "C-095", "l",
+     {(*JEV, "resolution", "extensions"): {"x-acme": {"outcome": "applied", "effect": "transport", "schema_hash": H}}}, True),
+    ("extension-outcome-missing-hash", "C-095", "l",
+     {(*JEV, "resolution", "extensions"): {"x-acme": {"outcome": "applied", "effect": "behavioral"}}}, True),
+    ("extension-outcome-reserved-key", "C-095", "l",
+     {(*JEV, "resolution", "extensions"): {"x-urim-a": {"outcome": "dropped", "effect": "transport"}}}, True),
+    ("target-version-key", "C-095", "l", {(*JEV, "version"): "1.0.0"}, True),
+    ("resolution-missing-hash", "C-095", "l", {(*JEV, "resolution", "hash"): DEL}, True),
+    ("lockfile-missing-integrity", "C-095", "l", {("integrity",): DEL}, False),
+    ("lockfile-unknown-key", "C-095", "l", {("signature",): "x"}, True),
+    ("lock-in-ack-ok", "C-095", "l",
+     {(*ENTRY, "accept_lock_in"): [{"extension": "x-acme", "locks_out": ["openai/decisions"], "reason": "needed"}]}, True),
+    ("lock-in-ack-repeats", "C-095", "l",
+     {(*ENTRY, "accept_lock_in"): [{"extension": "x-acme", "locks_out": ["a/b", "a/b"], "reason": "needed"}]}, True),
+    ("standby-repeats", "C-095", "l", {(*ENTRY, "standby"): ["cloudflare/clef-flash", "cloudflare/clef-flash"]}, True),
+    ("targets-repeat", "C-095", "c", {("targets",): ["typesafe/jev", "openai/decisions", "typesafe/jev"]}, True),
+    ("state-field-missing-type", "C-095", "c", {("state", "report"): {"required": True}}, True),
+    # C-096 formats and bounds (`must be`)
+    ("format-id-uppercase-key", "C-096", "c", {("questions",): {"Team": {"type": "yesno", "instructions": "x"}}}, True),
+    ("format-id-reserved", "C-096", "c", {("contract",): "constructor"}, True),
+    ("format-id-too-long", "C-096", "c", {("contract",): "a" * 65}, True),
+    ("format-id-64-ok", "C-096", "c", {("contract",): "a" * 64}, True),
+    ("format-semver-leading-zero", "C-096", "c", {("version",): "1.03.0"}, True),
+    ("format-semver-prerelease-ok", "C-096", "c", {("version",): "1.3.0-rc.1+build.5"}, True),
+    ("format-semver-bad-prerelease", "C-096", "c", {("version",): "1.3.0-01"}, True),
+    ("format-hash-short", "C-096", "c", {("eval", "dataset_hash"): "sha256:00"}, True),
+    ("format-hash-uppercase", "C-096", "c", {("eval", "dataset_hash"): "sha256:" + "A" * 64}, True),
+    ("format-capability-path-bad", "C-096", "c", {("requires",): {"question_types.Choice": "ga"}}, True),
+    ("format-target-id-bad", "C-096", "c", {("targets",): ["typesafe"]}, True),
+    ("format-semver-range-ok", "C-096", "l", {(*JEV, "descriptor", "range"): ">=1.3.0 <2.0.0"}, True),
+    ("format-semver-range-tilde", "C-096", "l", {(*JEV, "descriptor", "range"): "~1.3"}, True),
+    ("format-semver-range-bad", "C-096", "l", {(*JEV, "descriptor", "range"): "^^1"}, True),
+    ("format-timestamp-bad", "C-096", "l", {("generated_at",): "2026-10-26 10:00"}, True),
+    ("format-timestamp-z", "C-096", "l", {("generated_at",): "2026-10-26T14:00:00.5Z"}, True),
+    ("format-timestamp-month-13", "C-096", "l", {("generated_at",): "2026-13-26T14:00:00Z"}, True),
+    ("format-timestamp-leap-day-ok", "C-096", "l", {("generated_at",): "2028-02-29T10:00:00-04:00"}, True),
+    ("format-timestamp-not-leap", "C-096", "l", {("generated_at",): "2026-02-29T10:00:00-04:00"}, True),
+    ("format-timestamp-century-not-leap", "C-096", "l", {("generated_at",): "2100-02-29T10:00:00-04:00"}, True),
+    ("format-timestamp-400-leap-ok", "C-096", "l", {("generated_at",): "2000-02-29T10:00:00Z"}, True),
+    ("format-timestamp-april-31", "C-096", "l", {("generated_at",): "2026-04-31T10:00:00Z"}, True),
+    ("format-confidence-ref-bad", "C-096", "l", {(*JEV, "thresholds", "page_oncall", "confidence"): "yes_probability"}, True),
+    ("format-confidence-ref-native", "C-096", "l", {(*JEV, "thresholds", "page_oncall", "confidence"): "native/logprob"}, True),
+    ("format-integrity-bad", "C-096", "l", {("integrity",): "sha256-abc"}, False),
+    ("format-expr-empty", "C-096", "c", {("eval", "accept", "brier"): ""}, True),
+    ("format-string-invisible-ok", "C-096", "c", {("description",): "a\u200bb"}, True),
+    ("format-id-invisible", "C-096", "c", {("contract",): "a\u200bb"}, True),
+    ("bound-min-precision-zero", "C-096", "c", {("policy", "page_oncall", "objective", "min_precision"): 0}, True),
+    ("bound-min-precision-one", "C-096", "c", {("policy", "page_oncall", "objective", "min_precision"): 1}, True),
+    ("bound-escalation-zero", "C-096", "c", {("policy", "auto_route", "objective", "escalation_rate"): 0}, True),
+    ("bound-escalation-above-one", "C-096", "c", {("policy", "auto_route", "objective", "escalation_rate"): 1.5}, True),
+    ("bound-threshold-negative", "C-096", "l", {(*JEV, "thresholds", "page_oncall", "value"): -0.1}, True),
+    ("bound-min-cases-zero", "C-096", "c", {("eval", "min_cases"): 0}, True),
+    ("bound-min-cases-float", "C-096", "c", {("eval", "min_cases"): 2.0}, True),
+    ("bound-min-cases-bool", "C-096", "c", {("eval", "min_cases"): True}, True),
+    ("bound-levels-one", "C-096", "c", {("questions", "severity", "levels"): ["only"]}, True),
+    ("bound-max-bytes-zero", "C-096", "c", {("state", "report", "max_bytes"): 0}, True),
+    ("bound-required-not-bool", "C-096", "c", {("state", "report", "required"): "yes"}, True),
+    ("bound-paraphrases-empty-list", "C-096", "c", {("eval", "paraphrases", "team"): []}, True),
+    ("bound-value-not-number", "C-096", "l", {(*JEV, "thresholds", "page_oncall", "value"): "0.7"}, True),
+    ("bound-confidence-enum", "C-096", "c", {("confidence", "portable"): "max"}, True),
+    ("bound-atomic-not-bool", "C-096", "c", {("atomic",): "no"}, True),
+    ("bound-state-field-null", "C-096", "c", {("state", "report"): None}, True),
+    # C-097 contract cross rules
+    ("rule-experimental-undeclared", "C-097", "c", {("questions", "notes"): {"type": "extract", "instructions": "x"}}, True),
+    ("rule-experimental-required-ok", "C-097", "c",
+     {("questions", "notes"): {"type": "box", "instructions": "x"}, ("requires", "question_types.box"): "experimental"}, True),
+    ("rule-experimental-preferred-ok", "C-097", "c",
+     {("questions", "notes"): {"type": "extract", "instructions": "x"},
+      ("prefers", "question_types.extract"): {"fallback": "drop"}}, True),
+    ("rule-policy-unknown-question", "C-097", "c", {("policy", "auto_route", "question"): "owner"}, True),
+    ("rule-policy-not-an-option", "C-097", "c", {("policy", "auto_route", "when"): {"answer": "legal"}}, True),
+    ("rule-policy-option-ok", "C-097", "c", {("policy", "auto_route", "when"): {"answer": "billing"}}, True),
+    ("rule-policy-yesno-bad", "C-097", "c", {("policy", "page_oncall", "when", "answer"): "maybe"}, True),
+    ("rule-policy-score-ok", "C-097", "c", {("policy", "auto_route", "question"): "severity", ("policy", "auto_route", "when"): {"answer": "3"}}, True),
+    ("rule-policy-score-out-of-range", "C-097", "c", {("policy", "auto_route", "question"): "severity", ("policy", "auto_route", "when"): {"answer": "4"}}, True),
+    ("rule-policy-score-not-canonical", "C-097", "c", {("policy", "auto_route", "question"): "severity", ("policy", "auto_route", "when"): {"answer": "01"}}, True),
+    ("rule-policy-box-answer", "C-097", "c",
+     {("questions", "notes"): {"type": "box", "instructions": "x"}, ("requires", "question_types.box"): "experimental",
+      ("policy", "auto_route", "question"): "notes", ("policy", "auto_route", "when"): {"answer": "a"}}, True),
+    ("rule-paraphrase-unknown-question", "C-097", "c", {("eval", "paraphrases", "owner"): ["Who?"]}, True),
+    ("rule-requires-also-preferred", "C-097", "c", {("prefers", "question_types.choice"): {"fallback": "fail"}}, True),
+    ("rule-prefers-unknown-emulation", "C-097", "c", {("prefers", "refusal.typed", "fallback"): {"emulate": "split"}}, True),
+    ("rule-prefers-unregistered-capability", "C-097", "c", {("prefers", "streaming.partial"): {"fallback": {"emulate": "buffer"}}}, True),
+    ("rule-extension-emulation", "C-097", "c", {("x-acme",): {"with": {"k": 1}, "fallback": {"emulate": "fake"}}}, True),
+    ("rule-question-extension-emulation", "C-097", "c", {(*TEAM, "x-acme"): {"with": {"k": 1}, "fallback": {"emulate": "fake"}}}, True),
+    # C-098 integrity
+    ("integrity-stale", "C-098", "l", {(*JEV, "metrics", "accuracy"): 0.913}, False),
+    # JSON has no infinity, so render() writes YAML's .inf. Schema refuses it before integrity.
+    ("metrics-value-infinite", "C-096", "l", {(*JEV, "metrics", "accuracy"): INF}, False),
+    # C-099 lockfile rules
+    ("rule-active-not-a-target", "C-099", "l", {(*ENTRY, "active"): "openai/decisions"}, True),
+    ("rule-standby-not-a-target", "C-099", "l", {(*ENTRY, "standby"): ["cloudflare/clef-flash", "openai/decisions"]}, True),
+    ("rule-standby-empty-ok", "C-099", "l", {(*ENTRY, "standby"): []}, True),
+    ("lockfile-no-contracts-ok", "C-099", "l", {("contracts",): {}}, True),
+]
+
+
+def mutate(base: str, ops: dict[tuple, object]) -> dict:
+    doc = copy.deepcopy(BASE[base])
+    for path, value in ops.items():
+        parent = doc
+        for seg in path[:-1]:
+            parent = parent[seg]
+        if value is DEL:
+            del parent[path[-1]]
+        else:
+            parent[path[-1]] = value
+    return doc
+
+
+def render(name: str, cid: str, base: str, ops: dict[tuple, object], seal: bool) -> str:
+    doc = mutate(base, ops)
+    if base == "l" and seal and "integrity" in doc:
+        doc["integrity"] = integrity_of({k: v for k, v in doc.items() if k != "integrity"})
+    src = "spec/examples/incident-triage.decision.yaml" if base == "c" else "fixtures/valid/full.lock"
+    change = "; ".join(".".join(map(str, p)) + (" deleted" if v is DEL else " = " + (".inf" if v is INF else json.dumps(v, ensure_ascii=True))) for p, v in ops.items())
+    head = f"# {cid}: generated by scripts/gen-mutations; do not edit.\n# {src} with {change[:300]}\n"
+    body = json.dumps(doc, indent=1, ensure_ascii=False)
+    assert body.count("Infinity") == sum(v is INF for v in ops.values())
+    return head + body.replace("Infinity", ".inf") + "\n"
+
+
+def files() -> dict[str, str]:
+    out: dict[str, str] = {}
+    for name, cid, base, ops, seal in M:
+        fname = f"{name}.{'lock' if base == 'l' else 'yaml'}"
+        assert fname not in out, fname
+        out[fname] = render(name, cid, base, ops, seal)
+    return out
+
+
+def main(argv: list[str]) -> int:
+    want = files()
+    if argv[1:] == ["--check"]:
+        have = {p.name for p in OUT.iterdir()} if OUT.is_dir() else set()
+        bad = sorted(n for n in want if n not in have or (OUT / n).read_text(encoding="utf-8") != want[n])
+        bad += sorted(have - set(want))
+        for n in bad:
+            print(f"fixtures/mutations/{n}: missing, stale or not generated (run scripts/gen-mutations)", file=sys.stderr)
+        return 1 if bad else 0
+    if argv[1:]:
+        print(__doc__, file=sys.stderr)
+        return 2
+    OUT.mkdir(exist_ok=True)
+    for p in OUT.iterdir():
+        p.unlink()
+    for n, text in want.items():
+        (OUT / n).write_text(text, encoding="utf-8")
+    print(f"wrote {len(want)} files to fixtures/mutations/")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

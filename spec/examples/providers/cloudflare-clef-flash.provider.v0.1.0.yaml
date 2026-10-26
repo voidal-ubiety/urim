@@ -1,0 +1,29 @@
+# Example capability descriptor. Values marked TODO must be filled from
+# primary sources before use; others reflect research on 2026-10-25.
+id: cloudflare/clef-flash
+vendor: Cloudflare
+descriptor_version: 1.4.0
+camp: systemone
+models:
+  - { name: clef-flash, version: TODO, alias: null }
+endpoint: { base_url: TODO, path: /v1/systemone, auth: api_key }
+question_types: { choice: choice, score: score, yesno: noul }
+limits:
+  max_questions_per_request: 64
+  min_questions_per_request: 1
+  max_choice_options: TODO
+  score_levels: { min: 2, max: TODO }
+modalities:
+  text: { status: ga }
+  json: { status: ga }
+features:
+  caching.prompt: { status: TODO }
+  refusal.typed: { status: unsupported }
+confidence: { definition: margin_squared, source: "Cloudflare blog (Clef launch post)" }
+pricing: { basis: TODO, unit_price: TODO, currency: USD, as_of: TODO }
+residency: { regions: TODO, private_networking: TODO }
+weights: { license: Apache-2.0, commercial_restrictions: none stated, vram_gb_estimate: 19 }
+provenance:
+  - { fields: [confidence, weights, question_types], source_url: TODO, retrieved_at: "2026-10-25", method: docs }
+  - { fields: [limits], source_url: TODO, retrieved_at: "2026-10-25", method: docs }
+max_age_days: 30

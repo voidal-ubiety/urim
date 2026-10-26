@@ -1,8 +1,10 @@
-# Example DCTP contract, mirroring the Jev Harness incident-triage workflow
-# (choice route, score rate, yes/no gate). Illustrative, v0.1 draft.
-dctp: "0.1"
+# Example Urim contract, mirroring the Jev Harness incident-triage workflow
+# (choice route, score rate, yes/no gate). Illustrative, protocol 0.2 draft.
+# 1.3.0 is a MINOR over 1.2.0: the 0.2 migration moved limits.max_questions_per_request
+# from a hard requirement to a preference (SPEC.md §6.1, §5.10.4).
+urim: "0.2"
 contract: incident-triage
-version: 1.2.0
+version: 1.3.0
 description: >
   Route an incoming incident report to a team, rate its severity,
   and decide whether to page on-call.
@@ -64,15 +66,16 @@ policy:                          # application policy; never sent to the model
     else: human_dispatch
 
 atomic: false
-required_capabilities:
-  question_types.choice: required
-  question_types.score: required
-  question_types.yesno: required
-  limits.max_questions_per_request: ">= 3"
-  refusal.typed: optional
-fallbacks:
-  limits.max_questions_per_request: split
-  refusal.typed: map_error
+requires:                        # hard (SPEC.md §5.10.2)
+  question_types.choice: ga
+  question_types.score: ga
+  question_types.yesno: ga
+prefers:                         # soft; every entry declares its fallback (SPEC.md §5.10.3)
+  limits.max_questions_per_request:
+    value: ">= 3"
+    fallback: { emulate: split }
+  refusal.typed:
+    fallback: { emulate: map_error }
 
 targets_query: "camp:any, not experimental"
 targets:
@@ -82,7 +85,7 @@ targets:
 
 eval:
   dataset: ./evals/incident-triage.jsonl
-  dataset_hash: "sha256:REPLACE_WITH_REAL_HASH"
+  dataset_hash: "sha256:0000000000000000000000000000000000000000000000000000000000000000"   # placeholder (§5.1.2): type-valid all-zero hash; replace with the real dataset hash
   min_cases: 200
   repeats: 3
   paraphrases:                   # wording sensitivity probes

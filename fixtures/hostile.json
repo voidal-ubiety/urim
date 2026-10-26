@@ -1,5 +1,5 @@
 {
-  "$comment": "Hostile inputs that cannot be small static files. Run by scripts/hostile.py against all three CLIs with a wall-time and peak-RSS bound per case. Static hostile files live in fixtures/hostile/ and are ordinary cases.json cases; hostile.py also runs those under the same bounds. 'pieces' builds the file as the concatenation of [text, repeat] pairs. 'output' uses {file} for the path as passed.",
+  "$comment": "Hostile inputs that cannot be small static files. Run by scripts/hostile.py against all three CLIs with a wall-time and peak-RSS bound per case. Static hostile files live in fixtures/hostile/ and are ordinary cases.json cases; hostile.py also runs those under the same bounds. 'pieces' builds the file as the concatenation of [text, repeat] pairs. 'output' uses {file} for the path as passed. Since protocol 0.2 the schema is closed, so an input meant to be accepted is a sealed lockfile with padding in comments, or a decision contract whose stress content sits in the opaque state.<field>.schema value of a json-typed field. 'generate' appends generated lines after the pieces, indented by 'generate_indent'; many-keys lines use 'generate_value' as the value when given, else the key's number.",
   "bounds": {
     "js": {
       "max_ms": 4000,
@@ -45,44 +45,28 @@
       "name": "exactly-1-mib-comment-padded",
       "pieces": [
         [
-          "hoshen: 2\nurim: x\n#",
+          "hoshen: 2\nurim: \"0.2\"\ngenerated_at: \"2026-10-26T10:00:00-04:00\"\ncompiler: {name: urim, version: 0.2.0}\nintegrity: \"sha256-RQmDCUPMRsURYEALq1dPcacebjwTGbE8W7juQwUmLzU=\"\ncontracts: {}\n#",
           1
         ],
         [
           "x",
-          1048556
+          1048393
         ]
       ],
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
     },
     {
       "id": "C-020",
       "name": "very-long-line-comment",
       "pieces": [
         [
-          "hoshen: 2\nurim: x\n# ",
+          "hoshen: 2\nurim: \"0.2\"\ngenerated_at: \"2026-10-26T10:00:00-04:00\"\ncompiler: {name: urim, version: 0.2.0}\nintegrity: \"sha256-RQmDCUPMRsURYEALq1dPcacebjwTGbE8W7juQwUmLzU=\"\ncontracts: {}\n# ",
           1
         ],
         [
           "long ",
           200000
-        ]
-      ],
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
-    },
-    {
-      "id": "C-089",
-      "name": "huge-scalar-urim-near-1-mib",
-      "pieces": [
-        [
-          "hoshen: 2\nurim: ",
-          1
-        ],
-        [
-          "a",
-          1000000
         ],
         [
           "\n",
@@ -90,9 +74,14 @@
         ]
       ],
       "exit": 0,
-      "output_pieces": [
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
+    },
+    {
+      "id": "C-089",
+      "name": "huge-scalar-urim-near-1-mib",
+      "pieces": [
         [
-          "{file}: ok (lockfile, hoshen 2, urim ",
+          "urim: \"0.2\"\ncontract: hostile\nversion: 0.0.1\nquestions:\n  ok: {type: yesno, instructions: Answer yes or no.}\nstate:\n  doc:\n    type: json\n    schema: {s: ",
           1
         ],
         [
@@ -100,17 +89,19 @@
           1000000
         ],
         [
-          ")",
+          "}\n",
           1
         ]
-      ]
+      ],
+      "exit": 0,
+      "output": "{file}: ok (contract hostile@0.0.1, urim 0.2)"
     },
     {
       "id": "C-089",
       "name": "huge-scalar-of-escapes",
       "pieces": [
         [
-          "hoshen: 2\nurim: \"",
+          "urim: \"0.2\"\ncontract: hostile\nversion: 0.0.1\n? \"",
           1
         ],
         [
@@ -118,14 +109,14 @@
           300000
         ],
         [
-          "\"\n",
+          "\"\n: 1\n",
           1
         ]
       ],
-      "exit": 0,
+      "exit": 1,
       "output_pieces": [
         [
-          "{file}: ok (lockfile, hoshen 2, urim ",
+          "{file}: error: unknown key [\"",
           1
         ],
         [
@@ -133,7 +124,7 @@
           300000
         ],
         [
-          ")",
+          "\"]",
           1
         ]
       ]
@@ -164,7 +155,15 @@
       "generate": "many-keys",
       "count": 60000,
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+      "pieces": [
+        [
+          "urim: \"0.2\"\ncontract: hostile\nversion: 0.0.1\nquestions:\n  ok: {type: yesno, instructions: Answer yes or no.}\nstate:\n  doc:\n    type: json\n    schema:\n",
+          1
+        ]
+      ],
+      "generate_indent": "      ",
+      "output": "{file}: ok (contract hostile@0.0.1, urim 0.2)",
+      "generate_value": "0"
     },
     {
       "id": "C-021",
@@ -173,7 +172,13 @@
       "count": 60000,
       "suffix": "hoshen: 3\n",
       "exit": 1,
-      "output": "{file}: error: invalid YAML"
+      "output": "{file}: error: invalid YAML",
+      "pieces": [
+        [
+          "hoshen: 2\nurim: x\n",
+          1
+        ]
+      ]
     },
     {
       "id": "C-024",
@@ -248,19 +253,19 @@
           1000000
         ],
         [
-          "2\nurim: x\n",
+          "2\nurim: \"0.2\"\ngenerated_at: \"2026-10-26T10:00:00-04:00\"\ncompiler: {name: urim, version: 0.2.0}\nintegrity: \"sha256-RQmDCUPMRsURYEALq1dPcacebjwTGbE8W7juQwUmLzU=\"\ncontracts: {}\n",
           1
         ]
       ],
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.2)"
     },
     {
       "id": "C-028",
       "name": "float-million-digit-exponent",
       "pieces": [
         [
-          "hoshen: 2\nurim: x\nf: 1e",
+          "urim: \"0.2\"\ncontract: hostile\nversion: 0.0.1\nquestions:\n  ok: {type: yesno, instructions: Answer yes or no.}\nstate:\n  doc:\n    type: json\n    schema: {f: 1e",
           1
         ],
         [
@@ -268,19 +273,19 @@
           1000000
         ],
         [
-          "\n",
+          "}\n",
           1
         ]
       ],
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+      "output": "{file}: ok (contract hostile@0.0.1, urim 0.2)"
     },
     {
       "id": "C-028",
       "name": "float-million-digit-mantissa",
       "pieces": [
         [
-          "hoshen: 2\nurim: x\nf: 0.",
+          "urim: \"0.2\"\ncontract: hostile\nversion: 0.0.1\nquestions:\n  ok: {type: yesno, instructions: Answer yes or no.}\nstate:\n  doc:\n    type: json\n    schema: {f: 0.",
           1
         ],
         [
@@ -288,12 +293,12 @@
           1000000
         ],
         [
-          "1\n",
+          "1}\n",
           1
         ]
       ],
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
+      "output": "{file}: ok (contract hostile@0.0.1, urim 0.2)"
     },
     {
       "id": "C-083",
@@ -389,7 +394,7 @@
       "name": "wide-flow-sequence",
       "pieces": [
         [
-          "hoshen: 2\nurim: x\nq: [",
+          "urim: \"0.2\"\ncontract: hostile\nversion: 0.0.1\nquestions:\n  ok: {type: yesno, instructions: Answer yes or no.}\nstate:\n  doc:\n    type: json\n    schema: {q: [",
           1
         ],
         [
@@ -397,12 +402,11 @@
           150000
         ],
         [
-          "1]\n",
+          "1]}\n",
           1
         ]
       ],
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 2, urim x)",
       "bounds": {
         "js": {
           "max_rss_mib": 320
@@ -415,7 +419,8 @@
           "max_rss_mib": 96
         }
       },
-      "bounds_note": "150k items (300 KB). At 450k items (900 KB, inside MAX_BYTES) measured on 2026-10-26: js 2.5 s / 548 MiB, python 17.5 s / 296 MiB (PyYAML pure-Python parser, linear, ~28 us per item), rust 0.9 s / 103 MiB. Recorded in SECURITY.md (resource limits) as an open finding."
+      "bounds_note": "150k items (300 KB). At 450k items (900 KB, inside MAX_BYTES) measured on 2026-10-26: js 2.5 s / 548 MiB, python 17.5 s / 296 MiB (PyYAML pure-Python parser, linear, ~28 us per item), rust 0.9 s / 103 MiB. Recorded in SECURITY.md (resource limits) as an open finding.",
+      "output": "{file}: ok (contract hostile@0.0.1, urim 0.2)"
     },
     {
       "id": "C-084",
@@ -495,7 +500,13 @@
       "generate": "invisible-keys",
       "count": 50000,
       "exit": 1,
-      "output": "{file}: error: invisible or bidirectional control character in a mapping key"
+      "output": "{file}: error: invisible or bidirectional control character in a mapping key",
+      "pieces": [
+        [
+          "hoshen: 2\nurim: x\n",
+          1
+        ]
+      ]
     },
     {
       "id": "C-020",

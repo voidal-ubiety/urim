@@ -1,6 +1,0 @@
-# C-054: state may be an empty mapping
-urim: "0.1"
-contract: c
-version: v
-state: {}
-questions: { q: {} }

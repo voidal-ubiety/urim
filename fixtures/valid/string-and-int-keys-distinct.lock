@@ -1,5 +1,0 @@
-# C-034: "1" (string) and 1 (integer) are different keys
-"1": a
-1: b
-hoshen: 2
-urim: "0.1"

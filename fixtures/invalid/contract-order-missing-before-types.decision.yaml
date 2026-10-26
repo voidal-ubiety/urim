@@ -1,3 +1,3 @@
 # C-057: missing keys are reported before contract/version types
-urim: "0.1"
+urim: "0.2"
 contract: 1

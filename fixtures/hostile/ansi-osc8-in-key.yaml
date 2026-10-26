@@ -1,0 +1,6 @@
+urim: "0.2"
+contract: probe
+version: 1.0.0
+state: {s: {type: string}}
+questions: {q: {type: yesno, instructions: Check it.}}
+"\e]8;;https://example.invalid\e\\click\e]8;;\e\\": 1

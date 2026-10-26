@@ -3,10 +3,13 @@ use urim::{Problem, RENAMED_KEY, SUPPORTED_HOSHEN, VERSION, check_file, check_te
 
 #[test]
 fn c070_check_text_uses_file_only_in_message() {
-    let r = check_text("no/such/file.lock", "hoshen: 2\nurim: \"0.1\"\n");
+    let r = check_text(
+        "no/such/file.lock",
+        "hoshen: 2\nurim: \"0.2\"\ngenerated_at: \"2026-10-26T10:00:00-04:00\"\ncompiler: {name: urim, version: 0.2.0}\nintegrity: \"sha256-RQmDCUPMRsURYEALq1dPcacebjwTGbE8W7juQwUmLzU=\"\ncontracts: {}\n",
+    );
     assert!(r.is_ok());
-    assert_eq!(r.line(), "no/such/file.lock: ok (lockfile, hoshen 2, urim 0.1)");
-    assert_eq!(check_text("", "\u{feff}hoshen: 2\nurim: x\n").line(), ": ok (lockfile, hoshen 2, urim x)");
+    assert_eq!(r.line(), "no/such/file.lock: ok (lockfile, hoshen 2, urim 0.2)");
+    assert_eq!(check_text("", "\u{feff}hoshen: 2\nurim: \"0.2\"\ngenerated_at: \"2026-10-26T10:00:00-04:00\"\ncompiler: {name: urim, version: 0.2.0}\nintegrity: \"sha256-RQmDCUPMRsURYEALq1dPcacebjwTGbE8W7juQwUmLzU=\"\ncontracts: {}\n").line(), ": ok (lockfile, hoshen 2, urim 0.2)");
 }
 
 #[test]
@@ -19,10 +22,13 @@ fn c071_result_fields_and_exit_code() {
     let m = check_file("definitely/missing");
     assert_eq!(m.line(), "definitely/missing: error: cannot read file");
     assert_eq!(m.exit_code(), 1);
-    let ok = check_text("f", "hoshen: 2\nurim: x\n");
+    let ok = check_text(
+        "f",
+        "hoshen: 2\nurim: \"0.2\"\ngenerated_at: \"2026-10-26T10:00:00-04:00\"\ncompiler: {name: urim, version: 0.2.0}\nintegrity: \"sha256-RQmDCUPMRsURYEALq1dPcacebjwTGbE8W7juQwUmLzU=\"\ncontracts: {}\n",
+    );
     assert_eq!(ok.exit_code(), 0);
     assert_eq!(ok.problem(), None);
-    assert_eq!(ok.into_line(), "f: ok (lockfile, hoshen 2, urim x)");
+    assert_eq!(ok.into_line(), "f: ok (lockfile, hoshen 2, urim 0.2)");
 }
 
 #[test]
@@ -46,9 +52,14 @@ fn c073_problem_is_typed_and_displays_the_message() {
     }
     let p = check_text("f", "hoshen: 7\n").problem().cloned();
     assert_eq!(p, Some(Problem::UnsupportedHoshen { version: 7 }));
-    let p = check_text("f", "urim: x\n").problem().cloned();
-    assert_eq!(p, Some(Problem::MissingKeys(vec!["contract", "version", "state", "questions"])));
+    let p = check_text("f", "urim: \"0.2\"\n").problem().cloned();
+    let keys = vec!["contract", "version", "state", "questions"];
+    assert_eq!(p, Some(Problem::MissingKeys { path: String::new(), keys }));
+    let p = check_text("f", "urim: \"0.1\"\n").problem().cloned();
+    assert_eq!(p, Some(Problem::UnsupportedUrim { version: "0.1".to_owned() }));
     assert_eq!(check_text("f", &format!("{RENAMED_KEY}: x\n")).problem(), Some(&Problem::RenamedKey));
+    // Not reachable from a file (the schemas admit only finite numbers), but public.
+    assert_eq!(Problem::NonFinite.to_string(), "a number that is not finite has no canonical JSON form");
     assert_eq!(check_text("f", "hoshen: 1\n").problem(), Some(&Problem::HoshenNeverReleased));
 }
 
@@ -70,8 +81,10 @@ fn c073_problem_display_propagates_writer_errors() {
     use std::fmt::Write as _;
     let problems = [
         Problem::UnsupportedHoshen { version: 2 },
-        Problem::MissingKeys(vec!["contract", "version"]),
-        Problem::NotAString("urim"),
+        Problem::MissingKeys { path: String::new(), keys: vec!["contract", "version"] },
+        Problem::MissingKeys { path: "state.s".to_owned(), keys: vec!["type"] },
+        Problem::OnlyWhen { path: "q.options".to_owned(), field: "type", values: vec!["choice", "multi"] },
+        Problem::NonStringKey(String::new()),
         Problem::NotUrim,
     ];
     for p in problems {

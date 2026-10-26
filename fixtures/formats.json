@@ -1,0 +1,595 @@
+{
+ "$comment": "C-096: string formats, the same verdicts in all three ports (formats.ts, formats.py, formats.rs). Generated from the Python port by the release engineer and checked by each port's tests; a disagreement is a bug.",
+ "formats": {
+  "string": [
+   {
+    "value": "a",
+    "ok": true
+   },
+   {
+    "value": " ",
+    "ok": true
+   },
+   {
+    "value": "x y",
+    "ok": true
+   }
+  ],
+  "expr": [
+   {
+    "value": "a > 1",
+    "ok": true
+   },
+   {
+    "value": "?",
+    "ok": true
+   }
+  ],
+  "id": [
+   {
+    "value": "a",
+    "ok": true
+   },
+   {
+    "value": "abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "ok": true
+   },
+   {
+    "value": "abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "ok": false
+   },
+   {
+    "value": "a-b_c9",
+    "ok": true
+   },
+   {
+    "value": "A",
+    "ok": false
+   },
+   {
+    "value": "9a",
+    "ok": false
+   },
+   {
+    "value": "_a",
+    "ok": false
+   },
+   {
+    "value": "a.b",
+    "ok": false
+   },
+   {
+    "value": "a/b",
+    "ok": false
+   },
+   {
+    "value": "constructor",
+    "ok": false
+   },
+   {
+    "value": "prototype",
+    "ok": false
+   },
+   {
+    "value": "constructors",
+    "ok": true
+   },
+   {
+    "value": "a b",
+    "ok": false
+   }
+  ],
+  "target_id": [
+   {
+    "value": "typesafe/jev",
+    "ok": true
+   },
+   {
+    "value": "a/b/c",
+    "ok": false
+   },
+   {
+    "value": "a/",
+    "ok": false
+   },
+   {
+    "value": "/b",
+    "ok": false
+   },
+   {
+    "value": "ab",
+    "ok": false
+   },
+   {
+    "value": "A/b",
+    "ok": false
+   },
+   {
+    "value": "a/constructor",
+    "ok": false
+   }
+  ],
+  "capability_path": [
+   {
+    "value": "a",
+    "ok": true
+   },
+   {
+    "value": "a.b.c",
+    "ok": true
+   },
+   {
+    "value": "a..b",
+    "ok": false
+   },
+   {
+    "value": ".a",
+    "ok": false
+   },
+   {
+    "value": "a.",
+    "ok": false
+   },
+   {
+    "value": "a.B",
+    "ok": false
+   },
+   {
+    "value": "a.prototype",
+    "ok": false
+   }
+  ],
+  "semver": [
+   {
+    "value": "0.0.0",
+    "ok": true
+   },
+   {
+    "value": "1.2.3",
+    "ok": true
+   },
+   {
+    "value": "01.2.3",
+    "ok": false
+   },
+   {
+    "value": "1.2",
+    "ok": false
+   },
+   {
+    "value": "1.2.3.4",
+    "ok": false
+   },
+   {
+    "value": "1.2.3-alpha",
+    "ok": true
+   },
+   {
+    "value": "1.2.3-0",
+    "ok": true
+   },
+   {
+    "value": "1.2.3-01",
+    "ok": false
+   },
+   {
+    "value": "1.2.3-0a",
+    "ok": true
+   },
+   {
+    "value": "1.2.3-a.1",
+    "ok": true
+   },
+   {
+    "value": "1.2.3-",
+    "ok": false
+   },
+   {
+    "value": "1.2.3-a..b",
+    "ok": false
+   },
+   {
+    "value": "1.2.3+build.1",
+    "ok": true
+   },
+   {
+    "value": "1.2.3+",
+    "ok": false
+   },
+   {
+    "value": "1.2.3+01",
+    "ok": true
+   },
+   {
+    "value": "1.2.3-rc.1+b",
+    "ok": true
+   },
+   {
+    "value": "1.2.3+b_1",
+    "ok": false
+   },
+   {
+    "value": "v1.2.3",
+    "ok": false
+   },
+   {
+    "value": "1.2.x",
+    "ok": false
+   }
+  ],
+  "semver_range": [
+   {
+    "value": "1.2.3",
+    "ok": true
+   },
+   {
+    "value": ">=1.2.3",
+    "ok": true
+   },
+   {
+    "value": "^1.2.3",
+    "ok": true
+   },
+   {
+    "value": "~1.2.3",
+    "ok": true
+   },
+   {
+    "value": ">=1.0.0 <2.0.0",
+    "ok": true
+   },
+   {
+    "value": "^1.0.0 || ^2.0.0",
+    "ok": true
+   },
+   {
+    "value": "=1.0.0",
+    "ok": true
+   },
+   {
+    "value": "<=1.0.0",
+    "ok": true
+   },
+   {
+    "value": ">1.0.0",
+    "ok": true
+   },
+   {
+    "value": "<1.0.0",
+    "ok": true
+   },
+   {
+    "value": "",
+    "ok": false
+   },
+   {
+    "value": " || 1.0.0",
+    "ok": false
+   },
+   {
+    "value": "1.0.0 ||",
+    "ok": false
+   },
+   {
+    "value": "1.0.0  2.0.0",
+    "ok": false
+   },
+   {
+    "value": ">= 1.0.0",
+    "ok": false
+   },
+   {
+    "value": "^1.0",
+    "ok": false
+   },
+   {
+    "value": "*",
+    "ok": false
+   },
+   {
+    "value": "1.x",
+    "ok": false
+   }
+  ],
+  "protocol_version": [
+   {
+    "value": "0.2",
+    "ok": true
+   },
+   {
+    "value": "1.0",
+    "ok": true
+   },
+   {
+    "value": "10.20",
+    "ok": true
+   },
+   {
+    "value": "0.02",
+    "ok": false
+   },
+   {
+    "value": "1",
+    "ok": false
+   },
+   {
+    "value": "1.2.3",
+    "ok": false
+   },
+   {
+    "value": "a.b",
+    "ok": false
+   },
+   {
+    "value": ".1",
+    "ok": false
+   },
+   {
+    "value": "1.",
+    "ok": false
+   }
+  ],
+  "hash": [
+   {
+    "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "ok": true
+   },
+   {
+    "value": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "ok": true
+   },
+   {
+    "value": "sha256:FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+    "ok": false
+   },
+   {
+    "value": "sha256:000000000000000000000000000000000000000000000000000000000000000",
+    "ok": false
+   },
+   {
+    "value": "sha256:00000000000000000000000000000000000000000000000000000000000000000",
+    "ok": false
+   },
+   {
+    "value": "sha512:0000000000000000000000000000000000000000000000000000000000000000",
+    "ok": false
+   },
+   {
+    "value": "sha256:gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg",
+    "ok": false
+   }
+  ],
+  "integrity": [
+   {
+    "value": "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+    "ok": true
+   },
+   {
+    "value": "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB=",
+    "ok": false
+   },
+   {
+    "value": "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE=",
+    "ok": true
+   },
+   {
+    "value": "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA+=",
+    "ok": false
+   },
+   {
+    "value": "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAw=",
+    "ok": true
+   },
+   {
+    "value": "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "ok": false
+   },
+   {
+    "value": "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+    "ok": false
+   },
+   {
+    "value": "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA*A=",
+    "ok": false
+   },
+   {
+    "value": "sha384-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+    "ok": false
+   },
+   {
+    "value": "sha256-=",
+    "ok": false
+   }
+  ],
+  "timestamp": [
+   {
+    "value": "2026-10-26T10:00:00-04:00",
+    "ok": true
+   },
+   {
+    "value": "2026-10-26T10:00:00Z",
+    "ok": true
+   },
+   {
+    "value": "2026-10-26t10:00:00z",
+    "ok": true
+   },
+   {
+    "value": "2026-10-26T10:00:00.123+05:30",
+    "ok": true
+   },
+   {
+    "value": "2026-10-26T10:00:00.+00:00",
+    "ok": false
+   },
+   {
+    "value": "2026-10-26T10:00:00.1a+00:00",
+    "ok": false
+   },
+   {
+    "value": "2026-10-26 10:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-10-26T10:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-10-26T10:00-04:00",
+    "ok": false
+   },
+   {
+    "value": "2026-10-26T10:00:00",
+    "ok": false
+   },
+   {
+    "value": "2026-10-26T10:00:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-10-26-01T10:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-10-26T10:00:00+04:00:00",
+    "ok": false
+   },
+   {
+    "value": "2026-10-26T10:00:00+0400",
+    "ok": false
+   },
+   {
+    "value": "2026-13-01T00:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-00-01T00:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-02-29T00:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2024-02-29T00:00:00Z",
+    "ok": true
+   },
+   {
+    "value": "2000-02-29T00:00:00Z",
+    "ok": true
+   },
+   {
+    "value": "1900-02-29T00:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-04-31T00:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-01-31T00:00:00Z",
+    "ok": true
+   },
+   {
+    "value": "2026-01-00T00:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-01-01T24:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-01-01T23:60:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-12-31T23:59:60Z",
+    "ok": true
+   },
+   {
+    "value": "2026-01-01T00:00:61Z",
+    "ok": false
+   },
+   {
+    "value": "2026-01-01T00:00:00+24:00",
+    "ok": false
+   },
+   {
+    "value": "2026-01-01T00:00:00+23:60",
+    "ok": false
+   },
+   {
+    "value": "26-01-01T00:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-1-01T00:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-01-01T0:00:00Z",
+    "ok": false
+   },
+   {
+    "value": "2026-01-01",
+    "ok": false
+   }
+  ],
+  "x_key": [
+   {
+    "value": "x-acme",
+    "ok": true
+   },
+   {
+    "value": "x-urim-a",
+    "ok": true
+   },
+   {
+    "value": "x-",
+    "ok": false
+   },
+   {
+    "value": "x-A",
+    "ok": false
+   },
+   {
+    "value": "y-acme",
+    "ok": false
+   },
+   {
+    "value": "x-constructor",
+    "ok": false
+   }
+  ],
+  "confidence_ref": [
+   {
+    "value": "native",
+    "ok": true
+   },
+   {
+    "value": "portable/calibrated",
+    "ok": true
+   },
+   {
+    "value": "portable/",
+    "ok": false
+   },
+   {
+    "value": "portable",
+    "ok": false
+   },
+   {
+    "value": "native/logprob",
+    "ok": false
+   },
+   {
+    "value": "Native",
+    "ok": false
+   },
+   {
+    "value": "portable/a.b",
+    "ok": false
+   }
+  ]
+ }
+}

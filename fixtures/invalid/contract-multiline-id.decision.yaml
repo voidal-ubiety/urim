@@ -1,0 +1,6 @@
+# C-096: a contract id is a-z, 0-9, _ and -; a newline is refused
+urim: "0.2"
+contract: "a\nb"
+version: v
+state: {}
+questions: { q: {} }

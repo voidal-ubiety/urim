@@ -1,5 +1,0 @@
-# C-040: hoshen selects the lockfile rules; contract keys are ignored
-hoshen: 2
-urim: "0.1"
-contract: 1
-questions: {}

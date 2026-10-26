@@ -1,5 +1,5 @@
 # Minimal contract using the urim version key.
-urim: "0.1"
+urim: "0.2"
 contract: minimal
 version: 0.0.1
 state:

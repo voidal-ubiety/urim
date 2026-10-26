@@ -31,7 +31,10 @@ test("C-012 unreadable file (permission denied) reports cannot read file", {
   const dir = mkdtempSync(join(tmpdir(), "urim-"));
   try {
     const path = join(dir, "locked.lock");
-    writeFileSync(path, 'hoshen: 2\nurim: "0.1"\n');
+    writeFileSync(
+      path,
+      'hoshen: 2\nurim: "0.2"\ngenerated_at: "2026-10-26T10:00:00-04:00"\ncompiler: {name: urim, version: 0.2.0}\nintegrity: "sha256-RQmDCUPMRsURYEALq1dPcacebjwTGbE8W7juQwUmLzU="\ncontracts: {}\n',
+    );
     chmodSync(path, 0o000);
     assert.deepEqual(runCli(["check", path]), {
       exit: 1,

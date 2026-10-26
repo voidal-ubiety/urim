@@ -1,0 +1,6 @@
+# C-035: keys with different YAML types are distinct (1 vs 1.0) — not a duplicate-key error, so the keys are distinct; the JSON schema slot then refuses the non-string key
+urim: "0.2"
+contract: probe
+version: 1.0.0
+state: {s: {type: json, schema: {1: a, 1.0: b}}}
+questions: {q: {type: yesno, instructions: Check it.}}

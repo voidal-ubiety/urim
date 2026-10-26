@@ -1,0 +1,39 @@
+#!/bin/sh
+# Cross-check fixtures/jcs/corpus.json against the independent rfc8785 package (C-098).
+# Dev-only: uv fetches rfc8785 into a throwaway environment; nothing is added to the project.
+# The port tests (jcs tests in each language) check the ports against the same corpus.
+set -eu
+cd "$(dirname "$0")/.."
+exec uv run --quiet --no-project --isolated --with 'rfc8785==0.1.4' --with 'PyYAML==6.0.3' python - <<'PY'
+import json, sys
+sys.path.insert(0, "packages/python/src")
+import rfc8785
+from urim.profile import parse_document
+
+def as_doubles(v):
+    # The ports canonicalize integers as doubles (SPEC §13 item 5 is open); do the same here.
+    if isinstance(v, bool) or v is None or isinstance(v, str):
+        return v
+    if isinstance(v, int):
+        return float(v)
+    if isinstance(v, dict):
+        return {k: as_doubles(x) for k, x in v.items()}
+    if isinstance(v, list):
+        return [as_doubles(x) for x in v]
+    return v
+
+bad = 0
+cases = json.load(open("fixtures/jcs/corpus.json", encoding="utf-8"))["cases"]
+for c in cases:
+    value = as_doubles(parse_document(c["yaml"] + "\n"))
+    try:
+        got = rfc8785.dumps(value).decode("utf-8")
+    except (rfc8785.FloatDomainError, ValueError):
+        got = None
+    want = c.get("jcs")
+    if got != want:
+        bad += 1
+        print(f"{c['name']}: corpus {want!r}, rfc8785 {got!r}", file=sys.stderr)
+print(f"jcs corpus: {len(cases) - bad}/{len(cases)} agree with rfc8785")
+sys.exit(1 if bad else 0)
+PY

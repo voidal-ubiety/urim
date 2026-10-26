@@ -1,6 +1,0 @@
-# C-056: strings are printed verbatim, even with a newline
-urim: "0.1"
-contract: "a\nb"
-version: v
-state: {}
-questions: { q: {} }

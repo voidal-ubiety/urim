@@ -7,13 +7,22 @@ import * as urim from "../dist/index.js";
 import { PACKAGE_ROOT } from "./support.mjs";
 
 test("C-070 checkText validates text; the file name is only used in the message", () => {
-  const r = urim.checkText("no/such/file.lock", 'hoshen: 2\nurim: "0.1"\n');
+  const r = urim.checkText(
+    "no/such/file.lock",
+    'hoshen: 2\nurim: "0.2"\ngenerated_at: "2026-10-26T10:00:00-04:00"\ncompiler: {name: urim, version: 0.2.0}\nintegrity: "sha256-RQmDCUPMRsURYEALq1dPcacebjwTGbE8W7juQwUmLzU="\ncontracts: {}\n',
+  );
   assert.deepEqual(r, {
     ok: true,
-    line: "no/such/file.lock: ok (lockfile, hoshen 2, urim 0.1)",
+    line: "no/such/file.lock: ok (lockfile, hoshen 2, urim 0.2)",
     exitCode: 0,
   });
-  assert.equal(urim.checkText("", "\uFEFFhoshen: 2\nurim: x\n").line, ": ok (lockfile, hoshen 2, urim x)");
+  assert.equal(
+    urim.checkText(
+      "",
+      '\uFEFFhoshen: 2\nurim: "0.2"\ngenerated_at: "2026-10-26T10:00:00-04:00"\ncompiler: {name: urim, version: 0.2.0}\nintegrity: "sha256-RQmDCUPMRsURYEALq1dPcacebjwTGbE8W7juQwUmLzU="\ncontracts: {}\n',
+    ).line,
+    ": ok (lockfile, hoshen 2, urim 0.2)",
+  );
 });
 
 test("C-071 a result carries ok, the exact line, and exit code 0 or 1", () => {

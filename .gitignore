@@ -12,3 +12,4 @@ packages/js/coverage/
 .coverage.*
 htmlcov/
 coverage.xml
+build/

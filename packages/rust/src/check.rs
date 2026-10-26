@@ -4,27 +4,27 @@
 //! Every string that reaches the output line (the file name and document values) goes
 //! through [`sanitize`] (C-089).
 //!
-//! Implements: C-003, C-006, C-040..C-044, C-050..C-057, C-060, C-070, C-071, C-088, C-089, C-093, C-094
+//! Implements: C-003, C-006, C-040, C-041, C-042, C-060, C-070, C-071, C-088, C-089, C-093..C-099
 
 use std::fmt;
 use std::path::Path;
 
-use crate::value::{Mapping, Value};
-
-use crate::display::{is_invisible, sanitize};
+use crate::display::sanitize;
+use crate::jcs::integrity_of;
 use crate::profile::{as_int, as_str, parse_root};
 use crate::read::read_text;
+use crate::rules::{contract_rules, lockfile_rules};
+use crate::schema::{Fmt, Seg, check_string, validate};
+use crate::schema_gen::{CONTRACT, LOCKFILE, PROTOCOL, format_desc};
+use crate::value::{Mapping, Value};
 use crate::{Problem, RENAMED_KEY, SUPPORTED_HOSHEN};
-
-/// Keys every contract must have, in the order they are reported when missing.
-const CONTRACT_REQUIRED: [&str; 4] = ["contract", "version", "state", "questions"];
 
 /// The outcome of checking one file: the single line the CLI prints, and why it failed.
 ///
 /// # Examples
 ///
 /// ```
-/// let ok = urim::check_text("a.lock", "hoshen: 2\nurim: x\n");
+/// let ok = urim::check_text("c.yaml", "urim: \"0.2\"\ncontract: c\nversion: 1.0.0\nstate: {s: {type: string}}\nquestions: {q: {type: yesno, instructions: Ok?}}\n");
 /// assert_eq!((ok.is_ok(), ok.exit_code()), (true, 0));
 ///
 /// let bad = urim::check_text("a.lock", "[]");
@@ -90,72 +90,76 @@ impl fmt::Display for CheckResult {
 /// # Examples
 ///
 /// ```
-/// let r = urim::check_text("c.yaml", "urim: \"0.1\"\ncontract: c\nversion: 1.0.0\nstate: {}\nquestions: {q: {}}\n");
-/// assert_eq!(r.line(), "c.yaml: ok (contract c@1.0.0, urim 0.1)");
+/// let r = urim::check_text("c.yaml", "urim: \"0.2\"\ncontract: c\nversion: 1.0.0\nstate: {s: {type: string}}\nquestions: {q: {type: yesno, instructions: Ok?}}\n");
+/// assert_eq!(r.line(), "c.yaml: ok (contract c@1.0.0, urim 0.2)");
+///
+/// let old = urim::check_text("c.yaml", "urim: \"0.1\"\n");
+/// assert_eq!(old.line(), "c.yaml: error: unsupported urim version 0.1 (supported: 0.2)");
 /// ```
 pub fn check_text(file: &str, text: &str) -> CheckResult {
-    match parse_root(text).and_then(|root| detail(&root)) {
+    match parse_root(text).and_then(detail) {
         Ok(detail) => CheckResult::pass(file, format_args!("{detail}")),
         Err(problem) => CheckResult::fail(file, problem),
     }
 }
 
 /// The text inside `ok (...)` for a valid document.
-fn detail(root: &Mapping) -> Result<String, Problem> {
+fn detail(root: Mapping) -> Result<String, Problem> {
     if root.contains_key(RENAMED_KEY) {
         return Err(Problem::RenamedKey);
     }
-    if let Some(hoshen) = root.get("hoshen") {
-        return lockfile(root, hoshen);
+    let is_lockfile = root.contains_key("hoshen");
+    let has_urim = root.contains_key("urim");
+    let doc = Value::Mapping(root);
+    if is_lockfile {
+        lockfile(&doc, has_urim)
+    } else if has_urim {
+        contract(&doc)
+    } else {
+        Err(Problem::NotUrim)
     }
-    root.get("urim").map_or(Err(Problem::NotUrim), |spec| contract(root, spec))
 }
 
-/// The string value of identifier `name`; invisible (C-088) and then non-ASCII (C-092)
-/// characters are refused.
-fn identifier<'a>(value: Option<&'a Value>, name: &'static str) -> Result<&'a str, Problem> {
-    let s = value.and_then(as_str).ok_or(Problem::NotAString(name))?;
-    if s.chars().any(is_invisible) {
-        return Err(Problem::InvisibleIn(name));
-    }
-    if !s.is_ascii() {
-        return Err(Problem::NonAsciiIn(name));
-    }
-    Ok(s)
+/// The `urim` gate (SPEC §5.1.1): a protocol version, then exactly the supported one.
+fn urim_gate(doc: &Value) -> Result<(), Problem> {
+    let fmt = Fmt::ProtocolVersion;
+    let version = check_string(&[Seg::Key("urim")], doc.get("urim"), fmt, format_desc(fmt))?;
+    if version == PROTOCOL { Ok(()) } else { Err(Problem::UnsupportedUrim { version: version.to_owned() }) }
 }
 
-fn lockfile(root: &Mapping, hoshen: &Value) -> Result<String, Problem> {
-    let version = as_int(hoshen).ok_or(Problem::HoshenNotInteger)?;
+fn lockfile(doc: &Value, has_urim: bool) -> Result<String, Problem> {
+    let version = as_int(doc.get("hoshen")).ok_or(Problem::HoshenNotInteger)?;
     if version == 1 {
         return Err(Problem::HoshenNeverReleased);
     }
     if !SUPPORTED_HOSHEN.iter().any(|&s| i128::from(s) == version) {
         return Err(Problem::UnsupportedHoshen { version });
     }
-    if !root.contains_key("urim") {
-        return Err(Problem::MissingKeys(vec!["urim"]));
+    if !has_urim {
+        return Err(Problem::MissingKeys { path: String::new(), keys: vec!["urim"] });
     }
-    let urim = identifier(root.get("urim"), "urim")?;
-    Ok(format!("lockfile, hoshen {version}, urim {}", sanitize(urim)))
+    urim_gate(doc)?;
+    validate(&LOCKFILE, doc)?;
+    sealed(doc)?;
+    lockfile_rules(doc)?;
+    Ok(format!("lockfile, hoshen {version}, urim {PROTOCOL}"))
 }
 
-/// `spec` is the value of the `urim` key.
-fn contract(root: &Mapping, spec: &Value) -> Result<String, Problem> {
-    let spec_version = identifier(Some(spec), "urim")?;
-    let missing: Vec<&'static str> =
-        CONTRACT_REQUIRED.into_iter().filter(|k| !root.contains_key(k)).collect();
-    if !missing.is_empty() {
-        return Err(Problem::MissingKeys(missing));
+/// C-098: `integrity` is the hash of the rest of the document.
+fn sealed(doc: &Value) -> Result<(), Problem> {
+    let computed = integrity_of(doc)?;
+    if as_str(doc.get("integrity")) != Some(computed.as_str()) {
+        return Err(Problem::IntegrityMismatch { computed });
     }
-    let id = identifier(root.get("contract"), "contract")?;
-    let version = identifier(root.get("version"), "version")?;
-    if !matches!(root.get("state"), Some(Value::Mapping(_))) {
-        return Err(Problem::StateNotMapping);
-    }
-    if !matches!(root.get("questions"), Some(Value::Mapping(q)) if !q.is_empty()) {
-        return Err(Problem::QuestionsEmpty);
-    }
-    Ok(format!("contract {}@{}, urim {}", sanitize(id), sanitize(version), sanitize(spec_version)))
+    Ok(())
+}
+
+fn contract(doc: &Value) -> Result<String, Problem> {
+    urim_gate(doc)?;
+    validate(&CONTRACT, doc)?;
+    contract_rules(doc)?;
+    let field = |key| as_str(doc.get(key)).unwrap_or_default();
+    Ok(format!("contract {}@{}, urim {PROTOCOL}", field("contract"), field("version")))
 }
 
 /// Read the file at `path` (strict UTF-8) and check it.
@@ -176,5 +180,39 @@ pub fn check_file(path: impl AsRef<Path>) -> CheckResult {
     match read_text(path) {
         Ok(text) => check_text(&shown, &text),
         Err(problem) => CheckResult::fail(&shown, problem),
+    }
+}
+
+#[cfg(test)]
+#[expect(clippy::expect_used, clippy::indexing_slicing, reason = "tests: a bad fixture is a test failure")]
+mod tests {
+    use super::sealed;
+    use crate::profile::parse_root;
+    use crate::value::Value;
+    use crate::{Problem, check_file};
+
+    /// `fixtures/cases.json` again, inside this crate. `cargo llvm-cov` scores a function by its
+    /// best single test binary, not the union, so the private-path tests in this binary need the
+    /// shared cases beside them (tests/contract runs the same cases per contract ID).
+    #[test]
+    fn shared_cases_in_crate() {
+        let root = concat!(env!("CARGO_MANIFEST_DIR"), "/../../fixtures/");
+        let text = std::fs::read_to_string(format!("{root}cases.json")).expect("fixture readable");
+        let doc: serde_json::Value = serde_json::from_str(&text).expect("fixture JSON valid");
+        for case in doc["cases"].as_array().expect("array") {
+            let path = format!("{root}{}", case["path"].as_str().expect("string"));
+            let r = check_file(&path);
+            let want = case["output"].as_str().expect("string").replace("{file}", &path);
+            assert_eq!(r.line(), want);
+            assert_eq!(i64::from(r.exit_code()), case["exit"].as_i64().expect("int"));
+        }
+    }
+
+    /// The lockfile schema admits only finite numbers, so `check` cannot reach this; the seal
+    /// itself still refuses a document that has no canonical form rather than hashing a guess.
+    #[test]
+    fn a_non_finite_document_cannot_be_sealed() {
+        let doc = Value::Mapping(parse_root("integrity: x\nn: [1, .inf]\n").expect("valid YAML"));
+        assert_eq!(sealed(&doc), Err(Problem::NonFinite));
     }
 }

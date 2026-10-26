@@ -1,8 +1,10 @@
 # Second example: a regulated-industry contract that exercises the
 # capability-gated resolver (image input, residency, open-weight license, box).
-dctp: "0.1"
+# 0.4.0 is a MINOR over 0.3.0: the 0.2 migration restates the existing box drop as a
+# `prefers` entry; no new drop is introduced (SPEC.md §6.1, §5.10.4).
+urim: "0.2"
 contract: kyc-document-check
-version: 0.3.0
+version: 0.4.0
 description: Pre-screen an uploaded identity document before human KYC review.
 
 state:
@@ -26,7 +28,7 @@ questions:
     instructions: How likely is visible tampering or editing?
     levels: [None visible, Minor artifacts, Clear signs of editing]
   photo_region:
-    type: box                    # experimental; optional, dropped where unsupported
+    type: box                    # experimental; declared in prefers with fallback drop (SPEC.md §5.3)
     instructions: Locate the holder's portrait photo.
 
 policy:
@@ -38,18 +40,18 @@ policy:
     action: request_reupload
     else: continue
 
-required_capabilities:
-  modalities.image: ">= ga"
-  question_types.box: optional
+requires:                        # hard (SPEC.md §5.10.2)
+  modalities.image: ga
   residency.regions: { includes: [us] }
   weights.license: { any_of: [Apache-2.0, hosted] }   # excludes revenue-capped open weights
-fallbacks:
-  question_types.box: drop_question
+prefers:                         # soft (SPEC.md §5.10.3)
+  question_types.box:
+    fallback: drop               # photo_region is dropped where box is unsupported; no policy rule uses it (D-16)
 targets_query: "residency:us, modalities.image:ga"
 
 eval:
   dataset: ./evals/kyc-document-check.jsonl
-  dataset_hash: "sha256:REPLACE_WITH_REAL_HASH"
+  dataset_hash: "sha256:0000000000000000000000000000000000000000000000000000000000000000"   # placeholder (§5.1.2): type-valid all-zero hash; replace with the real dataset hash
   min_cases: 300
   repeats: 3
   accept:

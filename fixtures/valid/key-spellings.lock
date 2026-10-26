@@ -1,4 +1,8 @@
 # C-034: quoted keys, explicit ? keys and space before the colon are all the same key
 ? hoshen
 : 2
-'urim' : "0.1"
+'urim' : "0.2"
+generated_at: "2026-10-26T10:00:00-04:00"
+compiler: {name: urim, version: 0.2.0}
+integrity: "sha256-RQmDCUPMRsURYEALq1dPcacebjwTGbE8W7juQwUmLzU="
+contracts: {}

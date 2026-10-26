@@ -1,0 +1,8 @@
+%YAML 1.1
+---
+# C-025: a %YAML 1.1 directive does not switch on 1.1 booleans
+urim: "0.2"
+contract: yes
+version: 1.0.0
+state: {s: {type: string}}
+questions: {q: {type: yesno, instructions: Check it.}}

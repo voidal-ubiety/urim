@@ -1,0 +1,5 @@
+urim: "0.2"
+contract: probe
+version: 1.0.0
+state: {s: {type: json, schema: {__proto__: {polluted: yes, hoshen: 3}, constructor: {prototype: {polluted: yes}}, prototype: {polluted: yes}, q: {__proto__: {isAdmin: true}}}}}
+questions: {q: {type: yesno, instructions: Check it.}}

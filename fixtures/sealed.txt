@@ -1,0 +1,12 @@
+# Lockfile fixtures whose integrity scripts/seal-fixtures keeps current (paths relative to fixtures/).
+hostile/mixed-crlf-lf.lock
+valid/bom.lock
+valid/crlf.lock
+valid/flow-mapping-root.lock
+valid/full.lock
+valid/hoshen-hex.lock
+valid/hoshen-octal.lock
+valid/hoshen-plus-sign.lock
+valid/key-spellings.lock
+valid/minimal.lock
+valid/name with spaces.lock

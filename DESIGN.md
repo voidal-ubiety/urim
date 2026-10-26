@@ -12,11 +12,19 @@ The same concern lives in a module with the same name in every port.
 | Concern | JS (`packages/js`) | Python (`packages/python`) | Rust (`packages/rust`) |
 |---|---|---|---|
 | Public API surface | `src/index.ts` | `src/urim/__init__.py` | `src/lib.rs` |
-| Schema checks (lockfile / contract) | `src/check.ts` | `src/urim/check.py` | `src/check.rs` |
-| Failure reasons | message strings in `check.ts` | message strings in `check.py` | `src/problem.rs` (`Problem` enum) |
-| YAML loading | inside `check.ts` | inside `check.py` | `src/yaml.rs` |
+| Check pipeline (lockfile / contract) | `src/check.ts` | `src/urim/check.py` | `src/check.rs` |
+| Safe file read (regular file, size bound, strict UTF-8) | `src/read.ts` | `src/urim/read.py` | `src/read.rs` |
+| Urim YAML profile (text to root) | `src/profile.ts` | `src/urim/profile.py` | `src/profile.rs`, `src/value.rs` |
+| Hostile-input limits | `src/limits.ts` | `src/urim/limits.py` | `src/limits.rs` |
+| Closed-schema interpreter | `src/schema.ts`, `src/node.ts` | `src/urim/schema.py`, `node.py` | `src/schema.rs` |
+| Generated schema data (`scripts/gen-schema`, do not edit) | `src/schema.gen.ts` | `src/urim/schema_gen.py` | `src/schema_gen.rs` |
+| String formats (SPEC §5.1.2) | `src/formats.ts` | `src/urim/formats.py` | `src/formats.rs` |
+| Cross-field rules (C-097, C-099) | `src/rules.ts` | `src/urim/rules.py` | `src/rules.rs` |
+| RFC 8785 JCS and the lockfile seal (C-098) | `src/jcs.ts` | `src/urim/jcs.py` | `src/jcs.rs` |
+| Failure messages | `src/problem.ts` | `src/urim/problem.py` | `src/problem.rs` (`Problem` enum) |
+| Output sanitization | `src/display.ts` | `src/urim/display.py` | `src/display.rs` |
 | CLI | `src/cli.ts` (bin `urim`) | `src/urim/cli.py`, `__main__.py` | `src/main.rs` (bin `urim`) |
-| Contract tests | `test/*.test.mjs` | `tests/test_*.py` | `tests/contract/*.rs` (one test crate) |
+| Contract tests | `test/*.test.mjs` | `tests/test_*.py` | `tests/contract/*.rs` (one test crate), plus unit tests in `formats.rs`, `jcs.rs`, `check.rs` |
 
 Rust uses a lib/bin split: `main.rs` only parses argv, writes one line and returns an
 `ExitCode`; all logic is in the library. The Rust tests are one integration-test crate
@@ -25,10 +33,11 @@ Rust uses a lib/bin split: `main.rs` only parses argv, writes one line and retur
 ## 2. Data flow and structures
 
 ```
-path ─read bytes─▶ strict UTF-8 ─strip BOM─▶ YAML (1 document, core schema)
+path ─read bytes─▶ strict UTF-8 ─strip BOM─▶ YAML profile (1 document, core schema, limits)
      ─▶ root mapping ─▶ renamed key? ── error (C-093)
-                       ├ "hoshen" present? ── lockfile checks
-                       └ "urim" present?   ── contract checks ─▶ CheckResult
+                       ├ "hoshen" present? ── hoshen gate ─▶ urim gate ─▶ closed schema ─▶ seal (JCS) ─▶ lockfile rules
+                       └ "urim" present?   ── urim gate ─▶ closed schema ─▶ contract rules
+                                                                          ─▶ CheckResult
 ```
 
 * **Result:** each port returns a value with the printed line and ok/failed status.
@@ -43,14 +52,14 @@ path ─read bytes─▶ strict UTF-8 ─strip BOM─▶ YAML (1 document, core 
 
 ## 3. Complexity
 
-Let *n* be the input size in bytes and *k* the number of top-level keys.
+Let *n* be the input size in bytes.
 
 | Step | Time | Extra memory |
 |---|---|---|
 | read + UTF-8 validation | O(n) | O(n) |
 | YAML parse | O(n) for the libraries' normal inputs (see note) | O(n) |
-| key lookups | O(1) expected per lookup in Python (hash); O(k) in Rust (entry scan) and JS document maps; at most six lookups | O(1) |
-| required-key scan | O(1): fixed key list | O(missing keys) |
+| closed-schema walk | each value is visited once; key checks per mapping depend on the port's map type (not measured here) | O(depth) for the recursion |
+| JCS + SHA-256 (lockfiles only) | O(n log n) worst case: each mapping's keys are sorted; the hash is O(n) | O(n) for the canonical text |
 
 Note: the libraries' worst cases are not linear. Deep flow nesting was superlinear in
 unsafe-libyaml-norway (no longer used), and PyYAML and JS `yaml` recurse. Those inputs are bounded by the
@@ -91,10 +100,14 @@ Urim YAML profile's size and depth limits (SECURITY.md). Benchmarks are in
 |---|---|---|
 | `packages/rust/tests/contract/main.rs` (crate-level `#![expect]`) | `expect_used`, `unwrap_used`, `indexing_slicing`, `print_stderr` | test code: a failed expectation is a test failure; `print_stderr` reports a skipped root-only case |
 
-`src/` has no `#[expect]` and no `#[allow]`.
+| `packages/rust/src/check.rs`, `jcs.rs`, `formats.rs` (`#[cfg(test)]` modules) | `expect_used`, `indexing_slicing` | tests: a bad fixture is a test failure |
+| `packages/rust/src/jcs.rs` (SHA-256 compression) | `many_single_char_names` | FIPS 180-4 names the working variables a..h |
+| `packages/rust/src/formats.rs` (RFC 3339) | `many_single_char_names` | the RFC 3339 field names |
+
+`src/` has no `#[allow]`. Outside test modules, the only `#[expect]` is `many_single_char_names`.
 
 ## 6. Deviations
 
 * **Port-specific behavior** is listed as D-xxx entries in CONTRACT.md §Divergences, with fixtures in `fixtures/divergences.json`.
 * **Rust-only contract entries** are marked `- **Languages:** rust`, for example C-073.
-* **Bugs found while pinning behavior** (B-1, B-2) were fixed in separate commits; see CONTRACT.md.
+* **Bugs found while pinning behavior** (B-xxx entries in CONTRACT.md §B) were fixed in separate commits.

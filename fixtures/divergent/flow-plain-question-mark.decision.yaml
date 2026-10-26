@@ -1,0 +1,8 @@
+# D-015: a "?" inside a plain scalar in a flow collection (YAML 1.2 allows it).
+urim: "0.2"
+contract: minimal
+version: 0.0.1
+state:
+  text: { type: string, required: true }
+questions:
+  ok: { type: yesno, instructions: Is the text acceptable? }

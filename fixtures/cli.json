@@ -141,13 +141,61 @@
       "stderr": "usage: urim check <file>\n"
     },
     {
+      "id": "C-003",
+      "args": [
+        "--strict-prefers"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "check",
+        "--strict-prefers",
+        "valid/minimal.lock"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "migrate",
+        "valid/minimal.lock"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "plan"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "compile"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
       "id": "C-004",
       "args": [
         "check",
         "valid/minimal.lock"
       ],
       "exit": 0,
-      "stdout": "valid/minimal.lock: ok (lockfile, hoshen 2, urim 0.1)\n",
+      "stdout": "valid/minimal.lock: ok (lockfile, hoshen 2, urim 0.2)\n",
       "stderr": ""
     },
     {
@@ -177,7 +225,7 @@
         "./valid/minimal.lock"
       ],
       "exit": 0,
-      "stdout": "./valid/minimal.lock: ok (lockfile, hoshen 2, urim 0.1)\n",
+      "stdout": "./valid/minimal.lock: ok (lockfile, hoshen 2, urim 0.2)\n",
       "stderr": ""
     },
     {
@@ -187,7 +235,7 @@
         "valid/name with spaces.lock"
       ],
       "exit": 0,
-      "stdout": "valid/name with spaces.lock: ok (lockfile, hoshen 2, urim 0.1)\n",
+      "stdout": "valid/name with spaces.lock: ok (lockfile, hoshen 2, urim 0.2)\n",
       "stderr": ""
     },
     {
@@ -197,7 +245,7 @@
         "../fixtures/valid//minimal.lock"
       ],
       "exit": 0,
-      "stdout": "../fixtures/valid//minimal.lock: ok (lockfile, hoshen 2, urim 0.1)\n",
+      "stdout": "../fixtures/valid//minimal.lock: ok (lockfile, hoshen 2, urim 0.2)\n",
       "stderr": ""
     },
     {

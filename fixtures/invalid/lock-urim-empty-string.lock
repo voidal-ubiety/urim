@@ -1,0 +1,3 @@
+# C-100: urim must be MAJOR.MINOR; an empty string is not
+hoshen: 2
+urim: ""

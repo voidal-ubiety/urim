@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Keep the sealed lockfile fixtures sealed (SPEC §6.2, CONTRACT.md C-098).
+
+    scripts/seal-fixtures          rewrite each listed file's `integrity` value in place
+    scripts/seal-fixtures --check  exit 1 if any listed file's `integrity` is stale (verify.sh runs this)
+
+The files are listed in fixtures/sealed.txt, one path per line, relative to fixtures/. Each must
+hold exactly one `integrity: "sha256-…="` line. The value is computed with the Python port's own
+JCS (`urim.jcs`). That code is cross-checked against an independent RFC 8785 implementation by
+fixtures/jcs/corpus.json, so this is not a self-certifying loop. The rewrite is textual, so a
+fixture's spelling (BOM, CRLF, flow style, odd key spellings) is kept byte for byte.
+"""
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "packages/python/src"))
+
+from urim.jcs import integrity_of  # noqa: E402
+from urim.profile import parse_document  # noqa: E402
+
+FIXTURES = ROOT / "fixtures"
+VALUE = re.compile(r'(integrity\s*:\s*")(sha256-[A-Za-z0-9+/]{43}=)(")')
+
+
+def main(argv: list[str]) -> int:
+    check = argv[1:] == ["--check"]
+    if argv[1:] not in ([], ["--check"]):
+        print(__doc__, file=sys.stderr)
+        return 2
+    stale = 0
+    for line in (FIXTURES / "sealed.txt").read_text(encoding="utf-8").splitlines():
+        if not line or line.startswith("#"):
+            continue
+        path = FIXTURES / line
+        raw = path.read_bytes().decode("utf-8")
+        found = VALUE.findall(raw)
+        if len(found) != 1:
+            print(f"{line}: expected exactly one integrity value, found {len(found)}", file=sys.stderr)
+            return 1
+        root = parse_document(raw)
+        assert isinstance(root, dict)
+        computed = integrity_of({k: v for k, v in root.items() if isinstance(k, str)})
+        if found[0][1] == computed:
+            continue
+        stale += 1
+        if check:
+            print(f"{line}: stale integrity (run scripts/seal-fixtures)", file=sys.stderr)
+        else:
+            path.write_bytes(VALUE.sub(lambda m: m.group(1) + computed + m.group(3), raw).encode("utf-8"))
+            print(f"sealed {line}")
+    return 1 if check and stale else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
