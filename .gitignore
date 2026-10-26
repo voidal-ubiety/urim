@@ -1,6 +1,6 @@
 node_modules/
 packages/js/dist/
-packages/rust/target/
+target/
 packages/python/dist/
 __pycache__/
 *.egg-info/
