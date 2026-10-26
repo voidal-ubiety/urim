@@ -18,7 +18,7 @@ Nothing has been published yet.
 ### Tooling and hardening
 - The hostile-input suite (`scripts/hostile.py`) runs under time and memory bounds and never executes input. A strace sandbox check shows no network, child processes or file writes.
 - A runtime dependency allowlist (`scripts/check-deps`). Node `>=22`.
-- `scripts/audit-legal`, the legal and naming gate, with rules L1, L2, L4, L5-Rust, L5-Py, M1, M3, M5, C1, C3, C4, T1, T4 and T5. The rest report SKIP in a normal run and FAIL with `--release`, so a release can't pass until every rule is built. The marks register is in `docs/legal/marks.yaml`.
+- `scripts/audit-legal`, the legal and naming gate, with rules L1, L2, L4, L5-Rust, L5-Py, M1, M3, M5, C1, C3, C4, T1, T4 and T5. The rest report SKIP in a normal run and FAIL with `--release`, so a release can't pass until every rule is built. With `--release`, L5-Py also can't be skipped: `--offline` FAILs it, and a runtime env that can't be built (no PyPI) exits 2. The marks register is in `docs/legal/marks.yaml`.
 - The README's command-line reference is generated from SPEC §7.4. Only `--version`/`-V`, `--help`/`-h` and `urim check` exist; every other command and flag is marked Planned and exits 2.
 - Project URLs come from one value in `config/project.json`. The repository is `voidal-ubiety/urim` on GitHub and the homepage is https://urim.sh. CODEOWNERS is generated from `config/people.yaml`.
 - DCO sign-off is required (ADR 0003, `scripts/check-dco` in `verify.sh --release`).

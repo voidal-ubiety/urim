@@ -2,7 +2,7 @@
 
 > Not legal advice. A person works through this list before **every** publish to npm, PyPI, crates.io or JSR. It is derived from release engineering's LEGAL-CHECKLIST-v0.0.1 §1 (items A1–A11). Every publish is effectively irreversible.
 
-Run first: `scripts/verify.sh --release`. It runs `scripts/audit-legal --release` and `scripts/check-dco`. In `--release`, every audit-legal rule that is not built yet (the "not automated yet" ones below) is a FAIL, so the gate stays red until they are built; checking them by hand does not turn it green. Each line below names the gate rule that covers it, if one does.
+Run first: `scripts/verify.sh --release`. It runs `scripts/audit-legal --release` and `scripts/check-dco`. In `--release`, every audit-legal rule that is not built yet (the "not automated yet" ones below) is a FAIL, so the gate stays red until they are built; checking them by hand does not turn it green. Run it online: with `--release`, `--offline` FAILs L5-Py, and no access to PyPI is a broken environment (exit 2). Each line below names the gate rule that covers it, if one does.
 
 - [ ] **A1 Licence.** `license` is `Apache-2.0` in package.json, pyproject.toml, Cargo.toml and jsr.json (gate L2). LICENSE and NOTICE are in every artifact (L1; L3 is not automated yet, so inspect the dry-run file lists).
 - [ ] **A2 Dependency licences.** Every shipped runtime dependency satisfies [license-policy.yaml](license-policy.yaml) (L5-Rust, L5-Py; L5-JS is not automated yet).

@@ -10,7 +10,7 @@ Run these from the repo root:
 
 ```sh
 scripts/verify.sh            # tests at 100% coverage in all three ports, parity, contract, generated-file and project checks
-scripts/verify.sh --release  # also the DCO check and scripts/audit-legal --release (M3 fails until the §3a history rewrite; the 10 rules not yet built fail in --release)
+scripts/verify.sh --release  # also the DCO check and scripts/audit-legal --release (M3 fails until the §3a history rewrite; the 10 rules not yet built fail in --release; run it online, since L5-Py needs PyPI)
 ```
 
 `scripts/check-project` fails if the version differs anywhere it appears. That covers `packages/js/package.json`, `package-lock.json`, `jsr.json`, `VERSION` in `src/index.ts`, `pyproject.toml`, `__version__`, `Cargo.toml` and `Cargo.lock`. Rust reads its version from Cargo.toml. It also fails if the README status lines are out of date with `spec/SPEC.md`, or if any manifest URL differs from `config/project.json`.

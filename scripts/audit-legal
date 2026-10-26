@@ -4,13 +4,15 @@
 
     scripts/audit-legal [--release] [--offline]
 
-Exit 0 PASS, 1 FAIL, 2 a required tool is missing (and nothing FAILed).
+Exit 0 PASS, 1 FAIL, 2 a required tool is missing or (--release) the environment is broken,
+and nothing FAILed.
 Writes build/legal/audit-legal.json: [{rule, status, detail, source}].
 Statuses: PASS, FAIL, WARN (a *R* rule outside --release), SKIP (tool, network, --offline,
 or not implemented yet; the detail says which). With --release, WARN becomes FAIL, every
 rule in NOT_IMPLEMENTED becomes FAIL ("not implemented; release mode requires every rule
-to be built"), and a SKIP for a missing tool exits 2. Conditional SKIPs (missing tool,
---offline, no network) stay SKIP in --release. Spec: urim-shipping AUDIT-LEGAL-GATE-SPEC.md.
+to be built"), L5-Py FAILs under --offline, and a missing tool or a runtime env that can't
+be built (no PyPI) exits 2 when nothing FAILed: never a pass. Outside --release those
+stay SKIP. Spec: urim-shipping AUDIT-LEGAL-GATE-SPEC.md.
 Implemented here: L1 L2 L4 L5-Rust L5-Py M1 M3 M5 C1 C3 C4 T1 T4 T5.
 """
 from __future__ import annotations
@@ -107,10 +109,14 @@ def l5_rust(pol: dict) -> None:
         "cargo deny check licenses (deny.toml ⊆ policy)" if r.returncode == 0 else r.stderr[-800:], "deny.toml")
 
 
-def l5_py(pol: dict, offline: bool) -> None:
+def l5_py(pol: dict, offline: bool, release: bool = False) -> None:
     lock = ROOT / "packages/python/uv.lock"
     if not lock.exists():
         add("L5-Py", "FAIL", "packages/python/uv.lock is missing (a lock is required)", "uv.lock")
+        return
+    if offline and release:
+        add("L5-Py", "FAIL", "--offline is not allowed with --release: release requires L5-Py to run, "
+                             "and it installs the locked runtime deps from PyPI", "uv.lock")
         return
     if offline:
         add("L5-Py", "SKIP", "--offline: installing the locked runtime deps needs PyPI")
@@ -131,7 +137,11 @@ def l5_py(pol: dict, offline: bool) -> None:
         ]
         failed = next((s for s in steps if s.returncode), None)
         if failed:
-            add("L5-Py", "SKIP", f"could not build the runtime env: {failed.stderr.strip()[-300:]}")
+            why = f"could not build the runtime env: {failed.stderr.strip()[-300:]}"
+            if release:
+                _broken("L5-Py", why)
+            else:
+                add("L5-Py", "SKIP", why)
             return
         names = [ln.split("==")[0] for ln in req.read_text().splitlines() if "==" in ln]
         r = run_pip_licenses(env / "bin/python", names, python_allow_string(pol))
@@ -355,6 +365,7 @@ INSTALL = {
     "uvx": "ships with uv (see uv); or set PIP_LICENSES to a pip-licenses binary",
 }
 missing_tools: dict[str, str] = {}
+broken_env: dict[str, str] = {}  # rule -> why, filled by _broken (--release only)
 
 
 def _missing(rule: str, tool: str) -> None:
@@ -362,6 +373,12 @@ def _missing(rule: str, tool: str) -> None:
     tool_missing = True
     missing_tools[tool] = rule
     add(rule, "SKIP", f"tool missing: {tool} not on PATH; install: {INSTALL[tool]}")
+
+
+def _broken(rule: str, why: str) -> None:
+    """--release only: the environment can't run the rule (spec: exit 2, never treated as a pass)."""
+    broken_env[rule] = why
+    add(rule, "SKIP", f"[--release] broken environment: {why}")
 
 
 def missing_summary() -> str:
@@ -387,7 +404,7 @@ def main(argv: list[str]) -> int:
         return 2
     release, offline = "--release" in argv, "--offline" in argv
     pol = policy()
-    l1(); l2(pol); l4(); l5_rust(pol); l5_py(pol, offline); m1(); m3(); m5(); c1(); c3(); c4(); t1(); t4(); t5()
+    l1(); l2(pol); l4(); l5_rust(pol); l5_py(pol, offline, release); m1(); m3(); m5(); c1(); c3(); c4(); t1(); t4(); t5()
     not_implemented(release)
     if release:
         for r in results:
@@ -400,11 +417,16 @@ def main(argv: list[str]) -> int:
         print(f"{r['status']:4}  {r['rule']:8} {r['detail']}")
     if tool_missing and release:
         print(f"audit-legal: a required tool is missing: {missing_summary()}", file=sys.stderr)
+    if broken_env:
+        print("audit-legal: broken environment: " + "; ".join(f"{r}: {w}" for r, w in broken_env.items()),
+              file=sys.stderr)
+    stuck = [s for s, on in (("a required tool is missing", tool_missing and release),
+                             ("the environment is broken", bool(broken_env))) if on]
     if any(r["status"] == "FAIL" for r in results):
-        print("audit-legal: FAIL" + (" (and a required tool is missing; see above)" if tool_missing and release else ""))
+        print("audit-legal: FAIL" + (f" (and {' and '.join(stuck)}; see above)" if stuck else ""))
         return 1
-    if tool_missing and release:
-        print("audit-legal: exit 2: a required tool is missing (see above); nothing FAILed")
+    if stuck:
+        print(f"audit-legal: exit 2: {' and '.join(stuck)} (see above); nothing FAILed")
         return 2
     print("audit-legal: PASS" + (" (with WARN)" if any(r["status"] == "WARN" for r in results) else ""))
     return 0

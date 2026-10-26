@@ -200,7 +200,7 @@ class StubbedMain(unittest.TestCase):
         audit.ROOT = self.tmp
         for n in ("l1", "l2", "l4", "m1", "m3", "m5", "c1", "c3", "c4", "t1", "t4", "t5"):
             setattr(audit, n, lambda *a: None)
-        audit.l5_py = lambda pol, offline: audit._missing("L5-Py", "uv")
+        audit.l5_py = lambda *a: audit._missing("L5-Py", "uv")
         audit.policy = lambda: self.pol
         audit.shutil.which = lambda tool: None if tool == "cargo-deny" else "/bin/" + tool
         audit.NOT_IMPLEMENTED = ()  # once every rule is built, a missing tool alone exits 2
@@ -214,6 +214,8 @@ class StubbedMain(unittest.TestCase):
         audit.shutil.which = self.saved_which
         audit.results.clear()
         getattr(audit, "missing_tools", {}).clear()
+        getattr(audit, "broken_env", {}).clear()
+        audit.subprocess = subprocess
         audit.tool_missing = False
         shutil.rmtree(self.tmp)
 
@@ -249,7 +251,7 @@ class NotImplementedRuleTest(StubbedMain):
         super().setUp()
         audit.shutil.which = lambda tool: "/bin/" + tool
         audit.l5_rust = lambda pol: audit.add("L5-Rust", "PASS", "stub")
-        audit.l5_py = lambda pol, offline: audit.add("L5-Py", "PASS", "stub")
+        audit.l5_py = lambda *a: audit.add("L5-Py", "PASS", "stub")
         audit.m1 = lambda: audit.add("M1", "PASS", "stub")
         audit.NOT_IMPLEMENTED = ("L3", "T2")
 
@@ -283,13 +285,81 @@ class NotImplementedRuleTest(StubbedMain):
             self.assertEqual(s[rule], ("PASS", "stub"))
         self.assertEqual({r for r, (st, _) in s.items() if st == "FAIL"}, {"L3", "T2"})
 
-    def test_a_conditional_skip_stays_skip_in_release(self) -> None:
-        audit.l5_py = lambda pol, offline: audit.add("L5-Py", "SKIP", "--offline: installing the locked runtime deps needs PyPI")
+    def test_only_listed_rules_are_turned_into_fail(self) -> None:
+        # A SKIP from a built rule is not rewritten by the NOT_IMPLEMENTED step (L5-Py's own
+        # release handling is covered by ReleaseL5PyTest).
+        audit.m1 = lambda: audit.add("M1", "SKIP", "stub skip")
         audit.NOT_IMPLEMENTED = ()
-        code, _ = self.run_main("--release", "--offline")
+        code, _ = self.run_main("--release")
         self.assertEqual(code, 0)
-        self.assertEqual(self.statuses()["L5-Py"][0], "SKIP")
+        self.assertEqual(self.statuses()["M1"], ("SKIP", "stub skip"))
 
     def test_the_real_list_matches_the_rules_not_built(self) -> None:
         self.assertEqual(self.saved["NOT_IMPLEMENTED"],
                          ("L3", "L5-JS", "L6", "L7", "L8", "T2", "T3", "C2", "M2", "M4"))
+
+
+class ReleaseL5PyTest(StubbedMain):
+    """--release never lets L5-Py SKIP and pass: --offline FAILs, a broken env exits 2 (spec, Exit codes)."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        (self.tmp / "packages/python").mkdir(parents=True)
+        shutil.copy(ROOT / "packages/python/uv.lock", self.tmp / "packages/python/uv.lock")
+        audit.l5_py = self.saved["l5_py"]
+        audit.l5_rust = lambda pol: audit.add("L5-Rust", "PASS", "stub")
+        audit.shutil.which = lambda tool: "/bin/" + tool
+
+    def restore(self) -> None:
+        super().restore()
+        audit.l5_rust = self.saved_l5_rust
+
+    def no_pypi(self) -> None:
+        import types
+        def run(cmd, **kw):  # noqa: ANN001, ANN003, ANN202 - stand-in for subprocess.run
+            return subprocess.CompletedProcess(cmd, 2, "", "error: Failed to fetch: https://pypi.org/simple/pyyaml/")
+        audit.subprocess = types.SimpleNamespace(run=run)
+
+    def l5(self) -> tuple[str, str]:
+        r = next(r for r in audit.results if r["rule"] == "L5-Py")
+        return r["status"], r["detail"]
+
+    def test_release_offline_fails_l5_py(self) -> None:
+        code, out = self.run_main("--release", "--offline")
+        self.assertEqual(code, 1)
+        status, detail = self.l5()
+        self.assertEqual(status, "FAIL")
+        self.assertIn("--offline is not allowed with --release: release requires L5-Py to run", detail)
+
+    def test_release_without_pypi_is_a_broken_environment_exit_2(self) -> None:
+        self.no_pypi()
+        code, out = self.run_main("--release")
+        self.assertEqual(code, 2)
+        status, detail = self.l5()
+        self.assertEqual(status, "SKIP")
+        self.assertIn("[--release] broken environment: could not build the runtime env", detail)
+        self.assertIn("audit-legal: exit 2: the environment is broken", out)
+
+    def test_release_broken_env_with_a_fail_exits_1_and_names_it(self) -> None:
+        self.no_pypi()
+        audit.m3 = lambda: audit.add("M3", "FAIL", "history")
+        code, out = self.run_main("--release")
+        self.assertEqual(code, 1)
+        self.assertIn("audit-legal: FAIL (and the environment is broken; see above)", out)
+
+    def test_normal_run_offline_still_skips_and_passes(self) -> None:
+        code, out = self.run_main("--offline")
+        self.assertEqual(code, 0)
+        self.assertEqual(self.l5(), ("SKIP", "--offline: installing the locked runtime deps needs PyPI"))
+
+    def test_normal_run_without_pypi_still_skips_and_passes(self) -> None:
+        self.no_pypi()
+        import contextlib
+        import io
+        with contextlib.redirect_stdout(io.StringIO()) as out, contextlib.redirect_stderr(out):
+            code = audit.main([])
+        self.assertEqual(code, 0)
+        status, detail = self.l5()
+        self.assertEqual(status, "SKIP")
+        self.assertTrue(detail.startswith("could not build the runtime env: error: Failed to fetch"), detail)
+        self.assertNotIn("broken environment", out.getvalue())
