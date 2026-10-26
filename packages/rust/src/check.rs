@@ -1,11 +1,19 @@
-//! [`check_text`], [`check_file`] and their [`CheckResult`].
+//! [`check_text`], [`check_file`] and their [`CheckResult`]: the lockfile and contract
+//! schema checks that run on a root mapping from [`crate::profile`].
+//!
+//! Every string that reaches the output line (the file name and document values) goes
+//! through [`sanitize`] (C-089).
+//!
+//! Implements: C-003, C-006, C-040..C-044, C-050..C-057, C-060, C-070, C-071, C-088, C-089
 
 use std::fmt;
 use std::path::Path;
 
 use serde_norway::{Mapping, Value};
 
-use crate::yaml::{as_int, as_str, parse_root};
+use crate::display::{is_invisible, sanitize};
+use crate::profile::{as_int, as_str, parse_root};
+use crate::read::read_text;
 use crate::{Problem, SUPPORTED_HOSHEN};
 
 /// Keys every contract must have, in the order they are reported when missing.
@@ -33,11 +41,11 @@ pub struct CheckResult {
 
 impl CheckResult {
     fn pass(file: &str, detail: fmt::Arguments<'_>) -> Self {
-        Self { line: format!("{file}: ok ({detail})"), problem: None }
+        Self { line: format!("{}: ok ({detail})", sanitize(file)), problem: None }
     }
 
     fn fail(file: &str, problem: Problem) -> Self {
-        Self { line: format!("{file}: error: {problem}"), problem: Some(problem) }
+        Self { line: format!("{}: error: {problem}", sanitize(file)), problem: Some(problem) }
     }
 
     /// Whether the document passed.
@@ -86,60 +94,63 @@ impl fmt::Display for CheckResult {
 /// assert_eq!(r.line(), "c.yaml: ok (contract c@1.0.0, dctp 0.1)");
 /// ```
 pub fn check_text(file: &str, text: &str) -> CheckResult {
-    let root = match parse_root(text) {
-        Ok(root) => root,
-        Err(problem) => return CheckResult::fail(file, problem),
-    };
+    match parse_root(text).and_then(|root| detail(&root)) {
+        Ok(detail) => CheckResult::pass(file, format_args!("{detail}")),
+        Err(problem) => CheckResult::fail(file, problem),
+    }
+}
+
+/// The text inside `ok (...)` for a valid document.
+fn detail(root: &Mapping) -> Result<String, Problem> {
     if let Some(hoshen) = root.get("hoshen") {
-        return check_lockfile(file, &root, hoshen);
+        return lockfile(root, hoshen);
     }
     match (root.get("dctp"), root.get("urim")) {
-        (Some(_), Some(_)) => CheckResult::fail(file, Problem::BothSpecKeys),
-        (Some(spec), None) => check_contract(file, &root, ("dctp", spec)),
-        (None, Some(spec)) => check_contract(file, &root, ("urim", spec)),
-        (None, None) => CheckResult::fail(file, Problem::NotUrim),
+        (Some(_), Some(_)) => Err(Problem::BothSpecKeys),
+        (Some(spec), None) => contract(root, ("dctp", spec)),
+        (None, Some(spec)) => contract(root, ("urim", spec)),
+        (None, None) => Err(Problem::NotUrim),
     }
 }
 
-fn check_lockfile(file: &str, root: &Mapping, hoshen: &Value) -> CheckResult {
-    let Some(version) = as_int(hoshen) else {
-        return CheckResult::fail(file, Problem::HoshenNotInteger);
-    };
+/// The string value of identifier `name`; invisible characters are refused (C-088).
+fn identifier<'a>(value: Option<&'a Value>, name: &'static str) -> Result<&'a str, Problem> {
+    let s = value.and_then(as_str).ok_or(Problem::NotAString(name))?;
+    if s.chars().any(is_invisible) {
+        return Err(Problem::InvisibleIn(name));
+    }
+    Ok(s)
+}
+
+fn lockfile(root: &Mapping, hoshen: &Value) -> Result<String, Problem> {
+    let version = as_int(hoshen).ok_or(Problem::HoshenNotInteger)?;
     if !SUPPORTED_HOSHEN.iter().any(|&s| i128::from(s) == version) {
-        return CheckResult::fail(file, Problem::UnsupportedHoshen { version });
+        return Err(Problem::UnsupportedHoshen { version });
     }
-    let Some(urim) = root.get("urim") else {
-        return CheckResult::fail(file, Problem::MissingKeys(vec!["urim"]));
-    };
-    let Some(urim) = as_str(urim) else {
-        return CheckResult::fail(file, Problem::NotAString("urim"));
-    };
-    CheckResult::pass(file, format_args!("lockfile, hoshen {version}, urim {urim}"))
+    if !root.contains_key("urim") {
+        return Err(Problem::MissingKeys(vec!["urim"]));
+    }
+    let urim = identifier(root.get("urim"), "urim")?;
+    Ok(format!("lockfile, hoshen {version}, urim {}", sanitize(urim)))
 }
 
-/// `key` is the spec-version key that is present (`dctp` or `urim`) and its value.
-fn check_contract(file: &str, root: &Mapping, key: (&'static str, &Value)) -> CheckResult {
-    let Some(spec_version) = as_str(key.1) else {
-        return CheckResult::fail(file, Problem::NotAString(key.0));
-    };
+/// `spec` is the spec-version key that is present (`dctp` or `urim`) and its value.
+fn contract(root: &Mapping, spec: (&'static str, &Value)) -> Result<String, Problem> {
+    let spec_version = identifier(Some(spec.1), spec.0)?;
     let missing: Vec<&'static str> =
         CONTRACT_REQUIRED.into_iter().filter(|k| !root.contains_key(*k)).collect();
     if !missing.is_empty() {
-        return CheckResult::fail(file, Problem::MissingKeys(missing));
+        return Err(Problem::MissingKeys(missing));
     }
-    let Some(id) = root.get("contract").and_then(as_str) else {
-        return CheckResult::fail(file, Problem::NotAString("contract"));
-    };
-    let Some(version) = root.get("version").and_then(as_str) else {
-        return CheckResult::fail(file, Problem::NotAString("version"));
-    };
+    let id = identifier(root.get("contract"), "contract")?;
+    let version = identifier(root.get("version"), "version")?;
     if !matches!(root.get("state"), Some(Value::Mapping(_))) {
-        return CheckResult::fail(file, Problem::StateNotMapping);
+        return Err(Problem::StateNotMapping);
     }
     if !matches!(root.get("questions"), Some(Value::Mapping(q)) if !q.is_empty()) {
-        return CheckResult::fail(file, Problem::QuestionsEmpty);
+        return Err(Problem::QuestionsEmpty);
     }
-    CheckResult::pass(file, format_args!("contract {id}@{version}, {} {spec_version}", key.0))
+    Ok(format!("contract {}@{}, {} {}", sanitize(id), sanitize(version), spec.0, sanitize(spec_version)))
 }
 
 /// Read the file at `path` (strict UTF-8) and check it.
@@ -157,11 +168,8 @@ fn check_contract(file: &str, root: &Mapping, key: (&'static str, &Value)) -> Ch
 pub fn check_file(path: impl AsRef<Path>) -> CheckResult {
     let path = path.as_ref();
     let shown = path.to_string_lossy();
-    let Ok(bytes) = std::fs::read(path) else {
-        return CheckResult::fail(&shown, Problem::CannotRead);
-    };
-    let Ok(text) = String::from_utf8(bytes) else {
-        return CheckResult::fail(&shown, Problem::NotUtf8);
-    };
-    check_text(&shown, &text)
+    match read_text(path) {
+        Ok(text) => check_text(&shown, &text),
+        Err(problem) => CheckResult::fail(&shown, problem),
+    }
 }

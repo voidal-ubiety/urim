@@ -1,0 +1,5 @@
+hoshen: 1
+urim: x
+a: !t c
+b: &x d
+c: *x

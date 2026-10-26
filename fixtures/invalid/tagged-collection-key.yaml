@@ -1,4 +1,4 @@
-# C-023: a collection key under a local tag is still a collection key
+# C-085: the tag is refused before the collection key is seen (B-2 regression, formerly C-023)
 ? !t [1]
 : v
 hoshen: 1

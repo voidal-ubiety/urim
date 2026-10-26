@@ -1,8 +1,12 @@
-//! [`Problem`]: why a document failed the check.
+//! [`Problem`]: why a document failed the check. The `Display` text of each variant is
+//! the exact message from CONTRACT.md; `problem.ts` and `problem.py` hold the same strings.
+//!
+//! Implements: C-073 (and the message of every C-xxx failure listed on each variant)
 
 use std::fmt;
 
 use crate::SUPPORTED_HOSHEN;
+use crate::limits::{MAX_BYTES, MAX_DEPTH};
 
 /// Why a file or document failed `urim check`.
 ///
@@ -13,10 +17,27 @@ use crate::SUPPORTED_HOSHEN;
 pub enum Problem {
     /// The file could not be opened or read (C-010, C-012).
     CannotRead,
-    /// The file is not strict UTF-8 (C-011).
+    /// The path is a directory, FIFO, device or other non-regular file (C-011, C-081).
+    NotRegularFile,
+    /// The input is larger than [`MAX_BYTES`] (C-080).
+    TooLarge,
+    /// The file is not strict UTF-8 (C-013).
     NotUtf8,
     /// The text is not a single well-formed YAML 1.2 core-schema document (C-020..C-035).
     InvalidYaml,
+    /// Collections nest deeper than [`MAX_DEPTH`] (C-083).
+    TooDeep,
+    /// The document uses an anchor (`&a`) or an alias (`*a`) (C-084).
+    AnchorOrAlias,
+    /// The document has an explicit tag (`!!str`, `!t`, `!`) (C-085).
+    Tag,
+    /// A mapping key is `<<` (C-086).
+    MergeKey,
+    /// A mapping key contains an invisible or bidirectional-control character (C-087).
+    InvisibleInKey,
+    /// The named identifier value contains an invisible or bidirectional-control
+    /// character (C-088).
+    InvisibleIn(&'static str),
     /// The document root is not a mapping (C-040).
     RootNotMapping,
     /// `hoshen` is present but is not an integer (C-041).
@@ -44,7 +65,17 @@ impl fmt::Display for Problem {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::CannotRead => f.write_str("cannot read file"),
+            Self::NotRegularFile => f.write_str("not a regular file"),
+            Self::TooLarge => write!(f, "file too large (max {MAX_BYTES} bytes)"),
             Self::NotUtf8 => f.write_str("file is not valid UTF-8"),
+            Self::TooDeep => write!(f, "nesting too deep (max depth {MAX_DEPTH})"),
+            Self::AnchorOrAlias => f.write_str("anchors and aliases are not allowed"),
+            Self::Tag => f.write_str("tags are not allowed"),
+            Self::MergeKey => f.write_str("merge keys (<<) are not allowed"),
+            Self::InvisibleInKey => {
+                f.write_str("invisible or bidirectional control character in a mapping key")
+            }
+            Self::InvisibleIn(key) => write!(f, "invisible or bidirectional control character in {key}"),
             Self::InvalidYaml => f.write_str("invalid YAML"),
             Self::RootNotMapping => f.write_str("root must be a mapping"),
             Self::HoshenNotInteger => f.write_str("hoshen must be an integer"),

@@ -1,3 +1,0 @@
-# C-029: !!int forces an integer even from a quoted scalar
-hoshen: !!int "1"
-urim: "0.1"

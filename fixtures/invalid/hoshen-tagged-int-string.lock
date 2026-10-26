@@ -1,0 +1,3 @@
+# C-085: tags are refused, including !!int on a quoted scalar (formerly C-029)
+hoshen: !!int "1"
+urim: "0.1"

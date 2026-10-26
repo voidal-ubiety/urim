@@ -1,0 +1,5 @@
+dctp: "0.1\r"
+contract: "a\x9bb"
+version: "v\0"
+state: {}
+questions: {q: 1}

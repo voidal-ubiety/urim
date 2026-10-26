@@ -1,3 +1,3 @@
-# C-029: !!float forces a float
+# C-085: tags are refused, including core tags such as !!float (formerly C-029)
 hoshen: !!float 1
 urim: "0.1"

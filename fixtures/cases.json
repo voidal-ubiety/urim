@@ -11,7 +11,7 @@
       "id": "C-011",
       "path": "valid",
       "exit": 1,
-      "output": "{file}: error: cannot read file"
+      "output": "{file}: error: not a regular file"
     },
     {
       "id": "C-013",
@@ -105,15 +105,9 @@
     },
     {
       "id": "C-023",
-      "path": "invalid/tagged-collection-key.yaml",
-      "exit": 1,
-      "output": "{file}: error: invalid YAML"
-    },
-    {
-      "id": "C-023",
-      "path": "invalid/tagged-key-with-collection-key.yaml",
-      "exit": 1,
-      "output": "{file}: error: invalid YAML"
+      "path": "valid/explicit-key-without-value.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
     },
     {
       "id": "C-024",
@@ -230,24 +224,6 @@
       "output": "{file}: error: hoshen must be an integer"
     },
     {
-      "id": "C-029",
-      "path": "invalid/hoshen-tagged-float.lock",
-      "exit": 1,
-      "output": "{file}: error: hoshen must be an integer"
-    },
-    {
-      "id": "C-029",
-      "path": "invalid/hoshen-tagged-str.lock",
-      "exit": 1,
-      "output": "{file}: error: hoshen must be an integer"
-    },
-    {
-      "id": "C-029",
-      "path": "valid/hoshen-tagged-int-string.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
-    },
-    {
       "id": "C-030",
       "path": "invalid/comments-only.yaml",
       "exit": 1,
@@ -282,18 +258,6 @@
       "path": "valid/flow-mapping-root.lock",
       "exit": 0,
       "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
-    },
-    {
-      "id": "C-032",
-      "path": "valid/anchor-alias.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
-    },
-    {
-      "id": "C-033",
-      "path": "invalid/merge-key-not-applied.yaml",
-      "exit": 1,
-      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
     },
     {
       "id": "C-034",
@@ -575,7 +539,7 @@
       "id": "C-056",
       "path": "valid/contract-multiline-id.decision.yaml",
       "exit": 0,
-      "output": "{file}: ok (contract a\nb@v, urim 0.1)"
+      "output": "{file}: ok (contract a\\u{000A}b@v, urim 0.1)"
     },
     {
       "id": "C-056",
@@ -618,6 +582,390 @@
       "path": "invalid/unrecognized.yaml",
       "exit": 1,
       "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
+    },
+    {
+      "id": "C-082",
+      "path": "invalid/bom-in-quoted-scalar.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-082",
+      "path": "invalid/bom-not-leading.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-082",
+      "path": "invalid/control-char.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-082",
+      "path": "invalid/line-separator.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-082",
+      "path": "invalid/next-line-char.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-082",
+      "path": "invalid/nul-byte.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-082",
+      "path": "invalid/paragraph-separator.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-083",
+      "path": "invalid/depth-5000-unclosed.lock",
+      "exit": 1,
+      "output": "{file}: error: nesting too deep (max depth 64)"
+    },
+    {
+      "id": "C-083",
+      "path": "invalid/depth-65-block.lock",
+      "exit": 1,
+      "output": "{file}: error: nesting too deep (max depth 64)"
+    },
+    {
+      "id": "C-083",
+      "path": "invalid/depth-65.lock",
+      "exit": 1,
+      "output": "{file}: error: nesting too deep (max depth 64)"
+    },
+    {
+      "id": "C-083",
+      "path": "valid/depth-64.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+    },
+    {
+      "id": "C-084",
+      "path": "invalid/alias-expansion-over-100.lock",
+      "exit": 1,
+      "output": "{file}: error: anchors and aliases are not allowed"
+    },
+    {
+      "id": "C-084",
+      "path": "invalid/anchor-alias.lock",
+      "exit": 1,
+      "output": "{file}: error: anchors and aliases are not allowed"
+    },
+    {
+      "id": "C-084",
+      "path": "invalid/anchor-on-collection.lock",
+      "exit": 1,
+      "output": "{file}: error: anchors and aliases are not allowed"
+    },
+    {
+      "id": "C-084",
+      "path": "invalid/anchor-only.lock",
+      "exit": 1,
+      "output": "{file}: error: anchors and aliases are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/hoshen-tagged-float.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/hoshen-tagged-int-string.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/hoshen-tagged-str.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/tag-binary.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/tag-core-str.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/tag-custom-mapping.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/tag-custom-scalar.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/tag-int-non-numeric.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/tag-non-specific.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/tag-on-root.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/tag-timestamp.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/tagged-collection-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "invalid/tagged-key-with-collection-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-086",
+      "path": "invalid/merge-key-not-applied.yaml",
+      "exit": 1,
+      "output": "{file}: error: merge keys (<<) are not allowed"
+    },
+    {
+      "id": "C-086",
+      "path": "invalid/merge-key-quoted.lock",
+      "exit": 1,
+      "output": "{file}: error: merge keys (<<) are not allowed"
+    },
+    {
+      "id": "C-087",
+      "path": "invalid/invisible-bidi-key.lock",
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in a mapping key"
+    },
+    {
+      "id": "C-087",
+      "path": "invalid/invisible-tag-char-key.lock",
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in a mapping key"
+    },
+    {
+      "id": "C-087",
+      "path": "invalid/invisible-zwsp-key.lock",
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in a mapping key"
+    },
+    {
+      "id": "C-088",
+      "path": "invalid/invisible-in-contract.yaml",
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in contract"
+    },
+    {
+      "id": "C-088",
+      "path": "invalid/invisible-in-dctp.yaml",
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in dctp"
+    },
+    {
+      "id": "C-088",
+      "path": "invalid/invisible-in-urim.lock",
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in urim"
+    },
+    {
+      "id": "C-088",
+      "path": "invalid/invisible-in-version.yaml",
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in version"
+    },
+    {
+      "id": "C-089",
+      "path": "valid/backslash-in-urim.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim a\\u{0041}b)"
+    },
+    {
+      "id": "C-089",
+      "path": "valid/escape-in-contract.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract a\\u{009B}b@v\\u{0000}, dctp 0.1\\u{000D})"
+    },
+    {
+      "id": "C-089",
+      "path": "valid/escape-in-urim.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim a\\u{001B}b\\u{007F}\\u{0085}c\\u{0009})"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/alias-undefined.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-anchor-beats-tag.lock",
+      "exit": 1,
+      "output": "{file}: error: anchors and aliases are not allowed"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-anchor-before-tag.lock",
+      "exit": 1,
+      "output": "{file}: error: anchors and aliases are not allowed"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-depth-beats-earlier-merge.lock",
+      "exit": 1,
+      "output": "{file}: error: nesting too deep (max depth 64)"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-depth-before-syntax.lock",
+      "exit": 1,
+      "output": "{file}: error: nesting too deep (max depth 64)"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-depth-before-syntax-same-line.lock",
+      "exit": 1,
+      "output": "{file}: error: nesting too deep (max depth 64)"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-depth-before-unclosed-quote.lock",
+      "exit": 1,
+      "output": "{file}: error: nesting too deep (max depth 64)"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-depth-before-syntax-multibyte.lock",
+      "exit": 1,
+      "output": "{file}: error: nesting too deep (max depth 64)"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-syntax-before-depth-same-line.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-invisible-key-before-tag.lock",
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in a mapping key"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-merge-before-invisible-key.lock",
+      "exit": 1,
+      "output": "{file}: error: merge keys (<<) are not allowed"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-printable-before-syntax.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-profile-before-schema.yaml",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-schema-identifier-order.yaml",
+      "exit": 1,
+      "output": "{file}: error: dctp must be a string"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-second-document-beats-earlier-tag.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-syntax-beats-earlier-anchor.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-syntax-beats-earlier-tag.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-syntax-before-depth.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-tag-before-alias.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-tag-before-collection-key.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-tag-before-duplicate.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-090",
+      "path": "invalid/precedence-undefined-alias-beats-earlier-tag.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-091",
+      "path": "invalid/proto-key-not-urim.yaml",
+      "exit": 1,
+      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
+    },
+    {
+      "id": "C-091",
+      "path": "valid/proto-keys-inert.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
     }
   ]
 }

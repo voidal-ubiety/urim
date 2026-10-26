@@ -1,2 +1,2 @@
-# C-033: << is a literal key; merge keys are not applied
+# C-086: a << key is refused (formerly C-033, where it was a literal key)
 <<: { hoshen: 1, urim: "0.1" }

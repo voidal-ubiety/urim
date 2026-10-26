@@ -12,4 +12,5 @@ mod api;
 mod cli;
 mod divergences;
 mod files;
+mod limits;
 mod support;

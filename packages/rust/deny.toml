@@ -14,6 +14,10 @@ ignore = []
 # Permissive licenses only; every license in the tree is listed explicitly.
 allow = ["MIT", "Apache-2.0"]
 confidence-threshold = 0.93
+# unicode-ident's data tables are under Unicode-3.0 (OSI-approved, permissive). It is reached
+# only at build time (saphyr-parser -> thiserror -> thiserror-impl proc macro -> syn), so none of
+# its code is in the urim binary. Scoped to this one crate rather than allowed globally.
+exceptions = [{ name = "unicode-ident", allow = ["Unicode-3.0"] }]
 
 [bans]
 multiple-versions = "deny"

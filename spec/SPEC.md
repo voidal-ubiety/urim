@@ -138,6 +138,27 @@ atomic: false               # forbid request splitting, OPTIONAL
 
 See `examples/incident-triage.decision.yaml` for a complete file.
 
+### 5.1.1 Urim YAML profile
+
+Contracts and lockfiles (`urim.lock`) are written in the **Urim YAML profile**, a strict subset of YAML 1.2 with the core schema. A conforming reader MUST accept every file that follows the profile and MUST reject any other file with a single error. It MUST apply these steps in this order and report only the first failure:
+
+1. **Size.** The file MUST be at most 1 MiB (1,048,576 bytes) of UTF-8 and MUST be a regular file.
+2. **Characters.** One leading byte order mark (U+FEFF) is ignored. Every other character MUST be YAML 1.2 `c-printable`, and MUST NOT be U+0085 (NEL), U+2028 (LS), U+2029 (PS) or U+FEFF.
+3. **Well-formed YAML, in stream order.** The file MUST hold exactly one document, MUST be valid YAML 1.2, and MUST NOT use an undefined alias. Collections MUST NOT nest deeper than 64 levels. When nesting deeper than 64 and a syntax error both occur, the one that comes first in the stream is reported.
+4. **Profile rules, first violation in the stream wins.** These are forbidden:
+   - anchors and aliases (`&a`, `*a`);
+   - tags of any kind (`!!str`, `!x`, `!<…>`);
+   - the merge key `<<`, which is also never applied;
+   - invisible or bidirectional-control characters in keys.
+
+   On one node an anchor is reported before a tag.
+5. **Values.** Mapping keys MUST be unique scalars. Every integer MUST be in −2^63..2^64−1. Plain scalars resolve with the YAML 1.2 core schema only, so `yes`, `no`, `on` and `off` stay strings.
+6. **Schema.** The schema checks for the file kind then apply. Identifiers MUST NOT contain invisible characters.
+
+Diagnostics that include a file name or file content MUST escape control, bidirectional and other invisible characters as `\u{XXXX}`, so a hostile name cannot rewrite the terminal or reorder what the reader sees.
+
+The profile exists so that every reader in every language accepts the same files with the same meaning. Anchors, tags and merge keys are the features YAML parsers disagree on most. The reference checker (`urim check`, in JavaScript, Python and Rust) applies this profile, and its conformance cases live in the Urim repository (`CONTRACT.md` §3, `fixtures/cases.json`).
+
 ### 5.2 State
 
 `state` declares named inputs with a type: `string`, `markdown`, `json` (with optional inline JSON Schema), `image`, `audio`, `video`. Fields MAY be marked `required` and MAY carry `max_bytes`. The compiler serializes state into each target's native `state` representation. Modalities not supported by a target are a compile-time error.

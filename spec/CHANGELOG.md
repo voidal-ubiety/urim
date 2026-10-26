@@ -2,6 +2,28 @@
 
 Line numbers refer to the **new** file. The original 0.1.0 line is given in parentheses. Backups of 0.1.0: `SPEC.v0.1.0.md`, `examples/decision.lock.v0.1.0.yaml`, `examples/providers/cloudflare-clef-flash.provider.v0.1.0.yaml`, and `STATUS.v0.1.0.md`. Nothing was renamed, published, pushed, or registered, and no git repo was created.
 
+## Unreleased (Urim YAML profile) — 2026-10-26, ~10:05 ET
+
+Adds the Urim YAML profile to the spec. The reference checker (`urim check`, in JavaScript, Python and Rust) applies it; its contract calls this checker version v0.0.2. The packages are still at 0.0.1. Nothing was published, pushed or registered.
+
+- SPEC.md:141–160 — new §5.1.1 "Urim YAML profile". Contracts and lockfiles are a strict subset of YAML 1.2 (core schema), checked in a fixed order with the first failure reported:
+  1. size (1 MiB) and regular file;
+  2. profile characters (c-printable, minus NEL, LS, PS and a non-leading U+FEFF);
+  3. one well-formed document, no undefined alias, nesting ≤ 64, in stream order;
+  4. no anchors, aliases, tags or `<<` merge keys, and no invisible characters in keys;
+  5. unique scalar keys, integers in −2^63..2^64−1, core-schema resolution;
+  6. schema, where identifiers have no invisible characters.
+
+  Diagnostics escape unsafe characters as `\u{XXXX}`. No other SPEC.md line changed. Every file in `examples/` passes the profile steps (1–5). The two contracts and `urim.lock` also pass `urim check`. The provider descriptors and the 0.1.0 and pre-hoshen lockfile backups are other file kinds, so they stop at the schema step.
+- Checker behavior changes (Urim `CONTRACT.md`):
+  - A directory now gives `not a regular file` (C-011, C-081). It used to give `cannot read file`.
+  - Core tags (`!!str`, `!!int`, …) are refused with `tags are not allowed` (C-085). C-029 is retired.
+  - Anchors and aliases are refused (C-084). C-032 is retired.
+  - A `<<` key is refused instead of being read as a literal key (C-086). C-033 is retired.
+  - NEL, LS, PS and a non-leading byte order mark are `invalid YAML` (C-082).
+  - An undefined alias is `invalid YAML`, and so is a syntax error that comes before nesting gets too deep (C-090).
+- Cross-language divergences D-001…D-007 and D-010 are resolved by the profile, so all three ports now agree on them. D-008, D-009, D-011 and D-012 remain open for David to decide.
+
 ## v0.1.1-draft (lockfile rename) — 2026-10-25, ~21:25 ET
 
 Scoped rename approved by David. **Only the lockfile was renamed.** DCTP is not renamed anywhere else, and the CLI verbs stay plain (`plan`, `apply`). Backups: `SPEC.pre-hoshen.md`, `STATUS.pre-hoshen.md`, `CHANGELOG.pre-hoshen.md`, `examples/decision.lock.pre-hoshen.yaml`.

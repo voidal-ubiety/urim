@@ -19,10 +19,14 @@
 //! ```
 
 mod check;
+mod display;
+mod limits;
 mod problem;
-mod yaml;
+mod profile;
+mod read;
 
 pub use check::{CheckResult, check_file, check_text};
+pub use limits::{MAX_BYTES, MAX_DEPTH};
 pub use problem::Problem;
 
 /// Package version, as in `Cargo.toml`.

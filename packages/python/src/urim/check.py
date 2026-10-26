@@ -1,20 +1,38 @@
 """`urim check`: validate a hoshen lockfile or a contract's top-level shape.
 
-Behavior is specified in CONTRACT.md (repo root) and shared with the JS and Rust ports.
+Behavior is specified in CONTRACT.md (repo root) and shared with check.rs and check.ts. Every
+string that reaches the output line goes through ``sanitize`` (C-089).
+
+Implements: C-003, C-006, C-040..C-046, C-050..C-057, C-060, C-070, C-071, C-088, C-089
 """
 
 from __future__ import annotations
 
-import re
+from collections.abc import Callable
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
-import yaml
+from urim.display import display_path, has_invisible, sanitize
+from urim.problem import (
+    BOTH_SPEC_KEYS,
+    HOSHEN_NOT_INTEGER,
+    NOT_URIM,
+    QUESTIONS_EMPTY,
+    ROOT_NOT_MAPPING,
+    STATE_NOT_MAPPING,
+    SUPPORTED_HOSHEN,
+    Failure,
+    invisible_in,
+    missing_keys,
+    not_a_string,
+    unsupported_hoshen,
+)
+from urim.profile import parse_document
+from urim.read import read_text
 
-SUPPORTED_HOSHEN = frozenset({1})
+__all__ = ["SUPPORTED_HOSHEN", "CheckResult", "check_file", "check_text"]
+
 CONTRACT_REQUIRED = ("contract", "version", "state", "questions")
-NOT_URIM = "not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
 
 
 @dataclass(frozen=True)
@@ -30,148 +48,73 @@ class CheckResult:
         return 0 if self.ok else 1
 
 
-class _InvalidYamlError(Exception):
-    """Raised inside the loader for input the contract treats as invalid YAML."""
-
-
-class _CoreLoader(yaml.SafeLoader):
-    """SafeLoader restricted to YAML 1.2 core-schema scalars, rejecting duplicate keys."""
-
-
-_CoreLoader.yaml_implicit_resolvers = {}
-_CoreLoader.add_implicit_resolver(
-    "tag:yaml.org,2002:null", re.compile(r"^(?:~|null|Null|NULL|)$"), ["~", "n", "N", ""]
-)
-_CoreLoader.add_implicit_resolver(
-    "tag:yaml.org,2002:bool", re.compile(r"^(?:true|True|TRUE|false|False|FALSE)$"), list("tTfF")
-)
-_CoreLoader.add_implicit_resolver(
-    "tag:yaml.org,2002:int",
-    re.compile(r"^(?:[-+]?(?:0|[1-9][0-9]*)|0o[0-7]+|0x[0-9a-fA-F]+)$"),
-    list("-+0123456789"),
-)
-_CoreLoader.add_implicit_resolver(
-    "tag:yaml.org,2002:float",
-    re.compile(
-        r"^(?:[-+]?(?:\.[0-9]+|[0-9]+(?:\.[0-9]*)?)(?:[eE][-+]?[0-9]+)?"
-        r"|[-+]?\.(?:inf|Inf|INF)|\.(?:nan|NaN|NAN))$"
-    ),
-    list("-+.0123456789"),
-)
-
-
-_INT_MIN = -(2**63)
-_INT_MAX = 2**64 - 1
-
-
-def _construct_int(loader: yaml.SafeLoader, node: yaml.ScalarNode) -> int:
-    value = loader.construct_scalar(node)
-    if value.startswith("0o"):
-        number = int(value[2:], 8)
-    elif value.startswith("0x"):
-        number = int(value[2:], 16)
-    else:
-        number = int(value, 10)
-    if not _INT_MIN <= number <= _INT_MAX:
-        raise _InvalidYamlError("integer out of 64-bit range")
-    return number
-
-
-def _construct_mapping(loader: yaml.SafeLoader, node: yaml.MappingNode) -> dict[Any, Any]:
-    loader.flatten_mapping(node)
-    result: dict[Any, Any] = {}
-    # Python treats True == 1 == 1.0 as the same dict key; YAML does not.
-    # Compare keys by (type, value) so they only count as duplicates when the
-    # YAML type matches. Only str keys are looked up afterwards, and a str never
-    # collides with a bool/int/float, so overwriting below loses nothing used.
-    seen: set[tuple[type, Any]] = set()
-    for key_node, value_node in node.value:
-        if not isinstance(key_node, yaml.ScalarNode):
-            raise _InvalidYamlError("mapping keys must be scalars")
-        key = loader.construct_object(key_node, deep=True)
-        if (type(key), key) in seen:
-            raise _InvalidYamlError("duplicate key")
-        seen.add((type(key), key))
-        result[key] = loader.construct_object(value_node, deep=True)
-    return result
-
-
-_CoreLoader.add_constructor("tag:yaml.org,2002:int", _construct_int)
-_CoreLoader.add_constructor("tag:yaml.org,2002:map", _construct_mapping)
-
-
 def _is_int(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool)
 
 
-def _fail(file: str, problem: str) -> CheckResult:
-    return CheckResult(ok=False, line=f"{file}: error: {problem}")
+def _identifier(root: dict[Any, Any], name: str) -> str:
+    """Return the string value of identifier ``name``; invisible characters are refused (C-088)."""
+    value = root[name]
+    if not isinstance(value, str):
+        raise Failure(not_a_string(name))
+    if has_invisible(value):
+        raise Failure(invisible_in(name))
+    return value
 
 
-def _pass(file: str, detail: str) -> CheckResult:
-    return CheckResult(ok=True, line=f"{file}: ok ({detail})")
+def _lockfile(root: dict[Any, Any]) -> str:
+    hoshen = root["hoshen"]
+    if not _is_int(hoshen):
+        raise Failure(HOSHEN_NOT_INTEGER)
+    if hoshen not in SUPPORTED_HOSHEN:
+        raise Failure(unsupported_hoshen(hoshen))
+    if "urim" not in root:
+        raise Failure(missing_keys(["urim"]))
+    return f"lockfile, hoshen {hoshen}, urim {sanitize(_identifier(root, 'urim'))}"
+
+
+def _contract(root: dict[Any, Any], key: str) -> str:
+    spec_version = _identifier(root, key)
+    missing = [k for k in CONTRACT_REQUIRED if k not in root]
+    if missing:
+        raise Failure(missing_keys(missing))
+    contract_id = _identifier(root, "contract")
+    version = _identifier(root, "version")
+    if not isinstance(root["state"], dict):
+        raise Failure(STATE_NOT_MAPPING)
+    if not isinstance(root["questions"], dict) or not root["questions"]:
+        raise Failure(QUESTIONS_EMPTY)
+    return f"contract {sanitize(contract_id)}@{sanitize(version)}, {key} {sanitize(spec_version)}"
+
+
+def _detail(text: str) -> str:
+    root = parse_document(text)
+    if not isinstance(root, dict):
+        raise Failure(ROOT_NOT_MAPPING)
+    if "hoshen" in root:
+        return _lockfile(root)
+    if "dctp" in root and "urim" in root:
+        raise Failure(BOTH_SPEC_KEYS)
+    if "dctp" in root:
+        return _contract(root, "dctp")
+    if "urim" in root:
+        return _contract(root, "urim")
+    raise Failure(NOT_URIM)
+
+
+def _run(file: str, text_of: Callable[[], str]) -> CheckResult:
+    shown = sanitize(display_path(file))
+    try:
+        return CheckResult(ok=True, line=f"{shown}: ok ({_detail(text_of())})")
+    except Failure as failure:
+        return CheckResult(ok=False, line=f"{shown}: error: {failure.problem}")
 
 
 def check_text(file: str, text: str) -> CheckResult:
     """Check YAML ``text``; ``file`` is used only in the message."""
-    text = text.removeprefix("\ufeff")
-    try:
-        root = yaml.load(text, Loader=_CoreLoader)  # noqa: S506 - restricted safe loader
-    except (yaml.YAMLError, _InvalidYamlError, ValueError, TypeError):
-        return _fail(file, "invalid YAML")
-
-    if not isinstance(root, dict):
-        return _fail(file, "root must be a mapping")
-
-    if "hoshen" in root:
-        return _check_lockfile(file, root)
-    if "dctp" in root or "urim" in root:
-        return _check_contract(file, root)
-    return _fail(file, NOT_URIM)
-
-
-def _check_lockfile(file: str, root: dict[Any, Any]) -> CheckResult:
-    hoshen = root["hoshen"]
-    if not _is_int(hoshen):
-        return _fail(file, "hoshen must be an integer")
-    if hoshen not in SUPPORTED_HOSHEN:
-        supported = ", ".join(str(v) for v in sorted(SUPPORTED_HOSHEN))
-        return _fail(file, f"unsupported hoshen version {hoshen} (supported: {supported})")
-    if "urim" not in root:
-        return _fail(file, "missing required key(s): urim")
-    if not isinstance(root["urim"], str):
-        return _fail(file, "urim must be a string")
-    return _pass(file, f"lockfile, hoshen {hoshen}, urim {root['urim']}")
-
-
-def _check_contract(file: str, root: dict[Any, Any]) -> CheckResult:
-    if "dctp" in root and "urim" in root:
-        return _fail(file, "set only one of 'dctp' or 'urim'")
-    key = "dctp" if "dctp" in root else "urim"
-    if not isinstance(root[key], str):
-        return _fail(file, f"{key} must be a string")
-    missing = [k for k in CONTRACT_REQUIRED if k not in root]
-    if missing:
-        return _fail(file, "missing required key(s): " + ", ".join(missing))
-    for k in ("contract", "version"):
-        if not isinstance(root[k], str):
-            return _fail(file, f"{k} must be a string")
-    if not isinstance(root["state"], dict):
-        return _fail(file, "state must be a mapping")
-    if not isinstance(root["questions"], dict) or not root["questions"]:
-        return _fail(file, "questions must be a non-empty mapping")
-    return _pass(file, f"contract {root['contract']}@{root['version']}, {key} {root[key]}")
+    return _run(file, lambda: text)
 
 
 def check_file(path: str) -> CheckResult:
     """Read and check the file at ``path``; the message names ``path`` exactly as given."""
-    try:
-        with Path(path).open("rb") as fh:
-            data = fh.read()
-    except OSError:
-        return _fail(path, "cannot read file")
-    try:
-        text = data.decode("utf-8")
-    except UnicodeDecodeError:
-        return _fail(path, "file is not valid UTF-8")
-    return check_text(path, text)
+    return _run(path, lambda: read_text(path))
