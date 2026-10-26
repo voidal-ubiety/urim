@@ -182,3 +182,55 @@ class TreeTest(unittest.TestCase):
     def test_slug_matches_github_anchors(self) -> None:
         self.assertEqual(audit.slug("Sign-off (Developer Certificate of Origin)"),
                          "sign-off-developer-certificate-of-origin")
+
+
+class MissingToolTest(unittest.TestCase):
+    """--release names each missing tool and how to install it; exit 2 only when nothing FAILs."""
+
+    def setUp(self) -> None:
+        self.tmp = Path(tempfile.mkdtemp())
+        (self.tmp / "packages/rust").mkdir(parents=True)
+        shutil.copy(ROOT / "packages/rust/deny.toml", self.tmp / "packages/rust/deny.toml")
+        self.saved = {n: getattr(audit, n) for n in
+                      ("ROOT", "l1", "l2", "l4", "l5_py", "m1", "m3", "m5", "c1", "c3", "c4", "t1", "t4", "t5", "policy")}
+        self.saved_which = audit.shutil.which
+        self.addCleanup(self.restore)
+        self.pol = audit.policy()
+        audit.ROOT = self.tmp
+        for n in ("l1", "l2", "l4", "m1", "m3", "m5", "c1", "c3", "c4", "t1", "t4", "t5"):
+            setattr(audit, n, lambda *a: None)
+        audit.l5_py = lambda pol, offline: audit._missing("L5-Py", "uv")
+        audit.policy = lambda: self.pol
+        audit.shutil.which = lambda tool: None if tool == "cargo-deny" else "/bin/" + tool
+        audit.results.clear()
+        audit.missing_tools.clear()
+        audit.tool_missing = False
+
+    def restore(self) -> None:
+        for n, v in self.saved.items():
+            setattr(audit, n, v)
+        audit.shutil.which = self.saved_which
+        audit.results.clear()
+        getattr(audit, "missing_tools", {}).clear()
+        audit.tool_missing = False
+        shutil.rmtree(self.tmp)
+
+    def run_main(self) -> tuple[int, str]:
+        import contextlib
+        import io
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(out):
+            code = audit.main(["--release"])
+        return code, out.getvalue()
+
+    def test_exit_2_names_every_missing_tool_and_its_install_command(self) -> None:
+        code, out = self.run_main()
+        self.assertEqual(code, 2)
+        self.assertIn("cargo-deny (needed by L5-Rust; install: cargo install --locked cargo-deny)", out)
+        self.assertIn("uv (needed by L5-Py; install: https://docs.astral.sh/uv/", out)
+
+    def test_a_fail_still_exits_1_but_the_missing_tools_are_named(self) -> None:
+        audit.m3 = lambda: audit.add("M3", "FAIL", "history")
+        code, out = self.run_main()
+        self.assertEqual(code, 1)
+        self.assertIn("a required tool is missing: cargo-deny", out)

@@ -95,9 +95,10 @@ def l5_rust(pol: dict) -> None:
     if extra or not allow:
         add("L5-Rust", "FAIL", f"deny.toml allows licenses outside the policy: {extra or 'none parsed'}", "deny.toml")
         return
-    if not shutil.which("cargo-deny"):
-        _missing("L5-Rust", "cargo-deny not installed")
-        return
+    for tool in ("cargo", "cargo-deny"):
+        if not shutil.which(tool):
+            _missing("L5-Rust", tool)
+            return
     r = subprocess.run(["cargo", "deny", "-L", "error", "check", "licenses"], cwd=ROOT / "packages/rust",
                        capture_output=True, text=True)
     add("L5-Rust", "PASS" if r.returncode == 0 else "FAIL",
@@ -112,9 +113,10 @@ def l5_py(pol: dict, offline: bool) -> None:
     if offline:
         add("L5-Py", "SKIP", "--offline: installing the locked runtime deps needs PyPI")
         return
-    if not shutil.which("uv"):
-        _missing("L5-Py", "uv not installed")
-        return
+    for tool in ("uv", "uvx"):
+        if not shutil.which(tool) and not (tool == "uvx" and os.environ.get("PIP_LICENSES")):
+            _missing("L5-Py", tool)
+            return
     with tempfile.TemporaryDirectory() as tmp:
         req = Path(tmp) / "req.txt"
         exp = subprocess.run(["uv", "export", "--frozen", "--no-dev", "--no-emit-project", "-o", str(req)],
@@ -343,10 +345,25 @@ def t5() -> None:
     add("T5", "PASS" if ok else "FAIL", "README carries the Jev/TypeSafe disclaimer" if ok else "README lacks the Jev disclaimer")
 
 
-def _missing(rule: str, why: str) -> None:
+# How to get each tool a rule shells out to (named in the SKIP line and the exit-2 summary).
+INSTALL = {
+    "cargo": "install Rust with rustup: https://rustup.rs",
+    "cargo-deny": "cargo install --locked cargo-deny",
+    "uv": "https://docs.astral.sh/uv/getting-started/installation/ (curl -LsSf https://astral.sh/uv/install.sh | sh)",
+    "uvx": "ships with uv (see uv); or set PIP_LICENSES to a pip-licenses binary",
+}
+missing_tools: dict[str, str] = {}
+
+
+def _missing(rule: str, tool: str) -> None:
     global tool_missing
     tool_missing = True
-    add(rule, "SKIP", f"tool missing: {why}")
+    missing_tools[tool] = rule
+    add(rule, "SKIP", f"tool missing: {tool} not on PATH; install: {INSTALL[tool]}")
+
+
+def missing_summary() -> str:
+    return "; ".join(f"{t} (needed by {r}; install: {INSTALL[t]})" for t, r in missing_tools.items())
 
 
 def main(argv: list[str]) -> int:
@@ -368,11 +385,13 @@ def main(argv: list[str]) -> int:
     out.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
     for r in results:
         print(f"{r['status']:4}  {r['rule']:8} {r['detail']}")
+    if tool_missing and release:
+        print(f"audit-legal: a required tool is missing: {missing_summary()}", file=sys.stderr)
     if any(r["status"] == "FAIL" for r in results):
-        print("audit-legal: FAIL")
+        print("audit-legal: FAIL" + (" (and a required tool is missing; see above)" if tool_missing and release else ""))
         return 1
     if tool_missing and release:
-        print("audit-legal: a required tool is missing")
+        print("audit-legal: exit 2: a required tool is missing (see above); nothing FAILed")
         return 2
     print("audit-legal: PASS" + (" (with WARN)" if any(r["status"] == "WARN" for r in results) else ""))
     return 0
