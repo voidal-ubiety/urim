@@ -1,185 +1,605 @@
 {
-  "comment": "Shared conformance cases for `urim check`. `path` is relative to this directory. `{file}` in `output` is replaced by the path exactly as passed to the checker. exit 0 lines go to stdout, exit 1 lines go to stderr.",
+  "comment": "Shared conformance cases for `urim check`. `id` names the CONTRACT.md entry the case pins. `path` is relative to this directory. `{file}` in `output` is replaced by the path exactly as passed to the checker. exit 0 lines go to stdout, exit 1 lines go to stderr.",
   "cases": [
     {
-      "path": "../spec/examples/urim.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
-    },
-    {
-      "path": "../spec/examples/incident-triage.decision.yaml",
-      "exit": 0,
-      "output": "{file}: ok (contract incident-triage@1.2.0, dctp 0.1)"
-    },
-    {
-      "path": "../spec/examples/kyc-document-check.decision.yaml",
-      "exit": 0,
-      "output": "{file}: ok (contract kyc-document-check@0.3.0, dctp 0.1)"
-    },
-    {
-      "path": "valid/minimal-urim.decision.yaml",
-      "exit": 0,
-      "output": "{file}: ok (contract minimal@0.0.1, urim 0.1)"
-    },
-    {
-      "path": "valid/minimal.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
-    },
-    {
-      "path": "valid/urim-yes-is-a-string.decision.yaml",
-      "exit": 0,
-      "output": "{file}: ok (contract x@1.0.0, urim yes)"
-    },
-    {
-      "path": "../spec/examples/providers/cloudflare-clef-flash.provider.yaml",
-      "exit": 1,
-      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
-    },
-    {
-      "path": "invalid/hoshen-unsupported.lock",
-      "exit": 1,
-      "output": "{file}: error: unsupported hoshen version 2 (supported: 1)"
-    },
-    {
-      "path": "invalid/hoshen-string.lock",
-      "exit": 1,
-      "output": "{file}: error: hoshen must be an integer"
-    },
-    {
-      "path": "invalid/hoshen-float.lock",
-      "exit": 1,
-      "output": "{file}: error: hoshen must be an integer"
-    },
-    {
-      "path": "invalid/hoshen-bool.lock",
-      "exit": 1,
-      "output": "{file}: error: hoshen must be an integer"
-    },
-    {
-      "path": "invalid/lock-missing-urim.lock",
-      "exit": 1,
-      "output": "{file}: error: missing required key(s): urim"
-    },
-    {
-      "path": "invalid/lock-urim-not-string.lock",
-      "exit": 1,
-      "output": "{file}: error: urim must be a string"
-    },
-    {
-      "path": "invalid/root-sequence.yaml",
-      "exit": 1,
-      "output": "{file}: error: root must be a mapping"
-    },
-    {
-      "path": "invalid/root-scalar.yaml",
-      "exit": 1,
-      "output": "{file}: error: root must be a mapping"
-    },
-    {
-      "path": "invalid/empty.yaml",
-      "exit": 1,
-      "output": "{file}: error: root must be a mapping"
-    },
-    {
-      "path": "invalid/syntax-error.yaml",
-      "exit": 1,
-      "output": "{file}: error: invalid YAML"
-    },
-    {
-      "path": "invalid/duplicate-key.yaml",
-      "exit": 1,
-      "output": "{file}: error: invalid YAML"
-    },
-    {
-      "path": "invalid/multi-document.yaml",
-      "exit": 1,
-      "output": "{file}: error: invalid YAML"
-    },
-    {
-      "path": "invalid/not-utf8.yaml",
-      "exit": 1,
-      "output": "{file}: error: file is not valid UTF-8"
-    },
-    {
+      "id": "C-010",
       "path": "invalid/does-not-exist.yaml",
       "exit": 1,
       "output": "{file}: error: cannot read file"
     },
     {
-      "path": "invalid/contract-missing-keys.decision.yaml",
+      "id": "C-011",
+      "path": "valid",
       "exit": 1,
-      "output": "{file}: error: missing required key(s): version, state, questions"
+      "output": "{file}: error: cannot read file"
     },
     {
-      "path": "invalid/contract-empty-questions.decision.yaml",
+      "id": "C-013",
+      "path": "invalid/encoded-surrogate.lock",
       "exit": 1,
-      "output": "{file}: error: questions must be a non-empty mapping"
+      "output": "{file}: error: file is not valid UTF-8"
     },
     {
-      "path": "invalid/contract-both-version-keys.decision.yaml",
+      "id": "C-013",
+      "path": "invalid/not-utf8.yaml",
       "exit": 1,
-      "output": "{file}: error: set only one of 'dctp' or 'urim'"
+      "output": "{file}: error: file is not valid UTF-8"
     },
     {
-      "path": "invalid/contract-dctp-not-string.decision.yaml",
+      "id": "C-013",
+      "path": "invalid/utf16.lock",
       "exit": 1,
-      "output": "{file}: error: dctp must be a string"
+      "output": "{file}: error: file is not valid UTF-8"
     },
     {
-      "path": "invalid/contract-version-not-string.decision.yaml",
+      "id": "C-014",
+      "path": "invalid/bom-only.yaml",
       "exit": 1,
-      "output": "{file}: error: version must be a string"
+      "output": "{file}: error: root must be a mapping"
     },
     {
-      "path": "invalid/contract-state-not-mapping.decision.yaml",
-      "exit": 1,
-      "output": "{file}: error: state must be a mapping"
-    },
-    {
-      "path": "invalid/unrecognized.yaml",
-      "exit": 1,
-      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
-    },
-    {
+      "id": "C-014",
       "path": "valid/bom.lock",
       "exit": 0,
       "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
     },
     {
-      "path": "valid/hoshen-hex.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
-    },
-    {
-      "path": "valid/urim-timestamp-is-a-string.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 2026-10-25)"
-    },
-    {
+      "id": "C-015",
       "path": "valid/crlf.lock",
       "exit": 0,
       "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
     },
     {
-      "path": "invalid/hoshen-leading-zero.lock",
-      "exit": 1,
-      "output": "{file}: error: hoshen must be an integer"
-    },
-    {
-      "path": "invalid/int-out-of-range.lock",
+      "id": "C-020",
+      "path": "invalid/syntax-error.yaml",
       "exit": 1,
       "output": "{file}: error: invalid YAML"
     },
     {
+      "id": "C-020",
+      "path": "invalid/tab-indent.yaml",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-021",
+      "path": "invalid/duplicate-hex-decimal-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-021",
+      "path": "invalid/duplicate-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-021",
+      "path": "invalid/duplicate-null-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-022",
+      "path": "invalid/multi-document.yaml",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-022",
+      "path": "invalid/trailing-empty-document.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-023",
       "path": "invalid/collection-key.lock",
       "exit": 1,
       "output": "{file}: error: invalid YAML"
     },
     {
+      "id": "C-023",
+      "path": "invalid/nested-collection-key.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-023",
+      "path": "invalid/tagged-key-with-collection-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-024",
+      "path": "invalid/hex-out-of-range.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-024",
+      "path": "invalid/hoshen-i64-min.lock",
+      "exit": 1,
+      "output": "{file}: error: unsupported hoshen version -9223372036854775808 (supported: 1)"
+    },
+    {
+      "id": "C-024",
+      "path": "invalid/hoshen-u64-max.lock",
+      "exit": 1,
+      "output": "{file}: error: unsupported hoshen version 18446744073709551615 (supported: 1)"
+    },
+    {
+      "id": "C-024",
+      "path": "invalid/int-below-i64-min.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-024",
+      "path": "invalid/int-out-of-range-elsewhere.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-024",
+      "path": "invalid/int-out-of-range.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-025",
+      "path": "invalid/lock-urim-true.lock",
+      "exit": 1,
+      "output": "{file}: error: urim must be a string"
+    },
+    {
+      "id": "C-025",
+      "path": "valid/urim-timestamp-is-a-string.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 2026-10-25)"
+    },
+    {
+      "id": "C-025",
+      "path": "valid/urim-yes-is-a-string.decision.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract x@1.0.0, urim yes)"
+    },
+    {
+      "id": "C-025",
+      "path": "valid/yaml-1.1-directive-keeps-core-schema.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim yes)"
+    },
+    {
+      "id": "C-026",
+      "path": "valid/hoshen-hex.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
+      "id": "C-026",
+      "path": "valid/hoshen-octal.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
+      "id": "C-026",
+      "path": "valid/hoshen-plus-sign.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
+      "id": "C-027",
+      "path": "invalid/hoshen-leading-zero.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-027",
+      "path": "invalid/hoshen-underscore.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-027",
+      "path": "invalid/hoshen-uppercase-hex-prefix.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-028",
+      "path": "invalid/hoshen-exponent.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-028",
+      "path": "invalid/hoshen-float.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-028",
+      "path": "invalid/hoshen-inf.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-029",
+      "path": "invalid/hoshen-tagged-float.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-029",
       "path": "invalid/hoshen-tagged-str.lock",
       "exit": 1,
       "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-029",
+      "path": "valid/hoshen-tagged-int-string.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
+      "id": "C-030",
+      "path": "invalid/comments-only.yaml",
+      "exit": 1,
+      "output": "{file}: error: root must be a mapping"
+    },
+    {
+      "id": "C-030",
+      "path": "invalid/empty.yaml",
+      "exit": 1,
+      "output": "{file}: error: root must be a mapping"
+    },
+    {
+      "id": "C-030",
+      "path": "invalid/explicit-empty-document.yaml",
+      "exit": 1,
+      "output": "{file}: error: root must be a mapping"
+    },
+    {
+      "id": "C-031",
+      "path": "invalid/root-scalar.yaml",
+      "exit": 1,
+      "output": "{file}: error: root must be a mapping"
+    },
+    {
+      "id": "C-031",
+      "path": "invalid/root-sequence.yaml",
+      "exit": 1,
+      "output": "{file}: error: root must be a mapping"
+    },
+    {
+      "id": "C-031",
+      "path": "valid/flow-mapping-root.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
+      "id": "C-032",
+      "path": "valid/anchor-alias.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+    },
+    {
+      "id": "C-033",
+      "path": "invalid/merge-key-not-applied.yaml",
+      "exit": 1,
+      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
+    },
+    {
+      "id": "C-034",
+      "path": "valid/key-spellings.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
+      "id": "C-034",
+      "path": "valid/string-and-int-keys-distinct.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
+      "id": "C-040",
+      "path": "invalid/lockfile-dctp-is-not-urim.lock",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s): urim"
+    },
+    {
+      "id": "C-040",
+      "path": "valid/lockfile-wins-over-dctp.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
+      "id": "C-041",
+      "path": "invalid/hoshen-bool.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-041",
+      "path": "invalid/hoshen-empty-value.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-041",
+      "path": "invalid/hoshen-mapping.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-041",
+      "path": "invalid/hoshen-null.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-041",
+      "path": "invalid/hoshen-sequence.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-041",
+      "path": "invalid/hoshen-string.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-042",
+      "path": "invalid/hoshen-negative-zero.lock",
+      "exit": 1,
+      "output": "{file}: error: unsupported hoshen version 0 (supported: 1)"
+    },
+    {
+      "id": "C-042",
+      "path": "invalid/hoshen-negative.lock",
+      "exit": 1,
+      "output": "{file}: error: unsupported hoshen version -1 (supported: 1)"
+    },
+    {
+      "id": "C-042",
+      "path": "invalid/hoshen-unsupported-hex.lock",
+      "exit": 1,
+      "output": "{file}: error: unsupported hoshen version 2 (supported: 1)"
+    },
+    {
+      "id": "C-042",
+      "path": "invalid/hoshen-unsupported.lock",
+      "exit": 1,
+      "output": "{file}: error: unsupported hoshen version 2 (supported: 1)"
+    },
+    {
+      "id": "C-042",
+      "path": "invalid/hoshen-zero.lock",
+      "exit": 1,
+      "output": "{file}: error: unsupported hoshen version 0 (supported: 1)"
+    },
+    {
+      "id": "C-043",
+      "path": "invalid/lock-missing-urim.lock",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s): urim"
+    },
+    {
+      "id": "C-044",
+      "path": "invalid/lock-urim-int.lock",
+      "exit": 1,
+      "output": "{file}: error: urim must be a string"
+    },
+    {
+      "id": "C-044",
+      "path": "invalid/lock-urim-mapping.lock",
+      "exit": 1,
+      "output": "{file}: error: urim must be a string"
+    },
+    {
+      "id": "C-044",
+      "path": "invalid/lock-urim-not-string.lock",
+      "exit": 1,
+      "output": "{file}: error: urim must be a string"
+    },
+    {
+      "id": "C-044",
+      "path": "invalid/lock-urim-null.lock",
+      "exit": 1,
+      "output": "{file}: error: urim must be a string"
+    },
+    {
+      "id": "C-045",
+      "path": "../spec/examples/urim.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
+      "id": "C-045",
+      "path": "valid/lock-urim-empty-string.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim )"
+    },
+    {
+      "id": "C-045",
+      "path": "valid/minimal.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
+      "id": "C-046",
+      "path": "invalid/lock-order-hoshen-type-first.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-046",
+      "path": "invalid/lock-order-version-before-urim.lock",
+      "exit": 1,
+      "output": "{file}: error: unsupported hoshen version 2 (supported: 1)"
+    },
+    {
+      "id": "C-050",
+      "path": "invalid/contract-both-keys-bad-types.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: set only one of 'dctp' or 'urim'"
+    },
+    {
+      "id": "C-050",
+      "path": "invalid/contract-both-version-keys.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: set only one of 'dctp' or 'urim'"
+    },
+    {
+      "id": "C-051",
+      "path": "invalid/contract-dctp-not-string.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: dctp must be a string"
+    },
+    {
+      "id": "C-051",
+      "path": "invalid/contract-dctp-null.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: dctp must be a string"
+    },
+    {
+      "id": "C-051",
+      "path": "invalid/contract-urim-not-string.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: urim must be a string"
+    },
+    {
+      "id": "C-052",
+      "path": "invalid/contract-missing-all.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s): contract, version, state, questions"
+    },
+    {
+      "id": "C-052",
+      "path": "invalid/contract-missing-keys.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s): version, state, questions"
+    },
+    {
+      "id": "C-052",
+      "path": "invalid/contract-missing-state-only.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s): state"
+    },
+    {
+      "id": "C-053",
+      "path": "invalid/contract-id-checked-before-version.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: contract must be a string"
+    },
+    {
+      "id": "C-053",
+      "path": "invalid/contract-id-not-string.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: contract must be a string"
+    },
+    {
+      "id": "C-053",
+      "path": "invalid/contract-version-not-string.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: version must be a string"
+    },
+    {
+      "id": "C-054",
+      "path": "invalid/contract-state-not-mapping.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: state must be a mapping"
+    },
+    {
+      "id": "C-054",
+      "path": "invalid/contract-state-null.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: state must be a mapping"
+    },
+    {
+      "id": "C-054",
+      "path": "valid/contract-empty-state.decision.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract c@v, urim 0.1)"
+    },
+    {
+      "id": "C-055",
+      "path": "invalid/contract-empty-questions.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: questions must be a non-empty mapping"
+    },
+    {
+      "id": "C-055",
+      "path": "invalid/contract-questions-null.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: questions must be a non-empty mapping"
+    },
+    {
+      "id": "C-055",
+      "path": "invalid/contract-questions-sequence.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: questions must be a non-empty mapping"
+    },
+    {
+      "id": "C-056",
+      "path": "../spec/examples/incident-triage.decision.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract incident-triage@1.2.0, dctp 0.1)"
+    },
+    {
+      "id": "C-056",
+      "path": "../spec/examples/kyc-document-check.decision.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract kyc-document-check@0.3.0, dctp 0.1)"
+    },
+    {
+      "id": "C-056",
+      "path": "valid/contract-multiline-id.decision.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract a\nb@v, urim 0.1)"
+    },
+    {
+      "id": "C-056",
+      "path": "valid/minimal-urim.decision.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract minimal@0.0.1, urim 0.1)"
+    },
+    {
+      "id": "C-057",
+      "path": "invalid/contract-order-key-type-first.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: dctp must be a string"
+    },
+    {
+      "id": "C-057",
+      "path": "invalid/contract-order-missing-before-types.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: missing required key(s): version, state, questions"
+    },
+    {
+      "id": "C-057",
+      "path": "invalid/contract-order-state-before-questions.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: state must be a mapping"
+    },
+    {
+      "id": "C-060",
+      "path": "../spec/examples/providers/cloudflare-clef-flash.provider.yaml",
+      "exit": 1,
+      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
+    },
+    {
+      "id": "C-060",
+      "path": "invalid/empty-mapping.yaml",
+      "exit": 1,
+      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
+    },
+    {
+      "id": "C-060",
+      "path": "invalid/unrecognized.yaml",
+      "exit": 1,
+      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
     }
   ]
 }

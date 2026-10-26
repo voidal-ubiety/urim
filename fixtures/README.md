@@ -28,4 +28,10 @@ Checks run in this order. The first failure wins.
    OK output: `ok (contract ID@VERSION, KEY V)`.
 6. Anything else: `not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'`. That includes provider descriptors, which v0.0.1 does not check.
 
-Known limits: anything not covered by `cases.json` (e.g. merge keys `<<`, unusual tags, `.inf`/`.nan`) is outside the conformance set. `scripts/parity.sh` runs all three CLIs over every case and requires byte-identical output.
+## Files
+
+- `cases.json`: file-level cases (`urim check <path>`). Each case has the `id` of the [`CONTRACT.md`](../CONTRACT.md) entry it pins.
+- `cli.json`: argv-level cases (flags, usage errors, stdout vs stderr, verbatim paths), run with this directory as cwd.
+- `divergences.json` + `divergent/`: inputs where the ports knowingly differ (CONTRACT.md section D). Each port pins its own behavior; `scripts/parity.sh` skips them.
+
+`scripts/parity.sh` runs all three CLIs over every `cases.json` and `cli.json` case and requires byte-identical output. [`CONTRACT.md`](../CONTRACT.md) is the full catalog.

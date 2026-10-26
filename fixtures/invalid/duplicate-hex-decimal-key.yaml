@@ -1,0 +1,5 @@
+# C-021: 0x1 and 1 are the same integer key
+0x1: a
+1: b
+hoshen: 1
+urim: "0.1"

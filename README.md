@@ -29,7 +29,7 @@ urim check spec/examples/incident-triage.decision.yaml
 # spec/examples/incident-triage.decision.yaml: ok (contract incident-triage@1.2.0, dctp 0.1)
 ```
 
-`urim check` exits 0 when the file is valid, 1 with a message naming the file and the problem when it isn't, and 2 on a usage error. The three implementations (TypeScript, Python, Rust) produce identical output on the shared fixtures in [`fixtures/`](fixtures/README.md).
+`urim check` exits 0 when the file is valid, 1 with a message naming the file and the problem when it isn't, and 2 on a usage error. The three implementations (TypeScript, Python, Rust) produce identical output on the shared fixtures in [`fixtures/`](fixtures/README.md). Every behavior is catalogued in [`CONTRACT.md`](CONTRACT.md), and `scripts/verify.sh` checks all of it.
 
 ## Repository layout
 
@@ -39,7 +39,8 @@ fixtures/             shared conformance cases for `urim check`
 packages/js           npm package `urim` (TypeScript, ESM)
 packages/python       PyPI package `urim`
 packages/rust         crates.io crate `urim`
-scripts/              cross-language parity check (scripts/parity.sh)
+scripts/              verify.sh (all tests, 100% coverage, parity, contract check)
+CONTRACT.md           the behavior contract: every rule with an ID, spec reference and tests
 PUBLISHING.md         exact publish/push commands (nothing published yet)
 ```
 

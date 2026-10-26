@@ -1,0 +1,3 @@
+# C-024: -2^63 is in range (so it reaches the version check)
+hoshen: -9223372036854775808
+urim: "0.1"

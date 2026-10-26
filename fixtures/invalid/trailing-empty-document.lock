@@ -1,0 +1,4 @@
+# C-022: a trailing --- starts a second (empty) document
+hoshen: 1
+urim: "0.1"
+---

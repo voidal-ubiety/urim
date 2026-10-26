@@ -1,0 +1,257 @@
+{
+  "comment": "Known cross-language divergences, outside the conformance set (see CONTRACT.md, section D). Each implementation pins its own current behavior so any change is deliberate. parity.sh skips these.",
+  "cases": [
+    {
+      "id": "D-001",
+      "path": "divergent/custom-tag-scalar.lock",
+      "expect": {
+        "js": {
+          "exit": 1,
+          "output": "{file}: error: hoshen must be an integer"
+        },
+        "rust": {
+          "exit": 1,
+          "output": "{file}: error: hoshen must be an integer"
+        },
+        "python": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        }
+      }
+    },
+    {
+      "id": "D-002",
+      "path": "divergent/int-tag-non-numeric.lock",
+      "expect": {
+        "js": {
+          "exit": 1,
+          "output": "{file}: error: hoshen must be an integer"
+        },
+        "rust": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        },
+        "python": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        }
+      }
+    },
+    {
+      "id": "D-003",
+      "path": "divergent/timestamp-tag.lock",
+      "expect": {
+        "js": {
+          "exit": 1,
+          "output": "{file}: error: urim must be a string"
+        },
+        "rust": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim 2026-01-01)"
+        },
+        "python": {
+          "exit": 1,
+          "output": "{file}: error: urim must be a string"
+        }
+      }
+    },
+    {
+      "id": "D-003",
+      "path": "divergent/binary-tag.lock",
+      "expect": {
+        "js": {
+          "exit": 1,
+          "output": "{file}: error: urim must be a string"
+        },
+        "rust": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim aGk=)"
+        },
+        "python": {
+          "exit": 1,
+          "output": "{file}: error: urim must be a string"
+        }
+      }
+    },
+    {
+      "id": "D-004",
+      "path": "divergent/custom-tag-mapping.lock",
+      "expect": {
+        "js": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        },
+        "rust": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        },
+        "python": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        }
+      }
+    },
+    {
+      "id": "D-005",
+      "path": "divergent/control-char.lock",
+      "expect": {
+        "js": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim a\u0007)"
+        },
+        "rust": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        },
+        "python": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        }
+      }
+    },
+    {
+      "id": "D-005",
+      "path": "divergent/nul-byte.lock",
+      "expect": {
+        "js": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x\u0000)"
+        },
+        "rust": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        },
+        "python": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        }
+      }
+    },
+    {
+      "id": "D-006",
+      "path": "divergent/next-line-char.lock",
+      "expect": {
+        "js": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim ab)"
+        },
+        "rust": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        },
+        "python": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        }
+      }
+    },
+    {
+      "id": "D-007",
+      "path": "divergent/double-bom.lock",
+      "expect": {
+        "js": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        },
+        "rust": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        },
+        "python": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        }
+      }
+    },
+    {
+      "id": "D-008",
+      "path": "divergent/document-end-only.yaml",
+      "expect": {
+        "js": {
+          "exit": 1,
+          "output": "{file}: error: root must be a mapping"
+        },
+        "rust": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        },
+        "python": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        }
+      }
+    },
+    {
+      "id": "D-009",
+      "path": "divergent/yaml-1.3-directive.lock",
+      "expect": {
+        "js": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        },
+        "rust": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        },
+        "python": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        }
+      }
+    },
+    {
+      "id": "D-009",
+      "path": "divergent/unknown-directive.lock",
+      "expect": {
+        "js": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        },
+        "rust": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        },
+        "python": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        }
+      }
+    },
+    {
+      "id": "D-010",
+      "path": "divergent/alias-expansion-over-100.lock",
+      "expect": {
+        "js": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        },
+        "rust": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        },
+        "python": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        }
+      }
+    },
+    {
+      "id": "D-011",
+      "path": "divergent/duplicate-nan-key.lock",
+      "expect": {
+        "js": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        },
+        "rust": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        },
+        "python": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        }
+      }
+    }
+  ]
+}

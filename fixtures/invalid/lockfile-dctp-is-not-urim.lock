@@ -1,0 +1,3 @@
+# C-040: a lockfile needs urim; dctp does not count
+hoshen: 1
+dctp: "0.1"

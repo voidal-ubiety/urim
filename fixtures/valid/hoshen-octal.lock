@@ -1,0 +1,3 @@
+# C-026: 0o octal integers are core-schema integers
+hoshen: 0o1
+urim: "0.1"

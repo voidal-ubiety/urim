@@ -1,0 +1,5 @@
+%YAML 1.1
+---
+# C-025: a %YAML 1.1 directive does not switch on 1.1 booleans
+hoshen: 1
+urim: yes

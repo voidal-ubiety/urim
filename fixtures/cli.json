@@ -1,0 +1,214 @@
+{
+  "comment": "Shared CLI cases. Run each implementation's `urim` with `args`, working directory = this fixtures/ directory, and require the exact exit code, stdout and stderr.",
+  "cases": [
+    {
+      "id": "C-001",
+      "args": [
+        "--version"
+      ],
+      "exit": 0,
+      "stdout": "urim 0.0.1\n",
+      "stderr": ""
+    },
+    {
+      "id": "C-001",
+      "args": [
+        "-V"
+      ],
+      "exit": 0,
+      "stdout": "urim 0.0.1\n",
+      "stderr": ""
+    },
+    {
+      "id": "C-002",
+      "args": [
+        "--help"
+      ],
+      "exit": 0,
+      "stdout": "usage: urim check <file>\n",
+      "stderr": ""
+    },
+    {
+      "id": "C-002",
+      "args": [
+        "-h"
+      ],
+      "exit": 0,
+      "stdout": "usage: urim check <file>\n",
+      "stderr": ""
+    },
+    {
+      "id": "C-003",
+      "args": [],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "check"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "check",
+        "a",
+        "b"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "lint",
+        "valid/minimal.lock"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "--version",
+        "x"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "--help",
+        "x"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "--bogus"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "-v"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "--VERSION"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "valid/minimal.lock"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-003",
+      "args": [
+        "CHECK",
+        "valid/minimal.lock"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "usage: urim check <file>\n"
+    },
+    {
+      "id": "C-004",
+      "args": [
+        "check",
+        "valid/minimal.lock"
+      ],
+      "exit": 0,
+      "stdout": "valid/minimal.lock: ok (lockfile, hoshen 1, urim 0.1)\n",
+      "stderr": ""
+    },
+    {
+      "id": "C-005",
+      "args": [
+        "check",
+        "invalid/hoshen-unsupported.lock"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "invalid/hoshen-unsupported.lock: error: unsupported hoshen version 2 (supported: 1)\n"
+    },
+    {
+      "id": "C-005",
+      "args": [
+        "check",
+        "invalid/does-not-exist.yaml"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "invalid/does-not-exist.yaml: error: cannot read file\n"
+    },
+    {
+      "id": "C-006",
+      "args": [
+        "check",
+        "./valid/minimal.lock"
+      ],
+      "exit": 0,
+      "stdout": "./valid/minimal.lock: ok (lockfile, hoshen 1, urim 0.1)\n",
+      "stderr": ""
+    },
+    {
+      "id": "C-006",
+      "args": [
+        "check",
+        "valid/name with spaces.lock"
+      ],
+      "exit": 0,
+      "stdout": "valid/name with spaces.lock: ok (lockfile, hoshen 1, urim 0.1)\n",
+      "stderr": ""
+    },
+    {
+      "id": "C-006",
+      "args": [
+        "check",
+        "../fixtures/valid//minimal.lock"
+      ],
+      "exit": 0,
+      "stdout": "../fixtures/valid//minimal.lock: ok (lockfile, hoshen 1, urim 0.1)\n",
+      "stderr": ""
+    },
+    {
+      "id": "C-006",
+      "args": [
+        "check",
+        "--version"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "--version: error: cannot read file\n"
+    }
+  ]
+}

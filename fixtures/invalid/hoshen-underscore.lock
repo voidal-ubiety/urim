@@ -1,0 +1,3 @@
+# C-027: 1_0 (YAML 1.1 digit separator) is a string under the core schema
+hoshen: 1_0
+urim: "0.1"

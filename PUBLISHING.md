@@ -2,14 +2,15 @@
 
 Nothing here has been published or pushed yet. Run these commands yourself. Each registry claims the name on the **first successful publish**. Do the first publish of each package interactively from your own machine. Trusted publishing (CI) can be set up afterwards.
 
-Before publishing, run all checks from the repo root:
+Before publishing, run every check from the repo root with one command:
 
 ```sh
-(cd packages/js && npm ci && npm test)
-(cd packages/python && python -m venv .venv && .venv/bin/pip install -e '.[test]' build twine && .venv/bin/pytest)
-(cd packages/rust && cargo test)
-PYTHON=packages/python/.venv/bin/python scripts/parity.sh
+scripts/verify.sh
 ```
+
+It runs, in order: each package's tests with coverage enforced at 100% (JS c8; Python pytest-cov with branch coverage; Rust cargo-llvm-cov, with branch coverage on a nightly toolchain); `scripts/parity.sh`, which requires byte-identical output from all three CLIs; and `scripts/contract-check.py`, which requires every ID in [`CONTRACT.md`](CONTRACT.md) to have a test in every language. It needs node + npm, [uv](https://docs.astral.sh/uv/) (or `PYTHON=/path/to/venv/bin/python` with `pip install -e packages/python --group dev`; pip >= 25.1 reads dependency groups), and cargo with `cargo-llvm-cov`.
+
+When you bump a version, update `fixtures/cli.json` (the `--version` cases) along with the three manifests.
 
 ## 1. GitHub (once github.com/no-complect/urim exists)
 

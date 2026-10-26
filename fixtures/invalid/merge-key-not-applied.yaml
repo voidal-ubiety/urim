@@ -1,0 +1,2 @@
+# C-033: << is a literal key; merge keys are not applied
+<<: { hoshen: 1, urim: "0.1" }

@@ -1,0 +1,5 @@
+# C-021: ~ and null are the same key
+~: a
+null: b
+hoshen: 1
+urim: "0.1"

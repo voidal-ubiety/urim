@@ -1,0 +1,4 @@
+urim: "0.1"
+contract: c
+version: v
+questions: { q: {} }

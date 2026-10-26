@@ -1,0 +1,6 @@
+# C-032: anchors and aliases resolve, as values and as keys
+hoshen: 1
+urim: &u x
+*u : y
+shared: &s { k: v }
+again: *s
