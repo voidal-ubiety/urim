@@ -1,0 +1,30 @@
+# Local only, and NOT enabled for a first publish: each registry's first publish is a manual
+# one by David (PUBLISHING.md). This workflow is for later releases via trusted publishing
+# (OIDC, no long-lived tokens) once each package exists and its trusted publisher is set.
+# A new npm trusted-publisher config expires unless its first publish succeeds within 2 days.
+name: publish
+on:
+  push:
+    tags: ["v*"]
+permissions: {}
+jobs:
+  npm:
+    runs-on: ubuntu-24.04
+    environment: release
+    permissions:
+      contents: read
+      id-token: write # npm trusted publishing + provenance (needs a public repo)
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22.14.0" # trusted publishing needs Node >= 22.14.0
+          registry-url: "https://registry.npmjs.org"
+      - run: npm install -g npm@11.5.1 # trusted publishing needs npm >= 11.5.1
+      - working-directory: packages/js
+        run: |
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run build
+          npm publish
