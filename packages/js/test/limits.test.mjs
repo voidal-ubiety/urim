@@ -72,3 +72,8 @@ test("C-089 control and invisible characters in the file name are escaped", () =
 test("C-071 misuse of the API (non-string text) is a TypeError, not a check result", () => {
   assert.throws(() => urim.checkText("f", 42), TypeError);
 });
+
+test("C-080 a 300k-item flow sequence inside MAX_BYTES is checked, not a crash (bug B-8)", () => {
+  const text = `hoshen: 1\nurim: x\nq: [${"1,".repeat(300_000)}1]\n`;
+  assert.equal(urim.checkText("wide.lock", text).line, "wide.lock: ok (lockfile, hoshen 1, urim x)");
+});

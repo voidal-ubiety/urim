@@ -92,7 +92,8 @@ function walk(root: Node): Walk {
     if ((isMap(node) || isSeq(node)) && depth > MAX_DEPTH) {
       result.tooDeep = { at, problem: Problem.tooDeep };
     }
-    stack.push(...children.reverse());
+    // Push one by one: spreading a large collection as call arguments overflows V8's stack (bug B-8).
+    for (const child of children.reverse()) stack.push(child);
   }
   return result;
 }
