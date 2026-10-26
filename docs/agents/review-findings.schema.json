@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urim/docs/agents/review-findings.schema.json",
+  "title": "Agent report self_check record (D-30)",
+  "type": "object",
+  "required": ["self_check"],
+  "properties": {
+    "self_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passes", "findings_per_pass", "fixes", "unverified", "status"],
+      "properties": {
+        "passes": {"type": "integer", "minimum": 1, "maximum": 3},
+        "findings_per_pass": {"type": "array", "items": {"type": "integer", "minimum": 0}, "minItems": 1, "maxItems": 3},
+        "fixes": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "unverified": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "status": {"enum": ["done", "blocked"]}
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+# Not legal advice. This is a project policy for automated checks; David approves changes.
+# Single source for dependency-license rules. scripts/audit-legal reads this file:
+#   - L5-Rust: packages/rust/deny.toml [licenses].allow must be a subset of `allow`
+#     (deny.toml lists only what the tree uses; exceptions there are per-crate).
+#   - L5-Py:   `python_allow` is passed to pip-licenses 5.5.5 as --allow-only with
+#     --from=mixed --partial-match. pip-licenses reads trove classifiers when a package
+#     has them, so the classifier spellings must be listed next to the SPDX ids.
+#   - L5-JS:   `allow` (SPDX ids) for license-checker-rseidelsohn --onlyAllow.
+# Ownership: Urim-Shipping maintains it; David is the final approver (docs/legal/README.md).
+project_license: Apache-2.0
+
+# Runtime dependencies that ship inside a urim artifact.
+allow:
+  - Apache-2.0
+  - MIT
+  - ISC
+  - BSD-2-Clause
+  - BSD-3-Clause
+  - 0BSD
+  - Zlib
+  # Unicode-3.0 is allowed per crate only (deny.toml exceptions), never globally.
+
+# Needs a human review (Urim-Shipping, then David) before it may ship.
+review:
+  - MPL-2.0
+  - Unlicense      # alone; fine as one option of a dual licence
+  - CC0-1.0
+  - PSF-2.0
+  - BlueOak-1.0.0
+
+deny:
+  - GPL
+  - LGPL
+  - AGPL
+  - SSPL
+  - BUSL
+  - CC-BY-NC
+  - Elastic-2.0
+  - Commons Clause
+  - UNLICENSED
+  - UNKNOWN
+  - NOASSERTION
+
+# pip-licenses --allow-only entries. With --partial-match an entry matches any license
+# name that contains it (case-insensitive substring). A package passes if any one of its
+# license names matches.
+python_allow:
+  - Apache-2.0
+  - Apache Software License   # License :: OSI Approved :: Apache Software License (e.g. requests)
+  - MIT                        # also matches the "MIT License" classifier
+  - ISC
+  - BSD-2-Clause
+  - BSD-3-Clause
+  - BSD License                # License :: OSI Approved :: BSD License
+  - 0BSD
+  - Zlib
+
+# Dev tools (linters, test runners, coverage) are reported, never gate a release.
+dev_tools: report-only

@@ -1,0 +1,382 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+"""Legal gate (Not legal advice: it checks files against docs/legal/license-policy.yaml).
+
+    scripts/audit-legal [--release] [--offline]
+
+Exit 0 PASS, 1 FAIL, 2 a required tool is missing (and nothing FAILed).
+Writes build/legal/audit-legal.json: [{rule, status, detail, source}].
+Statuses: PASS, FAIL, WARN (a *R* rule outside --release), SKIP (tool, network, or
+not implemented yet; the detail says which). With --release, WARN becomes FAIL and a SKIP
+for a missing tool exits 2. Spec: urim-shipping AUDIT-LEGAL-GATE-SPEC.md. Implemented
+here: L1 L2 L4 L5-Rust L5-Py M1 M3 M5 C1 C3 C4 T1 T4 T5. The others report SKIP (not implemented).
+"""
+from __future__ import annotations
+
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+import yaml
+
+ROOT = Path(__file__).resolve().parent.parent
+POLICY_PATH = "docs/legal/license-policy.yaml"
+
+
+def people() -> dict:
+    """config/people.yaml: the one swappable place for names, emails and handles."""
+    return yaml.safe_load((ROOT / "config" / "people.yaml").read_text(encoding="utf-8"))
+
+
+PIP_LICENSES = "pip-licenses==5.5.5"
+results: list[dict[str, str]] = []
+tool_missing = False
+
+
+def add(rule: str, status: str, detail: str, source: str = "") -> None:
+    results.append({"rule": rule, "status": status, "detail": detail, "source": source})
+
+
+def policy() -> dict:
+    return yaml.safe_load((ROOT / POLICY_PATH).read_text(encoding="utf-8"))
+
+
+def python_allow_string(pol: dict) -> str:
+    """The --allow-only value for pip-licenses (L5-Py)."""
+    return ";".join(pol["python_allow"])
+
+
+# ---- L1 / L2 / L4 -----------------------------------------------------------------------
+def l1() -> None:
+    canon = (ROOT / "LICENSE").read_bytes()
+    bad = [p for p in ("packages/js/LICENSE", "packages/python/LICENSE", "packages/rust/LICENSE")
+           if (ROOT / p).read_bytes() != canon]
+    ok = b"Apache License" in canon and b"Version 2.0, January 2004" in canon
+    add("L1", "PASS" if ok and not bad else "FAIL",
+        "LICENSE is Apache-2.0 and all 4 copies are byte-identical" if ok and not bad
+        else f"not Apache-2.0 or differs: {bad}", "LICENSE")
+
+
+def l2(pol: dict) -> None:
+    want = pol["project_license"]
+    found = {
+        "packages/js/package.json": json.loads((ROOT / "packages/js/package.json").read_text())["license"],
+        "packages/js/jsr.json": json.loads((ROOT / "packages/js/jsr.json").read_text()).get("license"),
+        "packages/python/pyproject.toml": _toml(ROOT / "packages/python/pyproject.toml", "license"),
+        "packages/rust/Cargo.toml": _toml(ROOT / "packages/rust/Cargo.toml", "license"),
+    }
+    bad = {k: v for k, v in found.items() if v != want}
+    add("L2", "FAIL" if bad else "PASS", f"manifests declare {want}" if not bad else f"mismatch: {bad}")
+
+
+def _toml(path: Path, key: str) -> str | None:
+    m = re.search(rf'^{key}\s*=\s*"([^"]*)"', path.read_text(encoding="utf-8"), re.M)
+    return m.group(1) if m else None
+
+
+def l4() -> None:
+    want = people()["copyright"]
+    files = ["NOTICE", "packages/js/NOTICE", "packages/python/NOTICE", "packages/rust/NOTICE"]
+    bad = [f for f in files if want not in (ROOT / f).read_text(encoding="utf-8")]
+    add("L4", "FAIL" if bad else "PASS", f"NOTICE names: {want}" if not bad else f"missing in {bad}")
+
+
+# ---- L5 ---------------------------------------------------------------------------------
+def l5_rust(pol: dict) -> None:
+    text = (ROOT / "packages/rust/deny.toml").read_text(encoding="utf-8")
+    m = re.search(r"^\[licenses\].*?^allow = \[([^\]]*)\]", text, re.M | re.S)
+    allow = re.findall(r'"([^"]+)"', m.group(1)) if m else []
+    extra = sorted(set(allow) - set(pol["allow"]))
+    if extra or not allow:
+        add("L5-Rust", "FAIL", f"deny.toml allows licenses outside the policy: {extra or 'none parsed'}", "deny.toml")
+        return
+    if not shutil.which("cargo-deny"):
+        _missing("L5-Rust", "cargo-deny not installed")
+        return
+    r = subprocess.run(["cargo", "deny", "-L", "error", "check", "licenses"], cwd=ROOT / "packages/rust",
+                       capture_output=True, text=True)
+    add("L5-Rust", "PASS" if r.returncode == 0 else "FAIL",
+        "cargo deny check licenses (deny.toml ⊆ policy)" if r.returncode == 0 else r.stderr[-800:], "deny.toml")
+
+
+def l5_py(pol: dict, offline: bool) -> None:
+    lock = ROOT / "packages/python/uv.lock"
+    if not lock.exists():
+        add("L5-Py", "FAIL", "packages/python/uv.lock is missing (a lock is required)", "uv.lock")
+        return
+    if offline:
+        add("L5-Py", "SKIP", "--offline: installing the locked runtime deps needs PyPI")
+        return
+    if not shutil.which("uv"):
+        _missing("L5-Py", "uv not installed")
+        return
+    with tempfile.TemporaryDirectory() as tmp:
+        req = Path(tmp) / "req.txt"
+        exp = subprocess.run(["uv", "export", "--frozen", "--no-dev", "--no-emit-project", "-o", str(req)],
+                             cwd=ROOT / "packages/python", capture_output=True, text=True)
+        env = Path(tmp) / "env"
+        steps = [exp] if exp.returncode else [
+            subprocess.run(["uv", "venv", "-q", str(env)], capture_output=True, text=True),
+            subprocess.run(["uv", "pip", "install", "-q", "-p", str(env / "bin/python"), "-r", str(req)],
+                           capture_output=True, text=True),
+        ]
+        failed = next((s for s in steps if s.returncode), None)
+        if failed:
+            add("L5-Py", "SKIP", f"could not build the runtime env: {failed.stderr.strip()[-300:]}")
+            return
+        names = [ln.split("==")[0] for ln in req.read_text().splitlines() if "==" in ln]
+        r = run_pip_licenses(env / "bin/python", names, python_allow_string(pol))
+        add("L5-Py", "PASS" if r.returncode == 0 else "FAIL",
+            f"{len(names)} locked runtime deps allowed: {', '.join(names)}" if r.returncode == 0
+            else (r.stderr or r.stdout).strip()[-800:], "uv.lock")
+
+
+def run_pip_licenses(python: Path, packages: list[str], allow: str) -> subprocess.CompletedProcess[str]:
+    """pip-licenses 5.5.5 (pinned), run through uvx unless PIP_LICENSES points at a binary."""
+    cmd = [os.environ["PIP_LICENSES"]] if os.environ.get("PIP_LICENSES") else ["uvx", "--quiet", "--from", PIP_LICENSES, "pip-licenses"]
+    return subprocess.run(cmd + ["--python", str(python), "--from=mixed", "--partial-match",
+                                 "--allow-only", allow, "--packages", *packages],
+                          capture_output=True, text=True)
+
+
+# ---- M / C / T --------------------------------------------------------------------------
+def m1() -> None:
+    r = subprocess.run([sys.executable, "scripts/check-project"], cwd=ROOT, capture_output=True, text=True)
+    add("M1", "PASS" if r.returncode == 0 else "FAIL", (r.stdout or r.stderr).strip()[-600:], "scripts/check-project")
+
+
+EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)*(?:invalid|example\.(?:com|org|net))\b")
+
+
+def m3() -> None:
+    files = subprocess.run(["git", "ls-files", "-co", "--exclude-standard"], cwd=ROOT,
+                           capture_output=True, text=True).stdout.split()
+    hits = []
+    for f in files:
+        # spec/ is a verbatim upstream copy; its changelog *describes* the old address.
+        if f.startswith("spec/") or f == "scripts/audit-legal" or not (ROOT / f).is_file():
+            continue
+        try:
+            if EMAIL.search((ROOT / f).read_text(encoding="utf-8")):
+                hits.append(f)
+        except UnicodeDecodeError:
+            pass
+    if hits:
+        add("M3", "FAIL", f"placeholder email in shipped files: {hits}")
+    authors = subprocess.run(["git", "log", "--format=%ae%n%ce"], cwd=ROOT, capture_output=True, text=True).stdout
+    bad = sorted({a for a in authors.split() if EMAIL.fullmatch(a)})
+    if bad:
+        add("M3", "WARN", f"git history uses {bad}; rewrite per RELEASE-RUNBOOK §3a before publishing (expected until then)", "git log")
+    elif not hits:
+        add("M3", "PASS", "no placeholder emails in files or git history")
+
+
+def c4() -> None:
+    p = ROOT / "SECURITY.md"
+    contact = people()["security_contact"]
+    if not p.exists() or contact not in p.read_text(encoding="utf-8"):
+        add("C4", "FAIL", "SECURITY.md missing or has no contact")
+        return
+    promises = sorted({m.group(0) for m in PROMISE.finditer(p.read_text(encoding="utf-8"))})
+    add("C4", "FAIL" if promises else "PASS",
+        f"SECURITY.md makes promises (C1 words): {promises}" if promises
+        else "SECURITY.md exists with the contact email and no C1 promise words")
+
+# T1 dictionary: the gate spec's seed list plus names that may appear later. A hit for any of
+# these in the scanned text must have an entry in docs/legal/marks.yaml.
+MARK_DICTIONARY = (
+    "Jev", "TypeSafe", "OpenAI", "Azure", "LiteLLM", "OpenRouter", "Vercel", "AI SDK",
+    "Cloudflare", "Clef", "Perplexity", "Decider", "Fastino", "GLiDE", "Gemini", "Claude",
+    "Buf", "Protobuf", "Terraform", "TypeScript", "GitHub", "npm", "PyPI", "Rust", "Python",
+    "OpenTelemetry", "jevcompat", "sys1bench", "LangChain", "Anthropic", "Hugging Face",
+    "Deno", "JSR",
+)
+# C1 words (AUDIT-LEGAL-GATE-SPEC.md § C): promises SECURITY.md must not make.
+PROMISE = re.compile(r"early access|sponsors[- ]only|priority (?:fix|support|patch)|\bSLA\b|"
+                     r"guarantee(?:d)? response|enterprise (?:edition|tier|build)|"
+                     r"paid (?:release|tier|version)|\bexclusive\b|private (?:fork|build|release)", re.I)
+
+
+def marks() -> list[dict]:
+    p = ROOT / "docs/legal/marks.yaml"
+    return yaml.safe_load(p.read_text(encoding="utf-8"))["marks"] if p.exists() else []
+
+
+def t1_scan_files() -> list[Path]:
+    files = [ROOT / "README.md", *sorted((ROOT / "spec").rglob("*.md")), *sorted((ROOT / "docs").rglob("*.md"))]
+    files += [ROOT / f for f in ("packages/js/package.json", "packages/python/pyproject.toml",
+                                 "packages/rust/Cargo.toml", "packages/js/jsr.json")]
+    return [f for f in files if f.is_file()]
+
+
+def t1() -> None:
+    entries = marks()
+    if not entries:
+        add("T1", "FAIL", "docs/legal/marks.yaml missing or empty")
+        return
+    need = {"mark", "owner", "kind", "allowed_context", "forbid_in_package_names"}
+    bad = [e.get("mark", "?") for e in entries
+           if not need <= e.keys() or e["kind"] not in ("provider", "tool", "standard", "platform")]
+    if bad:
+        add("T1", "FAIL", f"marks.yaml entries missing fields or with a bad kind: {bad}")
+        return
+    listed = {e["mark"] for e in entries}
+    found: dict[str, str] = {}
+    for f in t1_scan_files():
+        text = f.read_text(encoding="utf-8")
+        for m in MARK_DICTIONARY:
+            if m not in found and re.search(rf"(?<![\w-]){re.escape(m)}(?![\w-])", text):
+                found[m] = str(f.relative_to(ROOT))
+    unlisted = sorted(m for m in found if m not in listed)
+    unverified = sum(1 for e in entries if str(e["owner"]).startswith("UNVERIFIED"))
+    if unlisted:
+        add("T1", "WARN", "marks used but not in marks.yaml: "
+            + ", ".join(f"{m} ({found[m]})" for m in unlisted), "docs/legal/marks.yaml")
+    else:
+        add("T1", "PASS", f"{len(found)} marks found, all in marks.yaml "
+            f"({unverified} of {len(entries)} owners UNVERIFIED)", "docs/legal/marks.yaml")
+
+
+def package_names() -> dict[str, str]:
+    names = {
+        "npm": json.loads((ROOT / "packages/js/package.json").read_text(encoding="utf-8"))["name"],
+        "pypi": _toml(ROOT / "packages/python/pyproject.toml", "name") or "",
+        "crates.io": _toml(ROOT / "packages/rust/Cargo.toml", "name") or "",
+    }
+    jsr = ROOT / "packages/js/jsr.json"
+    if jsr.exists():
+        names["jsr"] = json.loads(jsr.read_text(encoding="utf-8"))["name"]
+    return names
+
+
+def t4() -> None:
+    forbidden = [e["mark"] for e in marks() if e.get("forbid_in_package_names") and not e.get("adapter_name_ok")]
+    hits = [f"{reg} {name} contains {m}" for reg, name in package_names().items()
+            for m in forbidden if re.search(re.escape(m.lower().replace(" ", "")), name.lower())]
+    add("T4", "FAIL" if hits else "PASS",
+        "; ".join(hits) if hits else f"package names {sorted(set(package_names().values()))} contain no listed mark")
+
+
+def slug(heading: str) -> str:
+    """GitHub's heading anchor: lowercase, drop punctuation except - and _, spaces to -."""
+    return re.sub(r"[^\w\- ]", "", heading.strip().lower()).replace(" ", "-")
+
+
+def m5() -> None:
+    sources = ["packages/rust/deny.toml", "packages/rust/Cargo.toml", "README.md", "SECURITY.md",
+               "CONTRIBUTING.md"]
+    sources += sorted(str(f.relative_to(ROOT)) for d in ("docs/legal", "docs/agents")
+                      for f in (ROOT / d).glob("*.md"))
+    link = re.compile(r"(?:\]\(|\s|^)((?:\.\./)*[A-Za-z0-9_./-]+\.(?:md|txt|yaml|json))(#[a-z0-9_-]+)?(?=[)\s]|$)", re.M)
+    md_link = re.compile(r"\]\(((?:\.\./)*[A-Za-z0-9_./-]+)(#[a-z0-9_-]+)?\)")
+    broken = []
+    for src in sources:
+        sp = ROOT / src
+        if not sp.exists():
+            broken.append(f"{src} (missing)")
+            continue
+        # Markdown: only link targets count; prose may name a file without linking it.
+        pattern = md_link if sp.suffix == ".md" else link
+        for m in pattern.finditer(sp.read_text(encoding="utf-8")):
+            rel, anchor = m.group(1), m.group(2)
+            if rel.startswith(("http", "/")):
+                continue
+            target = (sp.parent / rel).resolve()
+            if not target.exists():
+                target = (ROOT / rel).resolve()
+            if not target.exists():
+                broken.append(f"{src}: {rel}")
+            elif anchor and target.suffix == ".md":
+                heads = {slug(h) for h in re.findall(r"^#{1,6} (.+)$", target.read_text(encoding="utf-8"), re.M)}
+                if anchor[1:] not in heads:
+                    broken.append(f"{src}: {rel}{anchor} (no such heading)")
+    add("M5", "FAIL" if broken else "PASS",
+        f"broken legal links: {broken}" if broken else f"links from {len(sources)} files resolve")
+
+
+# C3 network imports (AUDIT-LEGAL-GATE-SPEC.md § C). No adapter or provider module exists, so
+# the allowlist is empty.
+NETWORK = re.compile(r"""['"]node:https?['"]|['"]https?['"]\s*\)|\bfetch\(|\burllib\b|\brequests\b|"""
+                     r"\bsocket\b|\breqwest\b|std::net\b")
+NETWORK_ALLOW: tuple[str, ...] = ()
+SHIPPED_SOURCES = (("packages/js/src", "*.ts"), ("packages/python/src", "*.py"), ("packages/rust/src", "*.rs"))
+# C1 describes the rule itself in these files, so they are not scanned for the words.
+C1_EXEMPT = ("docs/legal/", "docs/agents/legal-audit.md")
+
+
+def c1() -> None:
+    files = [ROOT / "README.md", ROOT / "FUNDING.md", ROOT / ".github/FUNDING.yml",
+             *sorted((ROOT / "docs").rglob("*.md"))]
+    hits = []
+    for f in files:
+        rel = str(f.relative_to(ROOT))
+        if not f.is_file() or rel.startswith(C1_EXEMPT):
+            continue
+        for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+            hits += [f"{rel}:{n}: {m.group(0)}" for m in PROMISE.finditer(line)]
+    funding = (ROOT / ".github/FUNDING.yml").exists() or (ROOT / "FUNDING.md").exists()
+    add("C1", "FAIL" if hits else "PASS", f"funding or promise wording: {hits}" if hits
+        else "no funding or promise wording" + ("" if funding else "; no FUNDING file"))
+
+
+def c3() -> None:
+    hits = []
+    for d, pattern in SHIPPED_SOURCES:
+        for f in sorted((ROOT / d).rglob(pattern)):
+            rel = str(f.relative_to(ROOT))
+            if rel.startswith(NETWORK_ALLOW):
+                continue
+            for n, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+                if NETWORK.search(line):
+                    hits.append(f"{rel}:{n}")
+    add("C3", "FAIL" if hits else "PASS",
+        f"network imports in shipped sources: {hits}" if hits else "no network imports in shipped sources")
+
+
+def t5() -> None:
+    ok = "Jev is a product of TypeSafe" in (ROOT / "README.md").read_text(encoding="utf-8")
+    add("T5", "PASS" if ok else "FAIL", "README carries the Jev/TypeSafe disclaimer" if ok else "README lacks the Jev disclaimer")
+
+
+def _missing(rule: str, why: str) -> None:
+    global tool_missing
+    tool_missing = True
+    add(rule, "SKIP", f"tool missing: {why}")
+
+
+def main(argv: list[str]) -> int:
+    unknown = set(argv) - {"--release", "--offline"}
+    if unknown:
+        print(__doc__.strip().splitlines()[2], file=sys.stderr)
+        return 2
+    release, offline = "--release" in argv, "--offline" in argv
+    pol = policy()
+    l1(); l2(pol); l4(); l5_rust(pol); l5_py(pol, offline); m1(); m3(); m5(); c1(); c3(); c4(); t1(); t4(); t5()
+    for rule in ("L3", "L5-JS", "L6", "L7", "L8", "T2", "T3", "C2", "M2", "M4"):
+        add(rule, "SKIP", "not implemented yet")
+    if release:
+        for r in results:
+            if r["status"] == "WARN":
+                r["status"], r["detail"] = "FAIL", "[--release] " + r["detail"]
+    out = ROOT / "build/legal/audit-legal.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
+    for r in results:
+        print(f"{r['status']:4}  {r['rule']:8} {r['detail']}")
+    if any(r["status"] == "FAIL" for r in results):
+        print("audit-legal: FAIL")
+        return 1
+    if tool_missing and release:
+        print("audit-legal: a required tool is missing")
+        return 2
+    print("audit-legal: PASS" + (" (with WARN)" if any(r["status"] == "WARN" for r in results) else ""))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

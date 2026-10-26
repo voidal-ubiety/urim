@@ -1,0 +1,161 @@
+# Not legal advice. Third-party marks named in Urim's docs, spec and packages.
+# Schema per entry (AUDIT-LEGAL-GATE-SPEC.md § T): mark, owner, kind
+# (provider|tool|standard|platform), allowed_context, forbid_in_package_names.
+# owner: taken from the gate spec's seed list. "UNVERIFIED" means nobody has confirmed
+# the owner yet; confirm each one before this file is published (LEGAL-CHECKLIST A8).
+# scripts/audit-legal T1 fails if a mark from this list's dictionary appears in the
+# scanned files without an entry here; T4 fails if a shipped package name contains one.
+
+marks:
+  - mark: "Jev"
+    owner: "TypeSafe"
+    kind: tool
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+    note: "Urim's README states \"Jev is a product of TypeSafe\". David built Jev Harness on TypeSafe's Jev, not Jev itself."
+  - mark: "TypeSafe"
+    owner: "UNVERIFIED"
+    kind: provider
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "OpenAI"
+    owner: "UNVERIFIED"
+    kind: provider
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Azure"
+    owner: "Microsoft"
+    kind: platform
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "LiteLLM"
+    owner: "UNVERIFIED (BerriAI per the gate spec; not confirmed)"
+    kind: tool
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "OpenRouter"
+    owner: "UNVERIFIED"
+    kind: provider
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Vercel"
+    owner: "UNVERIFIED"
+    kind: platform
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "AI SDK"
+    owner: "UNVERIFIED (Vercel per the gate spec)"
+    kind: tool
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Cloudflare"
+    owner: "UNVERIFIED"
+    kind: platform
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Clef"
+    owner: "UNVERIFIED (Cloudflare per the gate spec)"
+    kind: provider
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Perplexity"
+    owner: "UNVERIFIED"
+    kind: provider
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Decider"
+    owner: "UNVERIFIED (Perplexity per the gate spec)"
+    kind: provider
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Fastino"
+    owner: "UNVERIFIED"
+    kind: provider
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "GLiDE"
+    owner: "UNVERIFIED (Fastino per the gate spec)"
+    kind: provider
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Gemini"
+    owner: "Google"
+    kind: provider
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Claude"
+    owner: "Anthropic"
+    kind: provider
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Buf"
+    owner: "UNVERIFIED"
+    kind: tool
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Protobuf"
+    owner: "Google"
+    kind: standard
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Terraform"
+    owner: "HashiCorp"
+    kind: tool
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "TypeScript"
+    owner: "Microsoft"
+    kind: tool
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "GitHub"
+    owner: "UNVERIFIED"
+    kind: platform
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "npm"
+    owner: "UNVERIFIED"
+    kind: platform
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "PyPI"
+    owner: "UNVERIFIED"
+    kind: platform
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Rust"
+    owner: "Rust Foundation"
+    kind: standard
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "Python"
+    owner: "PSF"
+    kind: standard
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "OpenTelemetry"
+    owner: "CNCF"
+    kind: standard
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "jevcompat"
+    owner: "mandu05.com"
+    kind: tool
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "sys1bench"
+    owner: "UNVERIFIED"
+    kind: tool
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "JSR"
+    owner: "UNVERIFIED"
+    kind: platform
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+  - mark: "LangChain"
+    owner: "UNVERIFIED"
+    kind: tool
+    allowed_context: nominative (naming the product, provider or standard; no endorsement implied)
+    forbid_in_package_names: true
+    note: "Named in spec/CHANGELOG.md only. No LangChain code or adapter exists; David hasn't decided."
