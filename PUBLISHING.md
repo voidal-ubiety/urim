@@ -24,7 +24,7 @@ The repository URL lives in `config/project.json` (`repository`), and so do `hom
 - `packages/rust/Cargo.toml`: `homepage`, `repository`, `documentation`
 - the `<!-- generated:links -->` blocks in `README.md` and `packages/*/README.md`
 
-The repository owner is the GitHub account **`voidal-ubiety`** (repo `voidal-ubiety/urim`), the name of the future holding company (David, t64u/t65u). The homepage stays `https://urim.sh`. `check-project` fails if any other file hard-codes the owner, or if any `github.com/<owner>/urim` URL names a different owner.
+The repository owner is the GitHub organisation **`voidal-ubiety`** (public repo `voidal-ubiety/urim`), the name of the future holding company (David, t64u/t65u). The homepage stays `https://urim.sh`. `check-project` fails if any other file hard-codes the owner, or if any `github.com/<owner>/urim` URL names a different owner.
 
 Remaining spots that name a GitHub account. They are not the repository URL, so they are not changed:
 
@@ -41,14 +41,14 @@ Spec copy flagged for an upstream fix (do not edit `spec/` here):
 
 ## 2. GitHub
 
-Create the repo empty under the `voidal-ubiety` account, with no README or license, so the first push doesn't conflict (David only; nothing has been created):
+Create the repo empty and **public** under the `voidal-ubiety` organisation, with no README or license, so the first push doesn't conflict (David only; nothing has been created):
 
 ```sh
 git remote add origin "$(scripts/check-project --get repository).git"
 git push -u origin main
 ```
 
-Check before the first push (public, read-only lookup on 2026-10-26): a GitHub account `voidal-ubiety` exists, created 2025-04-25, and its type is **User**, not Organization. The repo `voidal-ubiety/urim` does not exist. Whether `voidal-ubiety` stays a user or becomes an organisation is David's open decision P8 (`/workspace/urim-shipping/RELEASE-RUNBOOK.md` §3b0; don't copy the steps here). `config/people.yaml` uses David's personal handle, which is valid either way. Under an organisation, CODEOWNERS can switch to `@voidal-ubiety/<team>` handles.
+Check before the first push (public, read-only lookups on 2026-10-26, last at 13:41 EDT): `voidal-ubiety` is a GitHub **Organization** (id 348431208, created 2026-10-26 13:13 EDT). The earlier `voidal-ubiety` user account (created 2025-04-25) was renamed `vu-control` (User, id 209141439; same id and creation date), which settles P8 (`/workspace/urim-shipping/RELEASE-RUNBOOK.md` §3b0) as an organisation. The stated org owners are `no-complect` and `vu-control`. The public API can't confirm this: the org shows no public members. `voidal-ubiety/urim` will be **public**. The website is a separate **private** repo, `voidal-ubiety/urim-site`, and nothing from it belongs in this repo. Neither repo is visible yet (both return 404, as expected for a repo that doesn't exist or is private). `config/people.yaml` keeps David's personal handle `no-complect`, which stays valid for CODEOWNERS. Now that the owner is an organisation, CODEOWNERS may instead use `@voidal-ubiety/<team>` handles, once such a team exists with write access.
 
 npm provenance needs a **public** repo. npm does not generate provenance for private repositories, even when the package is public (https://docs.npmjs.com/trusted-publishers).
 
