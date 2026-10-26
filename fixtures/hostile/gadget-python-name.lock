@@ -1,0 +1,3 @@
+hoshen: 1
+urim: x
+run: !!python/name:os.system

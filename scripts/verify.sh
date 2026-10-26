@@ -77,6 +77,8 @@ fi
 cd "$ROOT"
 step "parity: byte-identical CLIs"
 PYTHON="$PYTHON" scripts/parity.sh
+step "hostile: hostile inputs under time/RSS bounds, no execution (scripts/hostile.py)"
+PYTHON="$PYTHON" python3 scripts/hostile.py
 step "contract-check: every CONTRACT.md ID tested in every language"
 python3 scripts/contract-check.py
 printf '\nverify OK\n'

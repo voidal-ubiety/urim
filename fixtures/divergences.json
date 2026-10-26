@@ -90,6 +90,24 @@
           "output": "{file}: error: invalid YAML"
         }
       }
+    },
+    {
+      "id": "D-014",
+      "path": "divergent/cr-only-line-breaks.lock",
+      "expect": {
+        "js": {
+          "exit": 1,
+          "output": "{file}: error: invalid YAML"
+        },
+        "rust": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        },
+        "python": {
+          "exit": 0,
+          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+        }
+      }
     }
   ]
 }

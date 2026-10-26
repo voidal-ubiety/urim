@@ -1,0 +1,6 @@
+hoshen: 1
+urim: x
+__proto__: {polluted: yes, hoshen: 2}
+constructor: {prototype: {polluted: yes}}
+prototype: {polluted: yes}
+q: {__proto__: {isAdmin: true}}

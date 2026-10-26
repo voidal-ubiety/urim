@@ -92,7 +92,7 @@ This is the living contract for every behavior of `urim check` and the three lib
 
 - **Behavior:** Bytes that are not valid UTF-8 (Latin-1, UTF-16 with BOM, CESU-encoded surrogates) → `<file>: error: file is not valid UTF-8`. A read that fails after the file has opened (for example `EIO` from `/proc/self/mem`) → `<file>: error: cannot read file`. So does a path with an embedded NUL passed to the library API (`check_file("a\0b")` → `a\u{0000}b: error: cannot read file`; argv cannot carry a NUL, so the CLI never sees one).
 - **Spec:** §5.1 says contracts are YAML; strict UTF-8 is an implementation assumption.
-- **Fixtures (3):** `invalid/encoded-surrogate.lock`, `invalid/not-utf8.yaml`, `invalid/utf16.lock`
+- **Fixtures (6):** `hostile/overlong-utf8.lock`, `hostile/utf16be-bom.lock`, `hostile/utf32le-bom.lock`, `invalid/encoded-surrogate.lock`, `invalid/not-utf8.yaml`, `invalid/utf16.lock`
 - **Tests:** JS `C-013 shared file cases`, `limits.test.mjs` › `C-013 a read error after a successful open …`, `C-013 a NUL in the path …` · Python `test_shared_file_cases[C-013]`, `test_limits.py::test_c013_read_error_after_open_is_cannot_read`, `test_c013_nul_in_the_path_is_cannot_read` · Rust `contract/files.rs::c013_not_utf8`, `contract/limits.rs::c013_read_error_after_open_is_cannot_read`, `c013_nul_in_the_path_is_cannot_read`
 
 ### C-014 Leading BOM
@@ -106,7 +106,7 @@ This is the living contract for every behavior of `urim check` and the three lib
 
 - **Behavior:** CRLF files parse the same as LF.
 - **Spec:** Implementation assumption, not in spec.
-- **Fixtures (1):** `valid/crlf.lock`
+- **Fixtures (2):** `hostile/mixed-crlf-lf.lock`, `valid/crlf.lock`
 - **Tests:** JS `C-015 shared file cases` · Python `test_shared_file_cases[C-015]` · Rust `contract/files.rs::c015_crlf`
 
 ### C-080 Size limit
@@ -137,7 +137,7 @@ Output is sanitized in every result line (C-089).
 
 - **Behavior:** Any character outside YAML 1.2 `c-printable` anywhere in the text (C0 controls other than TAB/LF/CR, NUL, DEL, C1 controls, lone surrogates), or NEL (U+0085), LINE SEPARATOR (U+2028), PARAGRAPH SEPARATOR (U+2029), or U+FEFF other than one leading BOM, → `invalid YAML`. This applies even inside quoted scalars and comments. NEL, LS and PS are excluded because YAML 1.1 parsers treat them as line breaks and YAML 1.2 does not, so two parsers could read different structure from the same bytes. This is the C-082 extension that resolves D-005, D-006 and D-007.
 - **Spec:** §5.1.1; YAML 1.2 §5.1 (`c-printable`).
-- **Fixtures (7):** `invalid/bom-in-quoted-scalar.lock`, `invalid/bom-not-leading.lock`, `invalid/control-char.lock`, `invalid/line-separator.lock`, `invalid/next-line-char.lock`, `invalid/nul-byte.lock`, `invalid/paragraph-separator.lock`
+- **Fixtures (10):** `hostile/ansi-in-comment.lock`, `hostile/double-bom.lock`, `hostile/nul-in-value.lock`, `invalid/bom-in-quoted-scalar.lock`, `invalid/bom-not-leading.lock`, `invalid/control-char.lock`, `invalid/line-separator.lock`, `invalid/next-line-char.lock`, `invalid/nul-byte.lock`, `invalid/paragraph-separator.lock`
 - **Tests:** JS `C-082 shared file cases` · Python `test_shared_file_cases[C-082]` · Rust `contract/files.rs::c082_printable_only`
 
 ### C-083 Nesting depth limit
@@ -151,14 +151,14 @@ Output is sanitized in every result line (C-089).
 
 - **Behavior:** Any anchor (`&a`, used or not, on a scalar or a collection) or alias (`*a`) → `<file>: error: anchors and aliases are not allowed`. This removes alias-expansion attacks (billion laughs) and resolves D-010.
 - **Spec:** §5.1.1.
-- **Fixtures (4):** `invalid/alias-expansion-over-100.lock`, `invalid/anchor-alias.lock`, `invalid/anchor-on-collection.lock`, `invalid/anchor-only.lock`
+- **Fixtures (5):** `hostile/billion-laughs.lock`, `invalid/alias-expansion-over-100.lock`, `invalid/anchor-alias.lock`, `invalid/anchor-on-collection.lock`, `invalid/anchor-only.lock`
 - **Tests:** JS `C-084 shared file cases` · Python `test_shared_file_cases[C-084]` · Rust `contract/files.rs::c084_no_anchors_aliases`
 
 ### C-085 No tags
 
 - **Behavior:** Any tag on any node, including the root, keys, the non-specific `!` and core tags such as `!!str` and `!!int`, → `<file>: error: tags are not allowed`. Values are always resolved by the YAML 1.2 core schema from their plain or quoted form. This replaces C-029 and resolves D-001..D-004.
 - **Spec:** §5.1.1.
-- **Fixtures (13):** `invalid/hoshen-tagged-float.lock`, `invalid/hoshen-tagged-int-string.lock`, `invalid/hoshen-tagged-str.lock`, `invalid/tag-binary.lock`, `invalid/tag-core-str.lock`, `invalid/tag-custom-mapping.lock`, `invalid/tag-custom-scalar.lock`, `invalid/tag-int-non-numeric.lock`, `invalid/tag-non-specific.lock`, `invalid/tag-on-root.lock`, `invalid/tag-timestamp.lock`, `invalid/tagged-collection-key.yaml`, `invalid/tagged-key-with-collection-key.yaml`
+- **Fixtures (20):** `hostile/gadget-js-function.lock`, `hostile/gadget-js-undefined-regexp.lock`, `hostile/gadget-local-tag-on-key.lock`, `hostile/gadget-python-name.lock`, `hostile/gadget-python-object-apply.lock`, `hostile/gadget-python-object-new.lock`, `hostile/gadget-ruby-object.lock`, `invalid/hoshen-tagged-float.lock`, `invalid/hoshen-tagged-int-string.lock`, `invalid/hoshen-tagged-str.lock`, `invalid/tag-binary.lock`, `invalid/tag-core-str.lock`, `invalid/tag-custom-mapping.lock`, `invalid/tag-custom-scalar.lock`, `invalid/tag-int-non-numeric.lock`, `invalid/tag-non-specific.lock`, `invalid/tag-on-root.lock`, `invalid/tag-timestamp.lock`, `invalid/tagged-collection-key.yaml`, `invalid/tagged-key-with-collection-key.yaml`
 - **Tests:** JS `C-085 shared file cases` · Python `test_shared_file_cases[C-085]` · Rust `contract/files.rs::c085_no_tags`
 
 ### C-086 No merge keys
@@ -172,21 +172,21 @@ Output is sanitized in every result line (C-089).
 
 - **Behavior:** A mapping key at any depth containing an invisible or bidirectional-control character → `<file>: error: invisible or bidirectional control character in a mapping key`. The set is U+00AD, U+061C, U+180E, U+200B..U+200F, U+202A..U+202E, U+2060..U+2064, U+2066..U+206F, U+FEFF, U+FFF9..U+FFFB and U+E0000..U+E007F. It stops look-alike keys such as `urim\u{200B}` from shadowing real ones.
 - **Spec:** §5.1.1.
-- **Fixtures (3):** `invalid/invisible-bidi-key.lock`, `invalid/invisible-tag-char-key.lock`, `invalid/invisible-zwsp-key.lock`
+- **Fixtures (5):** `hostile/zero-width-escaped-key.lock`, `hostile/zero-width-joiner-key.lock`, `invalid/invisible-bidi-key.lock`, `invalid/invisible-tag-char-key.lock`, `invalid/invisible-zwsp-key.lock`
 - **Tests:** JS `C-087 shared file cases` · Python `test_shared_file_cases[C-087]` · Rust `contract/files.rs::c087_no_invisible_in_keys`
 
 ### C-088 No invisible characters in identifiers
 
 - **Behavior:** If the string value of `urim`, `dctp`, `contract` or `version` contains a C-087 character → `<file>: error: invisible or bidirectional control character in <key>`. This check runs right after that key's "must be a string" check, in the existing schema order (C-046, C-057).
 - **Spec:** §5.1.1.
-- **Fixtures (4):** `invalid/invisible-in-contract.yaml`, `invalid/invisible-in-dctp.yaml`, `invalid/invisible-in-urim.lock`, `invalid/invisible-in-version.yaml`
+- **Fixtures (5):** `hostile/bidi-escape-in-urim.lock`, `invalid/invisible-in-contract.yaml`, `invalid/invisible-in-dctp.yaml`, `invalid/invisible-in-urim.lock`, `invalid/invisible-in-version.yaml`
 - **Tests:** JS `C-088 shared file cases` · Python `test_shared_file_cases[C-088]` · Rust `contract/files.rs::c088_no_invisible_in_identifiers`
 
 ### C-089 Output is sanitized
 
 - **Behavior:** In every result line, the file name and every echoed value (`urim`, `contract`, `version`, `dctp`) have C0 controls, DEL, C1 controls, lone surrogates and C-087 characters escaped as `\u{XXXX}` (uppercase hex, at least 4 digits). A backslash is not escaped, so `a\u{0041}b` in a file prints as typed. A file name that is not valid UTF-8 shows U+FFFD for each undecodable byte.
 - **Spec:** §5.1.1.
-- **Fixtures (3):** `valid/backslash-in-urim.lock`, `valid/escape-in-contract.yaml`, `valid/escape-in-urim.lock`
+- **Fixtures (4):** `hostile/ansi-osc8-in-urim.lock`, `valid/backslash-in-urim.lock`, `valid/escape-in-contract.yaml`, `valid/escape-in-urim.lock`
 - **Tests:** JS `C-089 shared file cases`, `limits.test.mjs` › `C-089 …` · Python `test_shared_file_cases[C-089]`, `test_limits.py::test_c089_unsafe_characters_in_the_file_name_are_escaped` · Rust `contract/files.rs::c089_output_sanitized`, `contract/limits.rs::c089_unsafe_characters_in_the_file_name_are_escaped`
 
 ### C-090 First violation in stream order
@@ -206,7 +206,7 @@ Output is sanitized in every result line (C-089).
 
 - **Behavior:** Keys such as `__proto__`, `constructor` and `toString` are ordinary keys. They never satisfy a lookup for `hoshen`, `urim`, `dctp` or any other required key, and they never change how a value behaves. JS builds `Map`s, never plain objects.
 - **Spec:** §5.1.1.
-- **Fixtures (2):** `invalid/proto-key-not-urim.yaml`, `valid/proto-keys-inert.lock`
+- **Fixtures (4):** `hostile/proto-only-hoshen.yaml`, `hostile/proto-pollution-nested.lock`, `invalid/proto-key-not-urim.yaml`, `valid/proto-keys-inert.lock`
 - **Tests:** JS `C-091 shared file cases` · Python `test_shared_file_cases[C-091]` · Rust `contract/files.rs::c091_prototype_keys_inert`
 
 ### C-092 Identifiers are ASCII; look-alike keys never match
@@ -223,21 +223,21 @@ Output is sanitized in every result line (C-089).
 
 - **Behavior:** Malformed YAML (unclosed flow, tab indentation, bad indentation, an alias to an undefined anchor) → `invalid YAML`. Parser details are left out so messages match across languages. Where a syntax error sits relative to a profile violation decides which is reported (C-090).
 - **Spec:** Implementation assumption, not in spec.
-- **Fixtures (2):** `invalid/syntax-error.yaml`, `invalid/tab-indent.yaml`
+- **Fixtures (6):** `hostile/tab-before-key.lock`, `hostile/unterminated-double-quote.lock`, `hostile/unterminated-flow.lock`, `hostile/unterminated-single-quote.lock`, `invalid/syntax-error.yaml`, `invalid/tab-indent.yaml`
 - **Tests:** JS `C-020 shared file cases` · Python `test_shared_file_cases[C-020]` · Rust `contract/files.rs::c020_syntax_error`
 
 ### C-021 Duplicate keys
 
 - **Behavior:** Duplicate mapping keys at any depth → `invalid YAML`, including keys that resolve to the same value (`~`/`null`, `0x1`/`1`).
 - **Spec:** §5.3 ("YAML 1.2 core schema"); rejecting duplicates is an implementation assumption.
-- **Fixtures (3):** `invalid/duplicate-hex-decimal-key.yaml`, `invalid/duplicate-key.yaml`, `invalid/duplicate-null-key.yaml`
+- **Fixtures (5):** `hostile/duplicate-key-last-wins.lock`, `hostile/duplicate-key-quoted-spelling.lock`, `invalid/duplicate-hex-decimal-key.yaml`, `invalid/duplicate-key.yaml`, `invalid/duplicate-null-key.yaml`
 - **Tests:** JS `C-021 shared file cases` · Python `test_shared_file_cases[C-021]` · Rust `contract/files.rs::c021_duplicate_keys`
 
 ### C-022 Exactly one document
 
 - **Behavior:** More than one document (including a trailing `---` that opens an empty second document) → `invalid YAML`. So is a document end marker (`...`) before the document (see D-008 for a stream with no document).
 - **Spec:** Implementation assumption, not in spec.
-- **Fixtures (3):** `invalid/document-end-before-document.lock`, `invalid/multi-document.yaml`, `invalid/trailing-empty-document.lock`
+- **Fixtures (5):** `hostile/multi-document-after-end.lock`, `hostile/multi-document-smuggle.lock`, `invalid/document-end-before-document.lock`, `invalid/multi-document.yaml`, `invalid/trailing-empty-document.lock`
 - **Tests:** JS `C-022 shared file cases` · Python `test_shared_file_cases[C-022]` · Rust `contract/files.rs::c022_single_document`
 
 ### C-023 Scalar keys only
@@ -258,7 +258,7 @@ Output is sanitized in every result line (C-089).
 
 - **Behavior:** YAML 1.2 core schema: `yes`/`no`/`on`/`off` and timestamps (`2026-10-25`) are strings; `true`/`True`/`TRUE` are booleans (so `urim: True` → `urim must be a string`). A `%YAML 1.1` directive does not switch to 1.1 booleans.
 - **Spec:** §5.3 ("Contract parsers MUST use YAML 1.2 core schema").
-- **Fixtures (4):** `invalid/lock-urim-true.lock`, `valid/urim-timestamp-is-a-string.lock`, `valid/urim-yes-is-a-string.decision.yaml`, `valid/yaml-1.1-directive-keeps-core-schema.lock`
+- **Fixtures (8):** `hostile/yaml11-norway.lock`, `hostile/yaml11-octal-version.yaml`, `hostile/yaml11-on-y.lock`, `hostile/yaml11-sexagesimal-version.yaml`, `invalid/lock-urim-true.lock`, `valid/urim-timestamp-is-a-string.lock`, `valid/urim-yes-is-a-string.decision.yaml`, `valid/yaml-1.1-directive-keeps-core-schema.lock`
 - **Tests:** JS `C-025 shared file cases` · Python `test_shared_file_cases[C-025]` · Rust `contract/files.rs::c025_core_schema_strings`
 
 ### C-026 Integer forms
@@ -272,14 +272,14 @@ Output is sanitized in every result line (C-089).
 
 - **Behavior:** Decimal with leading zeros (`01`, `-007`), `0X1`, `1_0`, a sign on `0x`/`0o` (`+0x1`, `-0o7`) and `0b1` stay strings, so `hoshen: 01` → `hoshen must be an integer` and `urim: 01` is the string `01`. Leading zeros are an implementation assumption that all three ports share. A float needs a dot or an exponent, so `01` is not a float either (bug B-4). Signed `0x`/`0o` and `0b` follow the core schema (bug B-5).
 - **Spec:** §5.3 (core schema) plus implementation assumption.
-- **Fixtures (10):** `invalid/hoshen-binary-prefix.lock`, `invalid/hoshen-leading-zero.lock`, `invalid/hoshen-signed-hex.lock`, `invalid/hoshen-signed-octal.lock`, `invalid/hoshen-underscore.lock`, `invalid/hoshen-uppercase-hex-prefix.lock`, `valid/urim-bare-hex-prefix-is-string.lock`, `valid/urim-leading-zero-is-string.lock`, `valid/urim-signed-hex-is-string.lock`, `valid/urim-signed-leading-zero-is-string.lock`
+- **Fixtures (11):** `hostile/hoshen-hex-underscore.lock`, `invalid/hoshen-binary-prefix.lock`, `invalid/hoshen-leading-zero.lock`, `invalid/hoshen-signed-hex.lock`, `invalid/hoshen-signed-octal.lock`, `invalid/hoshen-underscore.lock`, `invalid/hoshen-uppercase-hex-prefix.lock`, `valid/urim-bare-hex-prefix-is-string.lock`, `valid/urim-leading-zero-is-string.lock`, `valid/urim-signed-hex-is-string.lock`, `valid/urim-signed-leading-zero-is-string.lock`
 - **Tests:** JS `C-027 shared file cases` · Python `test_shared_file_cases[C-027]` · Rust `contract/files.rs::c027_non_int_forms`
 
 ### C-028 Floats are not integers
 
 - **Behavior:** `1.0`, `1e0`, `.inf` are floats, so `hoshen` → `hoshen must be an integer`. So is an exponent too large for a double (`1e400`, infinity), so `urim: 1e400` → `urim must be a string` (bug B-6). A lone `.` is a string.
 - **Spec:** §6.2 ("Integer format version").
-- **Fixtures (6):** `invalid/hoshen-exponent.lock`, `invalid/hoshen-float.lock`, `invalid/hoshen-inf.lock`, `invalid/hoshen-negative-inf.lock`, `invalid/urim-overflowing-float.lock`, `valid/urim-lone-dot-is-string.lock`
+- **Fixtures (9):** `hostile/hoshen-float-overflow.lock`, `hostile/hoshen-nan.lock`, `hostile/urim-nan.lock`, `invalid/hoshen-exponent.lock`, `invalid/hoshen-float.lock`, `invalid/hoshen-inf.lock`, `invalid/hoshen-negative-inf.lock`, `invalid/urim-overflowing-float.lock`, `valid/urim-lone-dot-is-string.lock`
 - **Tests:** JS `C-028 shared file cases` · Python `test_shared_file_cases[C-028]` · Rust `contract/files.rs::c028_floats`
 
 ### C-029 Explicit core tags (retired)
@@ -471,7 +471,7 @@ Output is sanitized in every result line (C-089).
 
 ## D. Known cross-language divergences (outside the conformance set)
 
-These inputs behave differently across the three ports because the underlying YAML libraries differ. D-001..D-007 and D-010 were resolved by the v0.0.2 profile (§3) and are kept as stubs. D-008, D-009, D-011, D-012 and D-013 remain open. Every port **pins its own current behavior** from [`fixtures/divergences.json`](fixtures/divergences.json), so any change is deliberate. `parity.sh` skips them. Resolving each one is a behavior change for David to decide; a recommendation is given for each.
+These inputs behave differently across the three ports because the underlying YAML libraries differ. D-001..D-007 and D-010 were resolved by the v0.0.2 profile (§3) and are kept as stubs. D-008, D-009, D-011, D-012, D-013 and D-014 remain open. Every port **pins its own current behavior** from [`fixtures/divergences.json`](fixtures/divergences.json), so any change is deliberate. `parity.sh` skips them. Resolving each one is a behavior change for David to decide; a recommendation is given for each.
 
 Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `tests/test_divergences.py::test_pinned_python_behavior[D-0xx]` · Rust `tests/contract/divergences.rs::d000_divergences_pin_rust_behavior` (all D cases).
 
@@ -553,6 +553,15 @@ Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `
 
 - **Why:** YAML 1.2 allows an empty implicit key (spec example 8.18, `: # Both empty`; also `{: 1}` in flow), and JS's yaml and saphyr-parser accept it as a null key. PyYAML rejects it, and libyaml did too, so before the Rust port moved to saphyr-parser it was JS against Python and Rust. Found by the scalar differential corpus, which no fixture covered.
 - **Recommendation:** Reject everywhere as a profile rule (a null key is never useful in a lockfile or contract and the ports cannot agree on it), or accept everywhere and make the Python loader accept it. Low priority.
+
+### D-014 Lone CR as a line break
+
+| fixture | JS | Python | Rust |
+|---|---|---|---|
+| `divergent/cr-only-line-breaks.lock` (`hoshen: 1\rurim: x\r`) | exit 1: `error: invalid YAML` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 0: `ok (lockfile, hoshen 1, urim x)` |
+
+- **Why:** YAML 1.2 `b-break` includes a lone CR. PyYAML and saphyr-parser break lines there. The JS `yaml` package (2.x as locked) lexes the CR as content, reads `{hoshen: {"1\rurim": "x\r"}}` and reports a nested-mapping error. The same bytes therefore have two structures, which is the parser-differential reason C-082 already refuses NEL, LS and PS. JS fails safe here. Found by the hostile-input suite (CRLF and mixed line-ending category); CRLF and CRLF mixed with LF agree in all three ports (`valid/crlf.lock`, `hostile/mixed-crlf-lf.lock`).
+- **Recommendation:** Add a lone CR (a CR not followed by LF) to the C-082 profile characters, so all three ports say `invalid YAML`. This would be one shared check before parsing, needs no parser change and costs nothing for CRLF files. The alternative, accepting everywhere, would need a JS pre-pass that rewrites line breaks, which is more code on the trust path.
 
 ## B. Bugs found by this suite
 

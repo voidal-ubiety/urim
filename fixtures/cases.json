@@ -32,6 +32,24 @@
       "output": "{file}: error: file is not valid UTF-8"
     },
     {
+      "id": "C-013",
+      "path": "hostile/overlong-utf8.lock",
+      "exit": 1,
+      "output": "{file}: error: file is not valid UTF-8"
+    },
+    {
+      "id": "C-013",
+      "path": "hostile/utf16be-bom.lock",
+      "exit": 1,
+      "output": "{file}: error: file is not valid UTF-8"
+    },
+    {
+      "id": "C-013",
+      "path": "hostile/utf32le-bom.lock",
+      "exit": 1,
+      "output": "{file}: error: file is not valid UTF-8"
+    },
+    {
       "id": "C-014",
       "path": "invalid/bom-only.yaml",
       "exit": 1,
@@ -50,6 +68,12 @@
       "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
     },
     {
+      "id": "C-015",
+      "path": "hostile/mixed-crlf-lf.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+    },
+    {
       "id": "C-020",
       "path": "invalid/syntax-error.yaml",
       "exit": 1,
@@ -58,6 +82,30 @@
     {
       "id": "C-020",
       "path": "invalid/tab-indent.yaml",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-020",
+      "path": "hostile/tab-before-key.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-020",
+      "path": "hostile/unterminated-double-quote.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-020",
+      "path": "hostile/unterminated-flow.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-020",
+      "path": "hostile/unterminated-single-quote.lock",
       "exit": 1,
       "output": "{file}: error: invalid YAML"
     },
@@ -80,6 +128,18 @@
       "output": "{file}: error: invalid YAML"
     },
     {
+      "id": "C-021",
+      "path": "hostile/duplicate-key-last-wins.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-021",
+      "path": "hostile/duplicate-key-quoted-spelling.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
       "id": "C-022",
       "path": "invalid/multi-document.yaml",
       "exit": 1,
@@ -94,6 +154,18 @@
     {
       "id": "C-022",
       "path": "invalid/document-end-before-document.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-022",
+      "path": "hostile/multi-document-after-end.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-022",
+      "path": "hostile/multi-document-smuggle.lock",
       "exit": 1,
       "output": "{file}: error: invalid YAML"
     },
@@ -176,6 +248,30 @@
       "output": "{file}: ok (lockfile, hoshen 1, urim yes)"
     },
     {
+      "id": "C-025",
+      "path": "hostile/yaml11-norway.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim NO)"
+    },
+    {
+      "id": "C-025",
+      "path": "hostile/yaml11-octal-version.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract no@010, dctp 0.1)"
+    },
+    {
+      "id": "C-025",
+      "path": "hostile/yaml11-on-y.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim on)"
+    },
+    {
+      "id": "C-025",
+      "path": "hostile/yaml11-sexagesimal-version.yaml",
+      "exit": 0,
+      "output": "{file}: ok (contract x@1:30, dctp 0.1)"
+    },
+    {
       "id": "C-026",
       "path": "valid/hoshen-hex.lock",
       "exit": 0,
@@ -254,6 +350,12 @@
       "output": "{file}: ok (lockfile, hoshen 1, urim 0x)"
     },
     {
+      "id": "C-027",
+      "path": "hostile/hoshen-hex-underscore.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
       "id": "C-028",
       "path": "invalid/hoshen-exponent.lock",
       "exit": 1,
@@ -288,6 +390,24 @@
       "path": "valid/urim-lone-dot-is-string.lock",
       "exit": 0,
       "output": "{file}: ok (lockfile, hoshen 1, urim .)"
+    },
+    {
+      "id": "C-028",
+      "path": "hostile/hoshen-float-overflow.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-028",
+      "path": "hostile/hoshen-nan.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen must be an integer"
+    },
+    {
+      "id": "C-028",
+      "path": "hostile/urim-nan.lock",
+      "exit": 1,
+      "output": "{file}: error: urim must be a string"
     },
     {
       "id": "C-030",
@@ -698,6 +818,24 @@
       "output": "{file}: error: invalid YAML"
     },
     {
+      "id": "C-082",
+      "path": "hostile/ansi-in-comment.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-082",
+      "path": "hostile/double-bom.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-082",
+      "path": "hostile/nul-in-value.lock",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
       "id": "C-083",
       "path": "invalid/depth-5000-unclosed.lock",
       "exit": 1,
@@ -742,6 +880,12 @@
     {
       "id": "C-084",
       "path": "invalid/anchor-only.lock",
+      "exit": 1,
+      "output": "{file}: error: anchors and aliases are not allowed"
+    },
+    {
+      "id": "C-084",
+      "path": "hostile/billion-laughs.lock",
       "exit": 1,
       "output": "{file}: error: anchors and aliases are not allowed"
     },
@@ -824,6 +968,48 @@
       "output": "{file}: error: tags are not allowed"
     },
     {
+      "id": "C-085",
+      "path": "hostile/gadget-js-function.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "hostile/gadget-js-undefined-regexp.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "hostile/gadget-local-tag-on-key.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "hostile/gadget-python-name.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "hostile/gadget-python-object-apply.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "hostile/gadget-python-object-new.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-085",
+      "path": "hostile/gadget-ruby-object.lock",
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
       "id": "C-086",
       "path": "invalid/merge-key-not-applied.yaml",
       "exit": 1,
@@ -854,6 +1040,18 @@
       "output": "{file}: error: invisible or bidirectional control character in a mapping key"
     },
     {
+      "id": "C-087",
+      "path": "hostile/zero-width-escaped-key.lock",
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in a mapping key"
+    },
+    {
+      "id": "C-087",
+      "path": "hostile/zero-width-joiner-key.lock",
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in a mapping key"
+    },
+    {
       "id": "C-088",
       "path": "invalid/invisible-in-contract.yaml",
       "exit": 1,
@@ -878,6 +1076,12 @@
       "output": "{file}: error: invisible or bidirectional control character in version"
     },
     {
+      "id": "C-088",
+      "path": "hostile/bidi-escape-in-urim.lock",
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in urim"
+    },
+    {
       "id": "C-089",
       "path": "valid/backslash-in-urim.lock",
       "exit": 0,
@@ -894,6 +1098,12 @@
       "path": "valid/escape-in-urim.lock",
       "exit": 0,
       "output": "{file}: ok (lockfile, hoshen 1, urim a\\u{001B}b\\u{007F}c\\u{0009})"
+    },
+    {
+      "id": "C-089",
+      "path": "hostile/ansi-osc8-in-urim.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim \\u{001B}]8;;https://example.invalid\\u{001B}\\click\\u{001B}]8;;\\u{001B}\\)"
     },
     {
       "id": "C-090",
@@ -1036,6 +1246,18 @@
     {
       "id": "C-091",
       "path": "valid/proto-keys-inert.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+    },
+    {
+      "id": "C-091",
+      "path": "hostile/proto-only-hoshen.yaml",
+      "exit": 1,
+      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
+    },
+    {
+      "id": "C-091",
+      "path": "hostile/proto-pollution-nested.lock",
       "exit": 0,
       "output": "{file}: ok (lockfile, hoshen 1, urim x)"
     },

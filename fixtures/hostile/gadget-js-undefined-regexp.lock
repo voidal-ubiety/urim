@@ -1,0 +1,4 @@
+hoshen: 1
+urim: x
+u: !!js/undefined ""
+r: !!js/regexp /(a+)+$/

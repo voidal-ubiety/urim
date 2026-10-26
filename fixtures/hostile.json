@@ -1,0 +1,602 @@
+{
+  "$comment": "Hostile inputs that cannot be small static files. Run by scripts/hostile.py against all three CLIs with a wall-time and peak-RSS bound per case. Static hostile files live in fixtures/hostile/ and are ordinary cases.json cases; hostile.py also runs those under the same bounds. 'pieces' builds the file as the concatenation of [text, repeat] pairs. 'output' uses {file} for the path as passed.",
+  "bounds": {
+    "js": {
+      "max_ms": 4000,
+      "max_rss_mib": 256
+    },
+    "python": {
+      "max_ms": 6000,
+      "max_rss_mib": 192
+    },
+    "rust": {
+      "max_ms": 3000,
+      "max_rss_mib": 96
+    }
+  },
+  "canary": "/tmp/urim-hostile-canary",
+  "cases": [
+    {
+      "id": "C-080",
+      "name": "oversized-by-one-byte",
+      "pieces": [
+        [
+          "#",
+          1048577
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: file too large (max 1048576 bytes)"
+    },
+    {
+      "id": "C-080",
+      "name": "oversized-10-mib",
+      "pieces": [
+        [
+          "hoshen: 1\n",
+          1048576
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: file too large (max 1048576 bytes)"
+    },
+    {
+      "id": "C-080",
+      "name": "exactly-1-mib-comment-padded",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\n#",
+          1
+        ],
+        [
+          "x",
+          1048556
+        ]
+      ],
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+    },
+    {
+      "id": "C-020",
+      "name": "very-long-line-comment",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\n# ",
+          1
+        ],
+        [
+          "long ",
+          200000
+        ]
+      ],
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+    },
+    {
+      "id": "C-089",
+      "name": "huge-scalar-urim-near-1-mib",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: ",
+          1
+        ],
+        [
+          "a",
+          1000000
+        ],
+        [
+          "\n",
+          1
+        ]
+      ],
+      "exit": 0,
+      "output_pieces": [
+        [
+          "{file}: ok (lockfile, hoshen 1, urim ",
+          1
+        ],
+        [
+          "a",
+          1000000
+        ],
+        [
+          ")",
+          1
+        ]
+      ]
+    },
+    {
+      "id": "C-089",
+      "name": "huge-scalar-of-escapes",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: \"",
+          1
+        ],
+        [
+          "\\e",
+          300000
+        ],
+        [
+          "\"\n",
+          1
+        ]
+      ],
+      "exit": 0,
+      "output_pieces": [
+        [
+          "{file}: ok (lockfile, hoshen 1, urim ",
+          1
+        ],
+        [
+          "\\u{001B}",
+          300000
+        ],
+        [
+          ")",
+          1
+        ]
+      ]
+    },
+    {
+      "id": "C-087",
+      "name": "huge-key",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\n",
+          1
+        ],
+        [
+          "k",
+          1000000
+        ],
+        [
+          ": 1\n",
+          1
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-021",
+      "name": "sixty-thousand-keys",
+      "generate": "many-keys",
+      "count": 60000,
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+    },
+    {
+      "id": "C-021",
+      "name": "duplicate-key-after-sixty-thousand",
+      "generate": "many-keys",
+      "count": 60000,
+      "suffix": "hoshen: 2\n",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-024",
+      "name": "decimal-int-million-digits",
+      "pieces": [
+        [
+          "hoshen: ",
+          1
+        ],
+        [
+          "9",
+          1000000
+        ],
+        [
+          "\nurim: x\n",
+          1
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-024",
+      "name": "decimal-int-5000-digits-past-python-str-limit",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\nn: ",
+          1
+        ],
+        [
+          "7",
+          5000
+        ],
+        [
+          "\n",
+          1
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-024",
+      "name": "hex-int-million-digits",
+      "pieces": [
+        [
+          "hoshen: 0x",
+          1
+        ],
+        [
+          "f",
+          1000000
+        ],
+        [
+          "\nurim: x\n",
+          1
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-024",
+      "name": "octal-one-with-million-leading-zeros",
+      "pieces": [
+        [
+          "hoshen: 0o",
+          1
+        ],
+        [
+          "0",
+          1000000
+        ],
+        [
+          "1\nurim: x\n",
+          1
+        ]
+      ],
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+    },
+    {
+      "id": "C-028",
+      "name": "float-million-digit-exponent",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\nf: 1e",
+          1
+        ],
+        [
+          "9",
+          1000000
+        ],
+        [
+          "\n",
+          1
+        ]
+      ],
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+    },
+    {
+      "id": "C-028",
+      "name": "float-million-digit-mantissa",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\nf: 0.",
+          1
+        ],
+        [
+          "0",
+          1000000
+        ],
+        [
+          "1\n",
+          1
+        ]
+      ],
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+    },
+    {
+      "id": "C-083",
+      "name": "deep-flow-sequence-million",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\nq: ",
+          1
+        ],
+        [
+          "[",
+          1000000
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: nesting too deep (max depth 64)",
+      "bounds": {
+        "js": {
+          "max_rss_mib": 1024,
+          "max_ms": 6000
+        }
+      },
+      "bounds_note": "JS peak RSS here is the npm yaml package's document model (~1 KiB per node) on an input inside MAX_BYTES; recorded in SECURITY.md (resource limits) as an open finding, not hidden by the default bound."
+    },
+    {
+      "id": "C-083",
+      "name": "deep-flow-mapping",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\nq: ",
+          1
+        ],
+        [
+          "{a: ",
+          250000
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: nesting too deep (max depth 64)",
+      "bounds": {
+        "js": {
+          "max_rss_mib": 384
+        }
+      },
+      "bounds_note": "JS peak RSS here is the npm yaml package's document model (~1 KiB per node) on an input inside MAX_BYTES; recorded in SECURITY.md (resource limits) as an open finding, not hidden by the default bound."
+    },
+    {
+      "id": "C-083",
+      "name": "deep-flow-closed",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\nq: ",
+          1
+        ],
+        [
+          "[",
+          400000
+        ],
+        [
+          "]",
+          400000
+        ],
+        [
+          "\n",
+          1
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: nesting too deep (max depth 64)",
+      "bounds": {
+        "js": {
+          "max_rss_mib": 640
+        }
+      },
+      "bounds_note": "JS peak RSS here is the npm yaml package's document model (~1 KiB per node) on an input inside MAX_BYTES; recorded in SECURITY.md (resource limits) as an open finding, not hidden by the default bound."
+    },
+    {
+      "id": "C-083",
+      "name": "deep-block-sequence",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\nq:\n",
+          1
+        ]
+      ],
+      "generate": "block-nest",
+      "count": 1000,
+      "exit": 1,
+      "output": "{file}: error: nesting too deep (max depth 64)"
+    },
+    {
+      "id": "C-020",
+      "name": "wide-flow-sequence",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\nq: [",
+          1
+        ],
+        [
+          "1,",
+          150000
+        ],
+        [
+          "1]\n",
+          1
+        ]
+      ],
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)",
+      "bounds": {
+        "js": {
+          "max_rss_mib": 320
+        },
+        "python": {
+          "max_ms": 10000,
+          "max_rss_mib": 160
+        },
+        "rust": {
+          "max_rss_mib": 96
+        }
+      },
+      "bounds_note": "150k items (300 KB). At 450k items (900 KB, inside MAX_BYTES) measured on 2026-10-26: js 2.5 s / 548 MiB, python 17.5 s / 296 MiB (PyYAML pure-Python parser, linear, ~28 us per item), rust 0.9 s / 103 MiB. Recorded in SECURITY.md (resource limits) as an open finding."
+    },
+    {
+      "id": "C-084",
+      "name": "alias-flood",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\na: &a [1]\nb: [",
+          1
+        ],
+        [
+          "*a,",
+          300000
+        ],
+        [
+          "*a]\n",
+          1
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: anchors and aliases are not allowed",
+      "bounds": {
+        "js": {
+          "max_rss_mib": 576
+        }
+      },
+      "bounds_note": "JS peak RSS here is the npm yaml package's document model (~1 KiB per node) on an input inside MAX_BYTES; recorded in SECURITY.md (resource limits) as an open finding, not hidden by the default bound."
+    },
+    {
+      "id": "C-085",
+      "name": "tag-flood",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\nb: [",
+          1
+        ],
+        [
+          "!!python/name:os.system ,",
+          40000
+        ],
+        [
+          "1]\n",
+          1
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: tags are not allowed"
+    },
+    {
+      "id": "C-082",
+      "name": "nul-flood",
+      "pieces": [
+        [
+          "\u0000",
+          1000000
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-013",
+      "name": "invalid-utf8-flood",
+      "pieces": [
+        [
+          "hoshen: 1\n",
+          1
+        ]
+      ],
+      "bytes_suffix_hex": "ff",
+      "bytes_suffix_repeat": 1000000,
+      "exit": 1,
+      "output": "{file}: error: file is not valid UTF-8"
+    },
+    {
+      "id": "C-087",
+      "name": "zero-width-flood-in-keys",
+      "generate": "invisible-keys",
+      "count": 50000,
+      "exit": 1,
+      "output": "{file}: error: invisible or bidirectional control character in a mapping key"
+    },
+    {
+      "id": "C-020",
+      "name": "unterminated-quote-near-1-mib",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: \"",
+          1
+        ],
+        [
+          "a",
+          1040000
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-020",
+      "name": "many-documents",
+      "pieces": [
+        [
+          "hoshen: 1\nurim: x\n",
+          1
+        ],
+        [
+          "---\na: 1\n",
+          100000
+        ]
+      ],
+      "exit": 1,
+      "output": "{file}: error: invalid YAML",
+      "bounds": {
+        "js": {
+          "max_rss_mib": 320
+        }
+      },
+      "bounds_note": "JS peak RSS here is the npm yaml package's document model (~1 KiB per node) on an input inside MAX_BYTES; recorded in SECURITY.md (resource limits) as an open finding, not hidden by the default bound."
+    },
+    {
+      "id": "C-081",
+      "name": "fifo-without-writer",
+      "special": "fifo",
+      "exit": 1,
+      "output": "{file}: error: not a regular file"
+    },
+    {
+      "id": "C-081",
+      "name": "dev-zero",
+      "special": "dev-zero",
+      "exit": 1,
+      "output": "{file}: error: not a regular file"
+    },
+    {
+      "id": "C-081",
+      "name": "dev-urandom",
+      "special": "dev-urandom",
+      "exit": 1,
+      "output": "{file}: error: not a regular file"
+    },
+    {
+      "id": "C-081",
+      "name": "symlink-to-dev-zero",
+      "special": "symlink-dev-zero",
+      "exit": 1,
+      "output": "{file}: error: not a regular file"
+    },
+    {
+      "id": "C-081",
+      "name": "symlink-to-fifo",
+      "special": "symlink-fifo",
+      "exit": 1,
+      "output": "{file}: error: not a regular file"
+    },
+    {
+      "id": "C-081",
+      "name": "directory",
+      "special": "directory",
+      "exit": 1,
+      "output": "{file}: error: not a regular file"
+    },
+    {
+      "id": "C-013",
+      "name": "dangling-symlink",
+      "special": "dangling-symlink",
+      "exit": 1,
+      "output": "{file}: error: cannot read file"
+    },
+    {
+      "id": "C-013",
+      "name": "symlink-loop",
+      "special": "symlink-loop",
+      "exit": 1,
+      "output": "{file}: error: cannot read file"
+    },
+    {
+      "id": "C-089",
+      "name": "ansi-and-bidi-in-path",
+      "special": "ansi-path",
+      "exit": 1,
+      "output": "{escaped_file}: error: root must be a mapping"
+    }
+  ]
+}

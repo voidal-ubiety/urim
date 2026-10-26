@@ -1,0 +1,3 @@
+hoshen: 1
+urim: x
+obj: !!python/object/new:subprocess.Popen [["touch", "/tmp/urim-hostile-canary"]]
