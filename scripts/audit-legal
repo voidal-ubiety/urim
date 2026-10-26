@@ -6,10 +6,12 @@
 
 Exit 0 PASS, 1 FAIL, 2 a required tool is missing (and nothing FAILed).
 Writes build/legal/audit-legal.json: [{rule, status, detail, source}].
-Statuses: PASS, FAIL, WARN (a *R* rule outside --release), SKIP (tool, network, or
-not implemented yet; the detail says which). With --release, WARN becomes FAIL and a SKIP
-for a missing tool exits 2. Spec: urim-shipping AUDIT-LEGAL-GATE-SPEC.md. Implemented
-here: L1 L2 L4 L5-Rust L5-Py M1 M3 M5 C1 C3 C4 T1 T4 T5. The others report SKIP (not implemented).
+Statuses: PASS, FAIL, WARN (a *R* rule outside --release), SKIP (tool, network, --offline,
+or not implemented yet; the detail says which). With --release, WARN becomes FAIL, every
+rule in NOT_IMPLEMENTED becomes FAIL ("not implemented; release mode requires every rule
+to be built"), and a SKIP for a missing tool exits 2. Conditional SKIPs (missing tool,
+--offline, no network) stay SKIP in --release. Spec: urim-shipping AUDIT-LEGAL-GATE-SPEC.md.
+Implemented here: L1 L2 L4 L5-Rust L5-Py M1 M3 M5 C1 C3 C4 T1 T4 T5.
 """
 from __future__ import annotations
 
@@ -366,6 +368,18 @@ def missing_summary() -> str:
     return "; ".join(f"{t} (needed by {r}; install: {INSTALL[t]})" for t, r in missing_tools.items())
 
 
+# Rules from AUDIT-LEGAL-GATE-SPEC.md with no check yet: SKIP normally, FAIL with --release.
+NOT_IMPLEMENTED = ("L3", "L5-JS", "L6", "L7", "L8", "T2", "T3", "C2", "M2", "M4")
+
+
+def not_implemented(release: bool) -> None:
+    for rule in NOT_IMPLEMENTED:
+        if release:
+            add(rule, "FAIL", f"{rule} not implemented; release mode requires every rule to be built")
+        else:
+            add(rule, "SKIP", "not implemented yet")
+
+
 def main(argv: list[str]) -> int:
     unknown = set(argv) - {"--release", "--offline"}
     if unknown:
@@ -374,8 +388,7 @@ def main(argv: list[str]) -> int:
     release, offline = "--release" in argv, "--offline" in argv
     pol = policy()
     l1(); l2(pol); l4(); l5_rust(pol); l5_py(pol, offline); m1(); m3(); m5(); c1(); c3(); c4(); t1(); t4(); t5()
-    for rule in ("L3", "L5-JS", "L6", "L7", "L8", "T2", "T3", "C2", "M2", "M4"):
-        add(rule, "SKIP", "not implemented yet")
+    not_implemented(release)
     if release:
         for r in results:
             if r["status"] == "WARN":

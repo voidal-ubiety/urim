@@ -126,6 +126,7 @@ step "scripts: unit tests for the repo scripts (audit-legal L5-Py, ...)"
 if [[ $RELEASE == 1 ]]; then
   # Expected to FAIL until David's history rewrite (RELEASE-RUNBOOK §3a): the old commits
   # use the placeholder author email (audit-legal M3) and carry no Signed-off-by (DCO).
+  # audit-legal --release also FAILs every rule that is not built yet (NOT_IMPLEMENTED).
   step "release: DCO sign-off on every commit (scripts/check-dco)"
   python3 scripts/check-dco
   step "release: legal gate (scripts/audit-legal --release)"

@@ -10,7 +10,7 @@
 ```sh
 packages/python/.venv/bin/python scripts/audit-legal            # normal run
 packages/python/.venv/bin/python scripts/audit-legal --offline  # skips the rules that need PyPI
-packages/python/.venv/bin/python scripts/audit-legal --release  # WARN becomes FAIL
+packages/python/.venv/bin/python scripts/audit-legal --release  # WARN and every unbuilt rule become FAIL
 ```
 
 It needs the project venv for PyYAML. The results are also written to `build/legal/audit-legal.json`.
@@ -22,13 +22,13 @@ It needs the project venv for PyYAML. The results are also written to `build/leg
 | PASS | The rule holds. | Nothing. |
 | FAIL | The rule is broken. | Fix it in your change. If the fix is a decision for David (a licence exception, a new mark's owner), stop and report it. |
 | WARN | A release-only (*R*) rule is broken. It becomes FAIL with `--release`. | Report it. M3 stays WARN until David's history rewrite (RELEASE-RUNBOOK §3a). That is expected. |
-| SKIP | A tool or the network is missing, or the rule isn't implemented yet. | Say which rules were skipped. A SKIP is never a pass. |
+| SKIP | A tool or the network is missing, `--offline` was given, or the rule isn't implemented yet. With `--release`, an unimplemented rule is a FAIL instead ("<rule> not implemented; release mode requires every rule to be built"); the other SKIPs stay SKIP. | Say which rules were skipped. A SKIP is never a pass. |
 
-Exit codes: 0 PASS, 1 FAIL, 2 a required tool is missing.
+Exit codes: 0 PASS, 1 FAIL, 2 a required tool is missing (with `--release`, and only when nothing FAILed; the message names each tool and how to install it).
 
 ## Rules implemented today
 
-L1 L2 L4 L5-Rust L5-Py M1 M3 M5 C1 C3 C4 T1 T4 T5. The rest (L3 L5-JS L6 L7 L8 T2 T3 C2 M2 M4) report SKIP "not implemented yet". Cover them by hand with [docs/legal/RELEASE-CHECKLIST.md](../legal/RELEASE-CHECKLIST.md).
+L1 L2 L4 L5-Rust L5-Py M1 M3 M5 C1 C3 C4 T1 T4 T5. The rest (L3 L5-JS L6 L7 L8 T2 T3 C2 M2 M4) report SKIP "not implemented yet" in a normal run and FAIL with `--release`, so `--release` cannot pass until they are built. Until then, cover them by hand with [docs/legal/RELEASE-CHECKLIST.md](../legal/RELEASE-CHECKLIST.md).
 
 ## Things an agent never does here
 

@@ -184,16 +184,17 @@ class TreeTest(unittest.TestCase):
                          "sign-off-developer-certificate-of-origin")
 
 
-class MissingToolTest(unittest.TestCase):
-    """--release names each missing tool and how to install it; exit 2 only when nothing FAILs."""
+class StubbedMain(unittest.TestCase):
+    """main() with every rule stubbed out, in a temp ROOT; subclasses add the tests."""
 
     def setUp(self) -> None:
         self.tmp = Path(tempfile.mkdtemp())
         (self.tmp / "packages/rust").mkdir(parents=True)
         shutil.copy(ROOT / "packages/rust/deny.toml", self.tmp / "packages/rust/deny.toml")
         self.saved = {n: getattr(audit, n) for n in
-                      ("ROOT", "l1", "l2", "l4", "l5_py", "m1", "m3", "m5", "c1", "c3", "c4", "t1", "t4", "t5", "policy")}
+                      ("ROOT", "l1", "l2", "l4", "l5_py", "m1", "m3", "m5", "c1", "c3", "c4", "t1", "t4", "t5", "policy", "NOT_IMPLEMENTED")}
         self.saved_which = audit.shutil.which
+        self.saved_l5_rust = audit.l5_rust
         self.addCleanup(self.restore)
         self.pol = audit.policy()
         audit.ROOT = self.tmp
@@ -202,6 +203,7 @@ class MissingToolTest(unittest.TestCase):
         audit.l5_py = lambda pol, offline: audit._missing("L5-Py", "uv")
         audit.policy = lambda: self.pol
         audit.shutil.which = lambda tool: None if tool == "cargo-deny" else "/bin/" + tool
+        audit.NOT_IMPLEMENTED = ()  # once every rule is built, a missing tool alone exits 2
         audit.results.clear()
         audit.missing_tools.clear()
         audit.tool_missing = False
@@ -215,13 +217,17 @@ class MissingToolTest(unittest.TestCase):
         audit.tool_missing = False
         shutil.rmtree(self.tmp)
 
-    def run_main(self) -> tuple[int, str]:
+    def run_main(self, *argv: str) -> tuple[int, str]:
         import contextlib
         import io
         out = io.StringIO()
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(out):
-            code = audit.main(["--release"])
+            code = audit.main(list(argv or ["--release"]))
         return code, out.getvalue()
+
+
+class MissingToolTest(StubbedMain):
+    """--release names each missing tool and how to install it; exit 2 only when nothing FAILs."""
 
     def test_exit_2_names_every_missing_tool_and_its_install_command(self) -> None:
         code, out = self.run_main()
@@ -234,3 +240,56 @@ class MissingToolTest(unittest.TestCase):
         code, out = self.run_main()
         self.assertEqual(code, 1)
         self.assertIn("a required tool is missing: cargo-deny", out)
+
+
+class NotImplementedRuleTest(StubbedMain):
+    """--release FAILs every unimplemented rule; a normal run SKIPs it; built rules are untouched."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        audit.shutil.which = lambda tool: "/bin/" + tool
+        audit.l5_rust = lambda pol: audit.add("L5-Rust", "PASS", "stub")
+        audit.l5_py = lambda pol, offline: audit.add("L5-Py", "PASS", "stub")
+        audit.m1 = lambda: audit.add("M1", "PASS", "stub")
+        audit.NOT_IMPLEMENTED = ("L3", "T2")
+
+    def restore(self) -> None:
+        super().restore()
+        audit.l5_rust = self.saved_l5_rust
+
+    def statuses(self) -> dict[str, tuple[str, str]]:
+        return {r["rule"]: (r["status"], r["detail"]) for r in audit.results}
+
+    def test_release_fails_on_an_unimplemented_rule(self) -> None:
+        code, out = self.run_main("--release")
+        self.assertEqual(code, 1)
+        s = self.statuses()
+        for rule in ("L3", "T2"):
+            self.assertEqual(s[rule], ("FAIL", f"{rule} not implemented; release mode requires every rule to be built"))
+        self.assertIn("L3 not implemented; release mode requires every rule to be built", out)
+
+    def test_a_normal_run_still_passes_with_skip(self) -> None:
+        code, out = self.run_main("--offline")
+        self.assertEqual(code, 0)
+        s = self.statuses()
+        self.assertEqual(s["L3"], ("SKIP", "not implemented yet"))
+        self.assertEqual(s["T2"], ("SKIP", "not implemented yet"))
+        self.assertIn("audit-legal: PASS", out)
+
+    def test_implemented_rules_are_unaffected_by_release(self) -> None:
+        self.run_main("--release")
+        s = self.statuses()
+        for rule in ("L5-Rust", "L5-Py", "M1"):
+            self.assertEqual(s[rule], ("PASS", "stub"))
+        self.assertEqual({r for r, (st, _) in s.items() if st == "FAIL"}, {"L3", "T2"})
+
+    def test_a_conditional_skip_stays_skip_in_release(self) -> None:
+        audit.l5_py = lambda pol, offline: audit.add("L5-Py", "SKIP", "--offline: installing the locked runtime deps needs PyPI")
+        audit.NOT_IMPLEMENTED = ()
+        code, _ = self.run_main("--release", "--offline")
+        self.assertEqual(code, 0)
+        self.assertEqual(self.statuses()["L5-Py"][0], "SKIP")
+
+    def test_the_real_list_matches_the_rules_not_built(self) -> None:
+        self.assertEqual(self.saved["NOT_IMPLEMENTED"],
+                         ("L3", "L5-JS", "L6", "L7", "L8", "T2", "T3", "C2", "M2", "M4"))
