@@ -76,12 +76,18 @@ def _construct_int(loader: yaml.SafeLoader, node: yaml.Node) -> int:
 def _construct_mapping(loader: yaml.SafeLoader, node: yaml.MappingNode) -> dict[Any, Any]:
     loader.flatten_mapping(node)
     result: dict[Any, Any] = {}
+    # Python treats True == 1 == 1.0 as the same dict key; YAML does not.
+    # Compare keys by (type, value) so they only count as duplicates when the
+    # YAML type matches. Only str keys are looked up afterwards, and a str never
+    # collides with a bool/int/float, so overwriting below loses nothing used.
+    seen: set[tuple[type, Any]] = set()
     for key_node, value_node in node.value:
         if not isinstance(key_node, yaml.ScalarNode):
             raise _InvalidYaml("mapping keys must be scalars")
         key = loader.construct_object(key_node, deep=True)
-        if key in result:
+        if (type(key), key) in seen:
             raise _InvalidYaml("duplicate key")
+        seen.add((type(key), key))
         result[key] = loader.construct_object(value_node, deep=True)
     return result
 

@@ -214,6 +214,13 @@ This is the living contract for every behavior of `urim check` and the three lib
 - **Fixtures (2):** `valid/key-spellings.lock`, `valid/string-and-int-keys-distinct.lock`
 - **Tests:** JS `C-034 shared file cases` · Python `test_shared_file_cases[C-034]` · Rust `contract.rs::c034_key_spelling`
 
+### C-035 Keys of different types are distinct
+
+- **Behavior:** Key equality includes the YAML type: `true` and `1`, or `1` and `1.0`, in the same mapping are distinct keys, not duplicates.
+- **Spec:** §5.3 ("YAML 1.2 core schema"; under YAML 1.2, node equality includes the tag). Which keys count as duplicates is an implementation assumption, extending C-021. Added for bug B-1.
+- **Fixtures (2):** `valid/bool-and-int-keys-distinct.lock`, `valid/int-and-float-keys-distinct.lock`
+- **Tests:** JS `C-035 shared file cases` · Python `test_shared_file_cases[C-035]` · Rust `contract.rs::c035_keys_distinct_by_type`
+
 ## 4. Lockfile (root has `hoshen`)
 
 ### C-040 hoshen wins
@@ -464,7 +471,7 @@ Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `
 
 Each fix is its own commit, with the fixture failing before the fix and passing after it.
 
-- **B-1 (Python): keys of different types compared equal.** `{true: a, 1: b}` and `{1: a, 1.0: b}` were rejected as duplicate keys (→ `invalid YAML`) because Python's `True == 1 == 1.0`. YAML node equality includes the tag, and JS and Rust accept both. Pinned as **C-035**.
+- **B-1 (Python): keys of different types compared equal.** `{true: a, 1: b}` and `{1: a, 1.0: b}` were rejected as duplicate keys (→ `invalid YAML`) because Python's `True == 1 == 1.0`. YAML node equality includes the tag, and JS and Rust accept both. Pinned as **C-035**; fixed in `src/urim/check.py` by comparing keys as `(type, value)`. Separate commit, failing then passing.
 - **B-2 (Rust): a collection key under a local tag was accepted.** `? !t [1]` as a key passed in Rust, against C-023; JS and Python reject it. Pinned as a C-023 fixture.
 
 ## X. Coverage exclusions

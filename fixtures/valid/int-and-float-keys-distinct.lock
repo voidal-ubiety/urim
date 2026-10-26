@@ -1,0 +1,5 @@
+# C-035: keys with different YAML types are distinct (1 vs 1.0)
+1: a
+1.0: b
+hoshen: 1
+urim: "0.1"

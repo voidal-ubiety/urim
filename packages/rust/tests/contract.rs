@@ -45,6 +45,7 @@ file_contract! {
     c032_anchors_aliases => "C-032",
     c033_no_merge_keys => "C-033",
     c034_key_spelling => "C-034",
+    c035_keys_distinct_by_type => "C-035",
     c040_hoshen_precedence => "C-040",
     c041_hoshen_not_int => "C-041",
     c042_hoshen_unsupported => "C-042",

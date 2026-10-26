@@ -302,6 +302,18 @@
       "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
     },
     {
+      "id": "C-035",
+      "path": "valid/bool-and-int-keys-distinct.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
+      "id": "C-035",
+      "path": "valid/int-and-float-keys-distinct.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
       "id": "C-040",
       "path": "invalid/lockfile-dctp-is-not-urim.lock",
       "exit": 1,
