@@ -152,6 +152,7 @@ export function parseDocument(text: string): Value {
     customTags: coreTags,
     intAsBigInt: true,
     uniqueKeys: false, // checked in walk(): the package's own check is O(n^2) per mapping
+    prettyErrors: false, // we use e.pos only; prettifying is O(n) per error, O(n^2) per flood
   });
   // An empty stream is an empty array (the `EmptyStream` type), which YAML reads as null.
   const [doc, ...rest] = docs;
