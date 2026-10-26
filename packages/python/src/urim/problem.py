@@ -1,13 +1,16 @@
 """Failure messages: the exact wording from CONTRACT.md, shared with problem.rs and problem.ts.
 
-Implements: the message of every C-xxx failure (C-010..C-088)
+Implements: the message of every C-xxx failure (C-010..C-094)
 """
 
 from __future__ import annotations
 
 from urim.limits import MAX_BYTES, MAX_DEPTH
 
-SUPPORTED_HOSHEN = frozenset({1})
+SUPPORTED_HOSHEN = frozenset({2})
+
+#: The pre-0.1 name of the ``urim`` key (C-093). Rejected, never read as an alias.
+RENAMED_KEY = "dctp"
 
 CANNOT_READ = "cannot read file"
 NOT_REGULAR_FILE = "not a regular file"
@@ -21,10 +24,11 @@ MERGE_KEY = "merge keys (<<) are not allowed"
 INVISIBLE_IN_KEY = "invisible or bidirectional control character in a mapping key"
 ROOT_NOT_MAPPING = "root must be a mapping"
 HOSHEN_NOT_INTEGER = "hoshen must be an integer"
-BOTH_SPEC_KEYS = "set only one of 'dctp' or 'urim'"
+HOSHEN_NEVER_RELEASED = "hoshen 1 was never released; the first lockfile format is hoshen 2"
+RENAMED_KEY_USED = f"the {RENAMED_KEY}: key was renamed to urim: before 0.1; replace it"
 STATE_NOT_MAPPING = "state must be a mapping"
 QUESTIONS_EMPTY = "questions must be a non-empty mapping"
-NOT_URIM = "not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
+NOT_URIM = "not a urim document: expected a lockfile with 'hoshen' or a contract with 'urim'"
 
 
 def invisible_in(key: str) -> str:

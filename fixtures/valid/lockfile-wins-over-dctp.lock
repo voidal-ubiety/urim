@@ -1,4 +1,0 @@
-# C-040: hoshen selects the lockfile rules; dctp is ignored
-hoshen: 1
-urim: "0.1"
-dctp: 1

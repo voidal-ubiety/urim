@@ -1,2 +1,2 @@
-__proto__: {hoshen: 1, urim: x}
-constructor: {prototype: {hoshen: 1}}
+__proto__: {hoshen: 2, urim: x}
+constructor: {prototype: {hoshen: 2}}

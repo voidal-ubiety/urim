@@ -59,19 +59,19 @@
       "id": "C-014",
       "path": "valid/bom.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
     },
     {
       "id": "C-015",
       "path": "valid/crlf.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
     },
     {
       "id": "C-015",
       "path": "hostile/mixed-crlf-lf.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
     },
     {
       "id": "C-020",
@@ -185,7 +185,7 @@
       "id": "C-023",
       "path": "valid/explicit-key-without-value.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
     },
     {
       "id": "C-024",
@@ -197,13 +197,13 @@
       "id": "C-024",
       "path": "invalid/hoshen-i64-min.lock",
       "exit": 1,
-      "output": "{file}: error: unsupported hoshen version -9223372036854775808 (supported: 1)"
+      "output": "{file}: error: unsupported hoshen version -9223372036854775808 (supported: 2)"
     },
     {
       "id": "C-024",
       "path": "invalid/hoshen-u64-max.lock",
       "exit": 1,
-      "output": "{file}: error: unsupported hoshen version 18446744073709551615 (supported: 1)"
+      "output": "{file}: error: unsupported hoshen version 18446744073709551615 (supported: 2)"
     },
     {
       "id": "C-024",
@@ -233,7 +233,7 @@
       "id": "C-025",
       "path": "valid/urim-timestamp-is-a-string.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 2026-10-25)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 2026-10-25)"
     },
     {
       "id": "C-025",
@@ -245,49 +245,49 @@
       "id": "C-025",
       "path": "valid/yaml-1.1-directive-keeps-core-schema.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim yes)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim yes)"
     },
     {
       "id": "C-025",
       "path": "hostile/yaml11-norway.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim NO)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim NO)"
     },
     {
       "id": "C-025",
       "path": "hostile/yaml11-octal-version.yaml",
       "exit": 0,
-      "output": "{file}: ok (contract no@010, dctp 0.1)"
+      "output": "{file}: ok (contract no@010, urim 0.1)"
     },
     {
       "id": "C-025",
       "path": "hostile/yaml11-on-y.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim on)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim on)"
     },
     {
       "id": "C-025",
       "path": "hostile/yaml11-sexagesimal-version.yaml",
       "exit": 0,
-      "output": "{file}: ok (contract x@1:30, dctp 0.1)"
+      "output": "{file}: ok (contract x@1:30, urim 0.1)"
     },
     {
       "id": "C-026",
       "path": "valid/hoshen-hex.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
     },
     {
       "id": "C-026",
       "path": "valid/hoshen-octal.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
     },
     {
       "id": "C-026",
       "path": "valid/hoshen-plus-sign.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
     },
     {
       "id": "C-027",
@@ -311,13 +311,13 @@
       "id": "C-027",
       "path": "valid/urim-leading-zero-is-string.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 01)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 01)"
     },
     {
       "id": "C-027",
       "path": "valid/urim-signed-leading-zero-is-string.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim -007)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim -007)"
     },
     {
       "id": "C-027",
@@ -341,13 +341,13 @@
       "id": "C-027",
       "path": "valid/urim-signed-hex-is-string.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim +0x1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim +0x1)"
     },
     {
       "id": "C-027",
       "path": "valid/urim-bare-hex-prefix-is-string.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0x)"
     },
     {
       "id": "C-027",
@@ -389,7 +389,7 @@
       "id": "C-028",
       "path": "valid/urim-lone-dot-is-string.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim .)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim .)"
     },
     {
       "id": "C-028",
@@ -443,49 +443,49 @@
       "id": "C-031",
       "path": "valid/flow-mapping-root.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
     },
     {
       "id": "C-034",
       "path": "valid/key-spellings.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
     },
     {
       "id": "C-034",
       "path": "valid/string-and-int-keys-distinct.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
     },
     {
       "id": "C-035",
       "path": "valid/bool-and-int-keys-distinct.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
     },
     {
       "id": "C-035",
       "path": "valid/int-and-float-keys-distinct.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
     },
     {
       "id": "C-035",
       "path": "valid/float-and-leading-zero-keys-distinct.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
     },
     {
       "id": "C-040",
-      "path": "invalid/lockfile-dctp-is-not-urim.lock",
+      "path": "valid/lockfile-wins-over-contract-keys.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
+    },
+    {
+      "id": "C-040",
+      "path": "invalid/lockfile-contract-keys-not-urim.lock",
       "exit": 1,
       "output": "{file}: error: missing required key(s): urim"
-    },
-    {
-      "id": "C-040",
-      "path": "valid/lockfile-wins-over-dctp.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
     },
     {
       "id": "C-041",
@@ -527,31 +527,31 @@
       "id": "C-042",
       "path": "invalid/hoshen-negative-zero.lock",
       "exit": 1,
-      "output": "{file}: error: unsupported hoshen version 0 (supported: 1)"
+      "output": "{file}: error: unsupported hoshen version 0 (supported: 2)"
     },
     {
       "id": "C-042",
       "path": "invalid/hoshen-negative.lock",
       "exit": 1,
-      "output": "{file}: error: unsupported hoshen version -1 (supported: 1)"
+      "output": "{file}: error: unsupported hoshen version -1 (supported: 2)"
     },
     {
       "id": "C-042",
       "path": "invalid/hoshen-unsupported-hex.lock",
       "exit": 1,
-      "output": "{file}: error: unsupported hoshen version 2 (supported: 1)"
+      "output": "{file}: error: unsupported hoshen version 3 (supported: 2)"
     },
     {
       "id": "C-042",
       "path": "invalid/hoshen-unsupported.lock",
       "exit": 1,
-      "output": "{file}: error: unsupported hoshen version 2 (supported: 1)"
+      "output": "{file}: error: unsupported hoshen version 3 (supported: 2)"
     },
     {
       "id": "C-042",
       "path": "invalid/hoshen-zero.lock",
       "exit": 1,
-      "output": "{file}: error: unsupported hoshen version 0 (supported: 1)"
+      "output": "{file}: error: unsupported hoshen version 0 (supported: 2)"
     },
     {
       "id": "C-043",
@@ -585,21 +585,15 @@
     },
     {
       "id": "C-045",
-      "path": "../spec/examples/urim.lock",
-      "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
-    },
-    {
-      "id": "C-045",
       "path": "valid/lock-urim-empty-string.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim )"
+      "output": "{file}: ok (lockfile, hoshen 2, urim )"
     },
     {
       "id": "C-045",
       "path": "valid/minimal.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim 0.1)"
     },
     {
       "id": "C-046",
@@ -611,31 +605,7 @@
       "id": "C-046",
       "path": "invalid/lock-order-version-before-urim.lock",
       "exit": 1,
-      "output": "{file}: error: unsupported hoshen version 2 (supported: 1)"
-    },
-    {
-      "id": "C-050",
-      "path": "invalid/contract-both-keys-bad-types.decision.yaml",
-      "exit": 1,
-      "output": "{file}: error: set only one of 'dctp' or 'urim'"
-    },
-    {
-      "id": "C-050",
-      "path": "invalid/contract-both-version-keys.decision.yaml",
-      "exit": 1,
-      "output": "{file}: error: set only one of 'dctp' or 'urim'"
-    },
-    {
-      "id": "C-051",
-      "path": "invalid/contract-dctp-not-string.decision.yaml",
-      "exit": 1,
-      "output": "{file}: error: dctp must be a string"
-    },
-    {
-      "id": "C-051",
-      "path": "invalid/contract-dctp-null.decision.yaml",
-      "exit": 1,
-      "output": "{file}: error: dctp must be a string"
+      "output": "{file}: error: unsupported hoshen version 3 (supported: 2)"
     },
     {
       "id": "C-051",
@@ -717,18 +687,6 @@
     },
     {
       "id": "C-056",
-      "path": "../spec/examples/incident-triage.decision.yaml",
-      "exit": 0,
-      "output": "{file}: ok (contract incident-triage@1.2.0, dctp 0.1)"
-    },
-    {
-      "id": "C-056",
-      "path": "../spec/examples/kyc-document-check.decision.yaml",
-      "exit": 0,
-      "output": "{file}: ok (contract kyc-document-check@0.3.0, dctp 0.1)"
-    },
-    {
-      "id": "C-056",
       "path": "valid/contract-multiline-id.decision.yaml",
       "exit": 0,
       "output": "{file}: ok (contract a\\u{000A}b@v, urim 0.1)"
@@ -743,7 +701,7 @@
       "id": "C-057",
       "path": "invalid/contract-order-key-type-first.decision.yaml",
       "exit": 1,
-      "output": "{file}: error: dctp must be a string"
+      "output": "{file}: error: urim must be a string"
     },
     {
       "id": "C-057",
@@ -761,19 +719,19 @@
       "id": "C-060",
       "path": "../spec/examples/providers/cloudflare-clef-flash.provider.yaml",
       "exit": 1,
-      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
+      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'urim'"
     },
     {
       "id": "C-060",
       "path": "invalid/empty-mapping.yaml",
       "exit": 1,
-      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
+      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'urim'"
     },
     {
       "id": "C-060",
       "path": "invalid/unrecognized.yaml",
       "exit": 1,
-      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
+      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'urim'"
     },
     {
       "id": "C-082",
@@ -857,7 +815,7 @@
       "id": "C-083",
       "path": "valid/depth-64.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
     },
     {
       "id": "C-084",
@@ -1059,9 +1017,9 @@
     },
     {
       "id": "C-088",
-      "path": "invalid/invisible-in-dctp.yaml",
+      "path": "invalid/invisible-in-contract-urim.yaml",
       "exit": 1,
-      "output": "{file}: error: invisible or bidirectional control character in dctp"
+      "output": "{file}: error: invisible or bidirectional control character in urim"
     },
     {
       "id": "C-088",
@@ -1085,25 +1043,25 @@
       "id": "C-089",
       "path": "valid/backslash-in-urim.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim a\\u{0041}b)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim a\\u{0041}b)"
     },
     {
       "id": "C-089",
       "path": "valid/escape-in-contract.yaml",
       "exit": 0,
-      "output": "{file}: ok (contract a\\u{001B}[2Jb@v\\u{0000}, dctp 0.1\\u{000D})"
+      "output": "{file}: ok (contract a\\u{001B}[2Jb@v\\u{0000}, urim 0.1\\u{000D})"
     },
     {
       "id": "C-089",
       "path": "valid/escape-in-urim.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim a\\u{001B}b\\u{007F}c\\u{0009})"
+      "output": "{file}: ok (lockfile, hoshen 2, urim a\\u{001B}b\\u{007F}c\\u{0009})"
     },
     {
       "id": "C-089",
       "path": "hostile/ansi-osc8-in-urim.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim \\u{001B}]8;;https://example.invalid\\u{001B}\\click\\u{001B}]8;;\\u{001B}\\)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim \\u{001B}]8;;https://example.invalid\\u{001B}\\click\\u{001B}]8;;\\u{001B}\\)"
     },
     {
       "id": "C-090",
@@ -1187,7 +1145,7 @@
       "id": "C-090",
       "path": "invalid/precedence-schema-identifier-order.yaml",
       "exit": 1,
-      "output": "{file}: error: dctp must be a string"
+      "output": "{file}: error: urim must be a string"
     },
     {
       "id": "C-090",
@@ -1241,25 +1199,25 @@
       "id": "C-091",
       "path": "invalid/proto-key-not-urim.yaml",
       "exit": 1,
-      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
+      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'urim'"
     },
     {
       "id": "C-091",
       "path": "valid/proto-keys-inert.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
     },
     {
       "id": "C-091",
       "path": "hostile/proto-only-hoshen.yaml",
       "exit": 1,
-      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'"
+      "output": "{file}: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'urim'"
     },
     {
       "id": "C-091",
       "path": "hostile/proto-pollution-nested.lock",
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
     },
     {
       "id": "C-092",
@@ -1289,7 +1247,73 @@
       "id": "C-092",
       "path": "valid/non-ascii-question-key.yaml",
       "exit": 0,
-      "output": "{file}: ok (contract kyc-check@1.0.0, dctp 0.1)"
+      "output": "{file}: ok (contract kyc-check@1.0.0, urim 0.1)"
+    },
+    {
+      "id": "C-093",
+      "path": "invalid/renamed-key-in-lockfile.lock",
+      "exit": 1,
+      "output": "{file}: error: the dctp: key was renamed to urim: before 0.1; replace it"
+    },
+    {
+      "id": "C-093",
+      "path": "invalid/renamed-key-before-types.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: the dctp: key was renamed to urim: before 0.1; replace it"
+    },
+    {
+      "id": "C-093",
+      "path": "invalid/renamed-key-with-urim.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: the dctp: key was renamed to urim: before 0.1; replace it"
+    },
+    {
+      "id": "C-093",
+      "path": "invalid/renamed-key.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: the dctp: key was renamed to urim: before 0.1; replace it"
+    },
+    {
+      "id": "C-093",
+      "path": "invalid/renamed-key-null.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: the dctp: key was renamed to urim: before 0.1; replace it"
+    },
+    {
+      "id": "C-093",
+      "path": "../spec/examples/incident-triage.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: the dctp: key was renamed to urim: before 0.1; replace it"
+    },
+    {
+      "id": "C-093",
+      "path": "../spec/examples/kyc-document-check.decision.yaml",
+      "exit": 1,
+      "output": "{file}: error: the dctp: key was renamed to urim: before 0.1; replace it"
+    },
+    {
+      "id": "C-094",
+      "path": "../spec/examples/urim.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen 1 was never released; the first lockfile format is hoshen 2"
+    },
+    {
+      "id": "C-094",
+      "path": "invalid/hoshen-never-released.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen 1 was never released; the first lockfile format is hoshen 2"
+    },
+    {
+      "id": "C-094",
+      "path": "invalid/hoshen-never-released-hex.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen 1 was never released; the first lockfile format is hoshen 2"
+    },
+    {
+      "id": "C-094",
+      "path": "invalid/hoshen-never-released-no-urim.lock",
+      "exit": 1,
+      "output": "{file}: error: hoshen 1 was never released; the first lockfile format is hoshen 2"
     }
   ]
 }

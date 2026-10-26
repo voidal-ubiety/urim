@@ -1,4 +1,4 @@
 # C-034: quoted keys, explicit ? keys and space before the colon are all the same key
 ? hoshen
-: 1
+: 2
 'urim' : "0.1"

@@ -58,7 +58,7 @@ def test_c007_python_dash_m_subprocess() -> None:
         cwd=FIXTURES,
         check=False,
     )
-    expected = (0, "valid/minimal.lock: ok (lockfile, hoshen 1, urim 0.1)\n", "")
+    expected = (0, "valid/minimal.lock: ok (lockfile, hoshen 2, urim 0.1)\n", "")
     assert (proc.returncode, proc.stdout, proc.stderr) == expected
 
 
@@ -70,7 +70,7 @@ def test_c007_console_script_is_declared() -> None:
 @pytest.mark.skipif(not hasattr(os, "geteuid") or os.geteuid() == 0, reason="root ignores file modes")
 def test_c012_unreadable_file(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     path = tmp_path / "locked.lock"
-    path.write_text('hoshen: 1\nurim: "0.1"\n', encoding="utf-8")
+    path.write_text('hoshen: 2\nurim: "0.1"\n', encoding="utf-8")
     path.chmod(0)
     try:
         assert main(["check", str(path)]) == 1
@@ -82,9 +82,9 @@ def test_c012_unreadable_file(tmp_path: Path, capsys: pytest.CaptureFixture[str]
 @pytest.mark.skipif(os.name != "posix", reason="POSIX byte paths only")
 def test_d012_non_utf8_path_argument(tmp_path: Path) -> None:
     name = b"f\xff.lock"
-    (tmp_path / os.fsdecode(name)).write_bytes(b"hoshen: 1\nurim: x\n")
+    (tmp_path / os.fsdecode(name)).write_bytes(b"hoshen: 2\nurim: x\n")
     r = subprocess.run(
         [sys.executable, "-m", "urim", "check", name], cwd=tmp_path, capture_output=True, check=False
     )
     assert r.returncode == 0
-    assert r.stdout.endswith(b": ok (lockfile, hoshen 1, urim x)\n")
+    assert r.stdout.endswith(b": ok (lockfile, hoshen 2, urim x)\n")

@@ -12,7 +12,7 @@ Decision models take application state plus typed questions (choice, score, yes/
 |---|---|---|
 | **Urim** | The contract language and compiler (`urim`) | pre-alpha; `urim check` works |
 | **Thummim** | Eval and conformance suite | planned |
-| **hoshen** | The lockfile format (`urim.lock`, top-level `hoshen: 1`) | specified in spec §6.2 |
+| **hoshen** | The lockfile format (`urim.lock`, top-level `hoshen: 2`) | specified in spec §6.2 |
 
 ## Install and use (v0.0.1)
 
@@ -23,10 +23,10 @@ cargo install urim
 ```
 
 ```sh
-urim check spec/examples/urim.lock
-# spec/examples/urim.lock: ok (lockfile, hoshen 1, urim 0.1)
-urim check spec/examples/incident-triage.decision.yaml
-# spec/examples/incident-triage.decision.yaml: ok (contract incident-triage@1.2.0, dctp 0.1)
+urim check fixtures/valid/minimal.lock
+# fixtures/valid/minimal.lock: ok (lockfile, hoshen 2, urim 0.1)
+urim check fixtures/valid/minimal-urim.decision.yaml
+# fixtures/valid/minimal-urim.decision.yaml: ok (contract minimal@0.0.1, urim 0.1)
 ```
 
 `urim check` exits 0 when the file is valid, 1 with a message naming the file and the problem when it isn't, and 2 on a usage error. The three implementations (TypeScript, Python, Rust) produce identical output on the shared fixtures in [`fixtures/`](fixtures/README.md). Every behavior is catalogued in [`CONTRACT.md`](CONTRACT.md), and `scripts/verify.sh` checks all of it.

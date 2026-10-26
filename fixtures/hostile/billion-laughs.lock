@@ -1,4 +1,4 @@
-hoshen: 1
+hoshen: 2
 urim: x
 a: &a ["lol","lol","lol","lol","lol","lol","lol","lol","lol"]
 b: &b [*a,*a,*a,*a,*a,*a,*a,*a,*a]

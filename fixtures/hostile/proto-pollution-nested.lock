@@ -1,6 +1,6 @@
-hoshen: 1
+hoshen: 2
 urim: x
-__proto__: {polluted: yes, hoshen: 2}
+__proto__: {polluted: yes, hoshen: 3}
 constructor: {prototype: {polluted: yes}}
 prototype: {polluted: yes}
 q: {__proto__: {isAdmin: true}}

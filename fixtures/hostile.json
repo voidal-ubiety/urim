@@ -33,7 +33,7 @@
       "name": "oversized-10-mib",
       "pieces": [
         [
-          "hoshen: 1\n",
+          "hoshen: 2\n",
           1048576
         ]
       ],
@@ -45,7 +45,7 @@
       "name": "exactly-1-mib-comment-padded",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\n#",
+          "hoshen: 2\nurim: x\n#",
           1
         ],
         [
@@ -54,14 +54,14 @@
         ]
       ],
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
     },
     {
       "id": "C-020",
       "name": "very-long-line-comment",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\n# ",
+          "hoshen: 2\nurim: x\n# ",
           1
         ],
         [
@@ -70,14 +70,14 @@
         ]
       ],
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
     },
     {
       "id": "C-089",
       "name": "huge-scalar-urim-near-1-mib",
       "pieces": [
         [
-          "hoshen: 1\nurim: ",
+          "hoshen: 2\nurim: ",
           1
         ],
         [
@@ -92,7 +92,7 @@
       "exit": 0,
       "output_pieces": [
         [
-          "{file}: ok (lockfile, hoshen 1, urim ",
+          "{file}: ok (lockfile, hoshen 2, urim ",
           1
         ],
         [
@@ -110,7 +110,7 @@
       "name": "huge-scalar-of-escapes",
       "pieces": [
         [
-          "hoshen: 1\nurim: \"",
+          "hoshen: 2\nurim: \"",
           1
         ],
         [
@@ -125,7 +125,7 @@
       "exit": 0,
       "output_pieces": [
         [
-          "{file}: ok (lockfile, hoshen 1, urim ",
+          "{file}: ok (lockfile, hoshen 2, urim ",
           1
         ],
         [
@@ -143,7 +143,7 @@
       "name": "huge-key",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\n",
+          "hoshen: 2\nurim: x\n",
           1
         ],
         [
@@ -164,14 +164,14 @@
       "generate": "many-keys",
       "count": 60000,
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
     },
     {
       "id": "C-021",
       "name": "duplicate-key-after-sixty-thousand",
       "generate": "many-keys",
       "count": 60000,
-      "suffix": "hoshen: 2\n",
+      "suffix": "hoshen: 3\n",
       "exit": 1,
       "output": "{file}: error: invalid YAML"
     },
@@ -200,7 +200,7 @@
       "name": "decimal-int-5000-digits-past-python-str-limit",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\nn: ",
+          "hoshen: 2\nurim: x\nn: ",
           1
         ],
         [
@@ -237,7 +237,7 @@
     },
     {
       "id": "C-024",
-      "name": "octal-one-with-million-leading-zeros",
+      "name": "octal-two-with-million-leading-zeros",
       "pieces": [
         [
           "hoshen: 0o",
@@ -248,19 +248,19 @@
           1000000
         ],
         [
-          "1\nurim: x\n",
+          "2\nurim: x\n",
           1
         ]
       ],
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
     },
     {
       "id": "C-028",
       "name": "float-million-digit-exponent",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\nf: 1e",
+          "hoshen: 2\nurim: x\nf: 1e",
           1
         ],
         [
@@ -273,14 +273,14 @@
         ]
       ],
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
     },
     {
       "id": "C-028",
       "name": "float-million-digit-mantissa",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\nf: 0.",
+          "hoshen: 2\nurim: x\nf: 0.",
           1
         ],
         [
@@ -293,14 +293,14 @@
         ]
       ],
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)"
     },
     {
       "id": "C-083",
       "name": "deep-flow-sequence-million",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\nq: ",
+          "hoshen: 2\nurim: x\nq: ",
           1
         ],
         [
@@ -323,7 +323,7 @@
       "name": "deep-flow-mapping",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\nq: ",
+          "hoshen: 2\nurim: x\nq: ",
           1
         ],
         [
@@ -345,7 +345,7 @@
       "name": "deep-flow-closed",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\nq: ",
+          "hoshen: 2\nurim: x\nq: ",
           1
         ],
         [
@@ -375,7 +375,7 @@
       "name": "deep-block-sequence",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\nq:\n",
+          "hoshen: 2\nurim: x\nq:\n",
           1
         ]
       ],
@@ -389,7 +389,7 @@
       "name": "wide-flow-sequence",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\nq: [",
+          "hoshen: 2\nurim: x\nq: [",
           1
         ],
         [
@@ -402,7 +402,7 @@
         ]
       ],
       "exit": 0,
-      "output": "{file}: ok (lockfile, hoshen 1, urim x)",
+      "output": "{file}: ok (lockfile, hoshen 2, urim x)",
       "bounds": {
         "js": {
           "max_rss_mib": 320
@@ -422,7 +422,7 @@
       "name": "alias-flood",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\na: &a [1]\nb: [",
+          "hoshen: 2\nurim: x\na: &a [1]\nb: [",
           1
         ],
         [
@@ -448,7 +448,7 @@
       "name": "tag-flood",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\nb: [",
+          "hoshen: 2\nurim: x\nb: [",
           1
         ],
         [
@@ -480,7 +480,7 @@
       "name": "invalid-utf8-flood",
       "pieces": [
         [
-          "hoshen: 1\n",
+          "hoshen: 2\n",
           1
         ]
       ],
@@ -502,7 +502,7 @@
       "name": "unterminated-quote-near-1-mib",
       "pieces": [
         [
-          "hoshen: 1\nurim: \"",
+          "hoshen: 2\nurim: \"",
           1
         ],
         [
@@ -518,7 +518,7 @@
       "name": "many-documents",
       "pieces": [
         [
-          "hoshen: 1\nurim: x\n",
+          "hoshen: 2\nurim: x\n",
           1
         ],
         [

@@ -89,11 +89,11 @@ def build(case: dict, tmp: Path) -> str:
     gen = case.get("generate")
     count = case.get("count", 0)
     if gen == "many-keys":
-        text += "hoshen: 1\nurim: x\n" + "".join(f"k{i}: {i}\n" for i in range(count))
+        text += "hoshen: 2\nurim: x\n" + "".join(f"k{i}: {i}\n" for i in range(count))
     elif gen == "block-nest":
         text += "".join("  " * (i + 1) + "a:\n" for i in range(count))
     elif gen == "invisible-keys":
-        text += "hoshen: 1\nurim: x\n" + "".join(f"k{i}\u200b: 1\n" for i in range(count))
+        text += "hoshen: 2\nurim: x\n" + "".join(f"k{i}\u200b: 1\n" for i in range(count))
     text += case.get("suffix", "")
     data = text.encode("utf-8")
     if "bytes_suffix_hex" in case:

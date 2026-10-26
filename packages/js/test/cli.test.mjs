@@ -31,7 +31,7 @@ test("C-012 unreadable file (permission denied) reports cannot read file", {
   const dir = mkdtempSync(join(tmpdir(), "urim-"));
   try {
     const path = join(dir, "locked.lock");
-    writeFileSync(path, 'hoshen: 1\nurim: "0.1"\n');
+    writeFileSync(path, 'hoshen: 2\nurim: "0.1"\n');
     chmodSync(path, 0o000);
     assert.deepEqual(runCli(["check", path]), {
       exit: 1,
@@ -52,7 +52,7 @@ test("D-012 non-UTF-8 path bytes in argv are lost by Node (cannot read file)", {
       "sh",
       [
         "-c",
-        `f=$(printf 'f\\377.lock'); printf 'hoshen: 1\\nurim: x\\n' > "$f"; exec "$0" "$1" check "$f"`,
+        `f=$(printf 'f\\377.lock'); printf 'hoshen: 2\\nurim: x\\n' > "$f"; exec "$0" "$1" check "$f"`,
         process.execPath,
         CLI,
       ],

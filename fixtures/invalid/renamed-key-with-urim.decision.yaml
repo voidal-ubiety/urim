@@ -1,3 +1,4 @@
+# C-093: refused even with urim present; no "set only one" message
 dctp: "0.1"
 urim: "0.1"
 contract: x

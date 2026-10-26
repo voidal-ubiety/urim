@@ -25,15 +25,15 @@
       "expect": {
         "js": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
         },
         "rust": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
         },
         "python": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
         }
       }
     },
@@ -43,15 +43,15 @@
       "expect": {
         "js": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
         },
         "rust": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
         },
         "python": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
         }
       }
     },
@@ -61,7 +61,7 @@
       "expect": {
         "js": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
         },
         "rust": {
           "exit": 1,
@@ -79,11 +79,11 @@
       "expect": {
         "js": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
         },
         "rust": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
         },
         "python": {
           "exit": 1,
@@ -101,11 +101,11 @@
         },
         "rust": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
         },
         "python": {
           "exit": 0,
-          "output": "{file}: ok (lockfile, hoshen 1, urim x)"
+          "output": "{file}: ok (lockfile, hoshen 2, urim x)"
         }
       }
     }

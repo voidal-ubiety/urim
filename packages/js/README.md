@@ -10,14 +10,14 @@ Validates a hoshen lockfile (`urim.lock`) or the top-level shape of a Urim contr
 
 ```sh
 urim check urim.lock
-# urim.lock: ok (lockfile, hoshen 1, urim 0.1)
+# urim.lock: ok (lockfile, hoshen 2, urim 0.1)
 urim check broken.lock
 # broken.lock: error: unsupported hoshen version 2 (supported: 1)
 ```
 
 - Exit codes: 0 valid, 1 invalid (the message goes to stderr), 2 usage error.
-- Lockfiles need an integer `hoshen` in the supported set `{1}` and a string `urim`.
-- Contracts need `dctp` or `urim` (a string), plus `contract`, `version`, `state`, and a non-empty `questions` mapping.
+- Lockfiles need an integer `hoshen` in the supported set `{2}` and a string `urim`.
+- Contracts need `urim` (a string), plus `contract`, `version`, `state`, and a non-empty `questions` mapping.
 
 The TypeScript, Python, and Rust implementations give identical output on a shared fixture suite.
 

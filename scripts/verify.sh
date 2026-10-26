@@ -81,4 +81,6 @@ step "hostile: hostile inputs under time/RSS bounds, no execution (scripts/hosti
 PYTHON="$PYTHON" python3 scripts/hostile.py
 step "contract-check: every CONTRACT.md ID tested in every language"
 python3 scripts/contract-check.py
+step "names: the pre-0.1 version-key name appears only where allowed (C-093)"
+python3 scripts/check-names
 printf '\nverify OK\n'

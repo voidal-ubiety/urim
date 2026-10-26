@@ -1,0 +1,4 @@
+# C-040: a lockfile needs urim; contract keys do not stand in for it
+hoshen: 2
+contract: x
+version: 1.0.0

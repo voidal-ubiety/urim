@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+"""Name guard (C-093, decision D-14): the version key's pre-0.1 name must not come back.
+
+Fails if the old name (any case, so the old acronym and its conformance-level names too)
+appears in a tracked file outside the allowed places:
+
+* history: CHANGELOG.md, spec/CHANGELOG.md, docs/adr/
+* spec/: a copy of the upstream spec, re-synced separately and never edited here
+* the C-093 material: fixtures/invalid/renamed-key*, any line carrying the C-093 message,
+  and one RENAMED_KEY constant per port
+* this script
+
+Usage: scripts/check-names   (exit 0 clean, 1 with one line per offending file:line)
+"""
+
+from __future__ import annotations
+
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+OLD = re.compile(r"dctp", re.IGNORECASE)
+MESSAGE = "key was renamed to urim: before 0.1; replace it"
+ALLOWED_PATHS = (
+    re.compile(r"^(spec/CHANGELOG\.md|CHANGELOG\.md)$"),
+    re.compile(r"^docs/adr/"),
+    re.compile(r"^spec/"),
+    re.compile(r"^fixtures/invalid/renamed-key[^/]*$"),
+    re.compile(r"^scripts/check-names$"),
+)
+CONSTANT = re.compile(r'RENAMED_KEY(: &str)? = "dctp";?$')
+CONSTANT_FILES = {"packages/js/src/problem.ts", "packages/python/src/urim/problem.py", "packages/rust/src/lib.rs"}
+
+
+def tracked() -> list[str]:
+    out = subprocess.run(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard"],
+        cwd=ROOT, check=True, capture_output=True, text=True,
+    ).stdout
+    return sorted(set(out.splitlines()))
+
+
+def main() -> int:
+    bad: list[str] = []
+    constants: dict[str, int] = {}
+    for rel in tracked():
+        if any(p.search(rel) for p in ALLOWED_PATHS):
+            continue
+        path = ROOT / rel
+        if not path.is_file():
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue  # binary fixtures; the name is ASCII and would show in a text file
+        if OLD.search(rel):
+            bad.append(f"{rel}: the old name is in the file name")
+        for n, line in enumerate(text.splitlines(), 1):
+            if not OLD.search(line) or MESSAGE in line:
+                continue
+            if rel in CONSTANT_FILES and CONSTANT.search(line.strip()):
+                constants[rel] = constants.get(rel, 0) + 1
+                continue
+            bad.append(f"{rel}:{n}: {line.strip()[:120]}")
+    for rel in sorted(CONSTANT_FILES):
+        if constants.get(rel, 0) != 1:
+            bad.append(f"{rel}: expected exactly one RENAMED_KEY constant, found {constants.get(rel, 0)}")
+    for b in bad:
+        print(f"check-names: {b}", file=sys.stderr)
+    if bad:
+        print("check-names: the version key is `urim` (decision D-14); see CONTRACT.md C-093", file=sys.stderr)
+        return 1
+    print("check-names: OK (old version-key name only in history, spec/ and C-093 material)")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

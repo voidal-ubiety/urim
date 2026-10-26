@@ -1,8 +1,8 @@
 // `urim check`: validate a hoshen lockfile or a contract's top-level shape. Same as
 // check.rs/check.py. Every string that reaches the output line goes through `sanitize` (C-089).
-// Implements: C-003, C-006, C-040..C-046, C-050..C-057, C-060, C-070, C-071, C-088, C-089
+// Implements: C-003, C-006, C-040..C-046, C-050..C-057, C-060, C-070, C-071, C-088, C-089, C-093, C-094
 import { hasInvisible, sanitize } from "./display.js";
-import { Failure, Problem, SUPPORTED_HOSHEN } from "./problem.js";
+import { Failure, Problem, RENAMED_KEY, SUPPORTED_HOSHEN } from "./problem.js";
 import type { Value, YamlMap } from "./profile.js";
 import { isYamlMap, parseDocument } from "./profile.js";
 import { readText } from "./read.js";
@@ -40,13 +40,14 @@ function identifier(root: YamlMap, name: string): string {
 
 function lockfile(root: YamlMap, hoshen: Value): string {
   if (typeof hoshen !== "bigint") throw new Failure(Problem.hoshenNotInteger);
+  if (hoshen === 1n) throw new Failure(Problem.hoshenNeverReleased);
   if (!SUPPORTED_HOSHEN.includes(hoshen)) throw new Failure(Problem.unsupportedHoshen(hoshen));
   if (!root.strings.has("urim")) throw new Failure(Problem.missingKeys(["urim"]));
   return `lockfile, hoshen ${hoshen}, urim ${sanitize(identifier(root, "urim"))}`;
 }
 
-function contract(root: YamlMap, key: "dctp" | "urim"): string {
-  const specVersion = identifier(root, key);
+function contract(root: YamlMap): string {
+  const specVersion = identifier(root, "urim");
   const missing = CONTRACT_REQUIRED.filter((k) => !root.strings.has(k));
   if (missing.length > 0) throw new Failure(Problem.missingKeys(missing));
   const id = identifier(root, "contract");
@@ -54,18 +55,15 @@ function contract(root: YamlMap, key: "dctp" | "urim"): string {
   if (!isYamlMap(root.strings.get("state"))) throw new Failure(Problem.stateNotMapping);
   const questions = root.strings.get("questions");
   if (!isYamlMap(questions) || questions.size === 0) throw new Failure(Problem.questionsEmpty);
-  return `contract ${sanitize(id)}@${sanitize(version)}, ${key} ${sanitize(specVersion)}`;
+  return `contract ${sanitize(id)}@${sanitize(version)}, urim ${sanitize(specVersion)}`;
 }
 
 function detail(text: string): string {
   const root = parseDocument(text);
   if (!isYamlMap(root)) throw new Failure(Problem.rootNotMapping);
+  if (root.strings.has(RENAMED_KEY)) throw new Failure(Problem.renamedKey);
   if (root.strings.has("hoshen")) return lockfile(root, root.strings.get("hoshen") as Value);
-  const dctp = root.strings.has("dctp");
-  const urim = root.strings.has("urim");
-  if (dctp && urim) throw new Failure(Problem.bothSpecKeys);
-  if (dctp) return contract(root, "dctp");
-  if (urim) return contract(root, "urim");
+  if (root.strings.has("urim")) return contract(root);
   throw new Failure(Problem.notUrim);
 }
 

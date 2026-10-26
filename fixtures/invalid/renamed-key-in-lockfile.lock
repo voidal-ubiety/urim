@@ -1,0 +1,4 @@
+# C-093: checked before hoshen dispatch, so a lockfile with it fails too
+hoshen: 2
+urim: "0.1"
+dctp: "0.1"

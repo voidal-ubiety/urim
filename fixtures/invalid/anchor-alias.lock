@@ -1,5 +1,5 @@
 # C-084: anchors and aliases are refused (formerly C-032, where they resolved)
-hoshen: 1
+hoshen: 2
 urim: &u x
 *u : y
 shared: &s { k: v }

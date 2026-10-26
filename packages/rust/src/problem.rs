@@ -5,8 +5,8 @@
 
 use std::fmt;
 
-use crate::SUPPORTED_HOSHEN;
 use crate::limits::{MAX_BYTES, MAX_DEPTH};
+use crate::{RENAMED_KEY, SUPPORTED_HOSHEN};
 
 /// Why a file or document failed `urim check`.
 ///
@@ -45,6 +45,8 @@ pub enum Problem {
     RootNotMapping,
     /// `hoshen` is present but is not an integer (C-041).
     HoshenNotInteger,
+    /// `hoshen` is 1, a format that was never released (C-094).
+    HoshenNeverReleased,
     /// `hoshen` is an integer this release cannot read (C-042).
     UnsupportedHoshen {
         /// The version found in the file.
@@ -54,8 +56,8 @@ pub enum Problem {
     MissingKeys(Vec<&'static str>),
     /// The named key is present but is not a string (C-044, C-052, C-054).
     NotAString(&'static str),
-    /// Both `dctp` and `urim` are set in a contract (C-051).
-    BothSpecKeys,
+    /// The root has the pre-0.1 version key [`RENAMED_KEY`](crate::RENAMED_KEY), renamed to `urim` (C-093).
+    RenamedKey,
     /// `state` is not a mapping (C-055).
     StateNotMapping,
     /// `questions` is not a mapping, or it is empty (C-056).
@@ -83,6 +85,9 @@ impl fmt::Display for Problem {
             Self::InvalidYaml => f.write_str("invalid YAML"),
             Self::RootNotMapping => f.write_str("root must be a mapping"),
             Self::HoshenNotInteger => f.write_str("hoshen must be an integer"),
+            Self::HoshenNeverReleased => {
+                f.write_str("hoshen 1 was never released; the first lockfile format is hoshen 2")
+            }
             Self::UnsupportedHoshen { version } => {
                 write!(f, "unsupported hoshen version {version} (supported: ")?;
                 write_joined(f, SUPPORTED_HOSHEN)?;
@@ -93,11 +98,13 @@ impl fmt::Display for Problem {
                 write_joined(f, keys)
             }
             Self::NotAString(key) => write!(f, "{key} must be a string"),
-            Self::BothSpecKeys => f.write_str("set only one of 'dctp' or 'urim'"),
+            Self::RenamedKey => {
+                write!(f, "the {RENAMED_KEY}: key was renamed to urim: before 0.1; replace it")
+            }
             Self::StateNotMapping => f.write_str("state must be a mapping"),
             Self::QuestionsEmpty => f.write_str("questions must be a non-empty mapping"),
             Self::NotUrim => f.write_str(
-                "not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'",
+                "not a urim document: expected a lockfile with 'hoshen' or a contract with 'urim'",
             ),
         }
     }

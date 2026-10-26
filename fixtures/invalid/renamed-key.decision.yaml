@@ -1,0 +1,6 @@
+# C-093: the pre-0.1 version key is refused, never read as an alias
+dctp: "0.1"
+contract: x
+version: 1.0.0
+state: {}
+questions: { q: { type: yesno } }

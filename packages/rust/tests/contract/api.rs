@@ -1,12 +1,12 @@
 //! C-070..C-073: the library API.
-use urim::{Problem, SUPPORTED_HOSHEN, VERSION, check_file, check_text};
+use urim::{Problem, RENAMED_KEY, SUPPORTED_HOSHEN, VERSION, check_file, check_text};
 
 #[test]
 fn c070_check_text_uses_file_only_in_message() {
-    let r = check_text("no/such/file.lock", "hoshen: 1\nurim: \"0.1\"\n");
+    let r = check_text("no/such/file.lock", "hoshen: 2\nurim: \"0.1\"\n");
     assert!(r.is_ok());
-    assert_eq!(r.line(), "no/such/file.lock: ok (lockfile, hoshen 1, urim 0.1)");
-    assert_eq!(check_text("", "\u{feff}hoshen: 1\nurim: x\n").line(), ": ok (lockfile, hoshen 1, urim x)");
+    assert_eq!(r.line(), "no/such/file.lock: ok (lockfile, hoshen 2, urim 0.1)");
+    assert_eq!(check_text("", "\u{feff}hoshen: 2\nurim: x\n").line(), ": ok (lockfile, hoshen 2, urim x)");
 }
 
 #[test]
@@ -19,15 +19,15 @@ fn c071_result_fields_and_exit_code() {
     let m = check_file("definitely/missing");
     assert_eq!(m.line(), "definitely/missing: error: cannot read file");
     assert_eq!(m.exit_code(), 1);
-    let ok = check_text("f", "hoshen: 1\nurim: x\n");
+    let ok = check_text("f", "hoshen: 2\nurim: x\n");
     assert_eq!(ok.exit_code(), 0);
     assert_eq!(ok.problem(), None);
-    assert_eq!(ok.into_line(), "f: ok (lockfile, hoshen 1, urim x)");
+    assert_eq!(ok.into_line(), "f: ok (lockfile, hoshen 2, urim x)");
 }
 
 #[test]
 fn c072_supported_hoshen_and_version() {
-    assert_eq!(SUPPORTED_HOSHEN, &[1]);
+    assert_eq!(SUPPORTED_HOSHEN, &[2]);
     let manifest = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/Cargo.toml")).unwrap();
     assert!(manifest.contains(&format!("\nversion = \"{VERSION}\"\n")));
 }
@@ -46,8 +46,10 @@ fn c073_problem_is_typed_and_displays_the_message() {
     }
     let p = check_text("f", "hoshen: 7\n").problem().cloned();
     assert_eq!(p, Some(Problem::UnsupportedHoshen { version: 7 }));
-    let p = check_text("f", "dctp: x\n").problem().cloned();
+    let p = check_text("f", "urim: x\n").problem().cloned();
     assert_eq!(p, Some(Problem::MissingKeys(vec!["contract", "version", "state", "questions"])));
+    assert_eq!(check_text("f", &format!("{RENAMED_KEY}: x\n")).problem(), Some(&Problem::RenamedKey));
+    assert_eq!(check_text("f", "hoshen: 1\n").problem(), Some(&Problem::HoshenNeverReleased));
 }
 
 /// A `fmt::Write` that fails after accepting `budget` bytes.

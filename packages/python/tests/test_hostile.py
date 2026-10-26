@@ -44,8 +44,8 @@ def test_c085_gadget_is_rejected_and_nothing_executes(name: str) -> None:
 
 def test_c091_proto_keys_are_ordinary_keys() -> None:
     text = (HOSTILE / "proto-pollution-nested.lock").read_text(encoding="utf-8")
-    assert check_text("p.lock", text).line == "p.lock: ok (lockfile, hoshen 1, urim x)"
+    assert check_text("p.lock", text).line == "p.lock: ok (lockfile, hoshen 2, urim x)"
     value = profile.parse_document(text)
     assert isinstance(value, dict)
     assert list(value) == ["hoshen", "urim", "__proto__", "constructor", "prototype", "q"]
-    assert value["hoshen"] == 1
+    assert value["hoshen"] == 2  # the smuggled `hoshen: 3` stayed nested

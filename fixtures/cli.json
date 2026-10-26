@@ -147,7 +147,7 @@
         "valid/minimal.lock"
       ],
       "exit": 0,
-      "stdout": "valid/minimal.lock: ok (lockfile, hoshen 1, urim 0.1)\n",
+      "stdout": "valid/minimal.lock: ok (lockfile, hoshen 2, urim 0.1)\n",
       "stderr": ""
     },
     {
@@ -158,7 +158,7 @@
       ],
       "exit": 1,
       "stdout": "",
-      "stderr": "invalid/hoshen-unsupported.lock: error: unsupported hoshen version 2 (supported: 1)\n"
+      "stderr": "invalid/hoshen-unsupported.lock: error: unsupported hoshen version 3 (supported: 2)\n"
     },
     {
       "id": "C-005",
@@ -177,7 +177,7 @@
         "./valid/minimal.lock"
       ],
       "exit": 0,
-      "stdout": "./valid/minimal.lock: ok (lockfile, hoshen 1, urim 0.1)\n",
+      "stdout": "./valid/minimal.lock: ok (lockfile, hoshen 2, urim 0.1)\n",
       "stderr": ""
     },
     {
@@ -187,7 +187,7 @@
         "valid/name with spaces.lock"
       ],
       "exit": 0,
-      "stdout": "valid/name with spaces.lock: ok (lockfile, hoshen 1, urim 0.1)\n",
+      "stdout": "valid/name with spaces.lock: ok (lockfile, hoshen 2, urim 0.1)\n",
       "stderr": ""
     },
     {
@@ -197,7 +197,7 @@
         "../fixtures/valid//minimal.lock"
       ],
       "exit": 0,
-      "stdout": "../fixtures/valid//minimal.lock: ok (lockfile, hoshen 1, urim 0.1)\n",
+      "stdout": "../fixtures/valid//minimal.lock: ok (lockfile, hoshen 2, urim 0.1)\n",
       "stderr": ""
     },
     {

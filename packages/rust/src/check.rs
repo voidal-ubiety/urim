@@ -4,7 +4,7 @@
 //! Every string that reaches the output line (the file name and document values) goes
 //! through [`sanitize`] (C-089).
 //!
-//! Implements: C-003, C-006, C-040..C-044, C-050..C-057, C-060, C-070, C-071, C-088, C-089
+//! Implements: C-003, C-006, C-040..C-044, C-050..C-057, C-060, C-070, C-071, C-088, C-089, C-093, C-094
 
 use std::fmt;
 use std::path::Path;
@@ -14,7 +14,7 @@ use crate::value::{Mapping, Value};
 use crate::display::{is_invisible, sanitize};
 use crate::profile::{as_int, as_str, parse_root};
 use crate::read::read_text;
-use crate::{Problem, SUPPORTED_HOSHEN};
+use crate::{Problem, RENAMED_KEY, SUPPORTED_HOSHEN};
 
 /// Keys every contract must have, in the order they are reported when missing.
 const CONTRACT_REQUIRED: [&str; 4] = ["contract", "version", "state", "questions"];
@@ -24,7 +24,7 @@ const CONTRACT_REQUIRED: [&str; 4] = ["contract", "version", "state", "questions
 /// # Examples
 ///
 /// ```
-/// let ok = urim::check_text("a.lock", "hoshen: 1\nurim: x\n");
+/// let ok = urim::check_text("a.lock", "hoshen: 2\nurim: x\n");
 /// assert_eq!((ok.is_ok(), ok.exit_code()), (true, 0));
 ///
 /// let bad = urim::check_text("a.lock", "[]");
@@ -90,8 +90,8 @@ impl fmt::Display for CheckResult {
 /// # Examples
 ///
 /// ```
-/// let r = urim::check_text("c.yaml", "dctp: \"0.1\"\ncontract: c\nversion: 1.0.0\nstate: {}\nquestions: {q: {}}\n");
-/// assert_eq!(r.line(), "c.yaml: ok (contract c@1.0.0, dctp 0.1)");
+/// let r = urim::check_text("c.yaml", "urim: \"0.1\"\ncontract: c\nversion: 1.0.0\nstate: {}\nquestions: {q: {}}\n");
+/// assert_eq!(r.line(), "c.yaml: ok (contract c@1.0.0, urim 0.1)");
 /// ```
 pub fn check_text(file: &str, text: &str) -> CheckResult {
     match parse_root(text).and_then(|root| detail(&root)) {
@@ -102,15 +102,13 @@ pub fn check_text(file: &str, text: &str) -> CheckResult {
 
 /// The text inside `ok (...)` for a valid document.
 fn detail(root: &Mapping) -> Result<String, Problem> {
+    if root.contains_key(RENAMED_KEY) {
+        return Err(Problem::RenamedKey);
+    }
     if let Some(hoshen) = root.get("hoshen") {
         return lockfile(root, hoshen);
     }
-    match (root.get("dctp"), root.get("urim")) {
-        (Some(_), Some(_)) => Err(Problem::BothSpecKeys),
-        (Some(spec), None) => contract(root, ("dctp", spec)),
-        (None, Some(spec)) => contract(root, ("urim", spec)),
-        (None, None) => Err(Problem::NotUrim),
-    }
+    root.get("urim").map_or(Err(Problem::NotUrim), |spec| contract(root, spec))
 }
 
 /// The string value of identifier `name`; invisible (C-088) and then non-ASCII (C-092)
@@ -128,6 +126,9 @@ fn identifier<'a>(value: Option<&'a Value>, name: &'static str) -> Result<&'a st
 
 fn lockfile(root: &Mapping, hoshen: &Value) -> Result<String, Problem> {
     let version = as_int(hoshen).ok_or(Problem::HoshenNotInteger)?;
+    if version == 1 {
+        return Err(Problem::HoshenNeverReleased);
+    }
     if !SUPPORTED_HOSHEN.iter().any(|&s| i128::from(s) == version) {
         return Err(Problem::UnsupportedHoshen { version });
     }
@@ -138,9 +139,9 @@ fn lockfile(root: &Mapping, hoshen: &Value) -> Result<String, Problem> {
     Ok(format!("lockfile, hoshen {version}, urim {}", sanitize(urim)))
 }
 
-/// `spec` is the spec-version key that is present (`dctp` or `urim`) and its value.
-fn contract(root: &Mapping, spec: (&'static str, &Value)) -> Result<String, Problem> {
-    let spec_version = identifier(Some(spec.1), spec.0)?;
+/// `spec` is the value of the `urim` key.
+fn contract(root: &Mapping, spec: &Value) -> Result<String, Problem> {
+    let spec_version = identifier(Some(spec), "urim")?;
     let missing: Vec<&'static str> =
         CONTRACT_REQUIRED.into_iter().filter(|k| !root.contains_key(k)).collect();
     if !missing.is_empty() {
@@ -154,7 +155,7 @@ fn contract(root: &Mapping, spec: (&'static str, &Value)) -> Result<String, Prob
     if !matches!(root.get("questions"), Some(Value::Mapping(q)) if !q.is_empty()) {
         return Err(Problem::QuestionsEmpty);
     }
-    Ok(format!("contract {}@{}, {} {}", sanitize(id), sanitize(version), spec.0, sanitize(spec_version)))
+    Ok(format!("contract {}@{}, urim {}", sanitize(id), sanitize(version), sanitize(spec_version)))
 }
 
 /// Read the file at `path` (strict UTF-8) and check it.

@@ -2,7 +2,7 @@
 
 This is the living contract for every behavior of `urim check` and the three library ports (`packages/js`, `packages/python`, `packages/rust`). Each entry has a stable ID. Every ID has at least one test in **each** language whose name contains the ID, and `scripts/contract-check.py` fails if an ID is missing anywhere. Change behavior only by changing this file, the fixtures and the tests together.
 
-**Conventions.** `<file>` is the path exactly as passed. Result lines go to stdout (ok) or stderr (error), each followed by `\n`. Spec references are to [`spec/SPEC.md`](spec/SPEC.md) (DCTP v0.1.1 draft). "Implementation assumption" means the spec says nothing and v0.0.1 chose this. Checks run in the order of the sections below, except that the profile rules in §3 interleave with YAML syntax errors in stream order (C-090). The first failure wins.
+**Conventions.** `<file>` is the path exactly as passed. Result lines go to stdout (ok) or stderr (error), each followed by `\n`. Spec references are to [`spec/SPEC.md`](spec/SPEC.md) (v0.1.1 draft; where it disagrees with a decision recorded here, the decision wins until the spec copy is re-synced). "Implementation assumption" means the spec says nothing and v0.0.1 chose this. Checks run in the order of the sections below, except that the profile rules in §3 interleave with YAML syntax errors in stream order (C-090). The first failure wins.
 
 **Retired and resolved IDs.** An ID is never reused. When a rule is replaced its section stays as a stub with a `- **Status:**` line naming what replaced it. `contract-check.py` requires that no test or fixture still uses a retired or resolved ID, and that every `**Fixtures (n):**` list matches `fixtures/cases.json` exactly. "v0.0.2" names the next, unreleased checker version: the packages are still at 0.0.1 and nothing has been published.
 
@@ -177,14 +177,14 @@ Output is sanitized in every result line (C-089).
 
 ### C-088 No invisible characters in identifiers
 
-- **Behavior:** If the string value of `urim`, `dctp`, `contract` or `version` contains a C-087 character → `<file>: error: invisible or bidirectional control character in <key>`. This check runs right after that key's "must be a string" check, in the existing schema order (C-046, C-057).
+- **Behavior:** If the string value of `urim`, `contract` or `version` contains a C-087 character → `<file>: error: invisible or bidirectional control character in <key>`. This check runs right after that key's "must be a string" check, in the existing schema order (C-046, C-057).
 - **Spec:** §5.1.1.
-- **Fixtures (5):** `hostile/bidi-escape-in-urim.lock`, `invalid/invisible-in-contract.yaml`, `invalid/invisible-in-dctp.yaml`, `invalid/invisible-in-urim.lock`, `invalid/invisible-in-version.yaml`
+- **Fixtures (5):** `hostile/bidi-escape-in-urim.lock`, `invalid/invisible-in-contract-urim.yaml`, `invalid/invisible-in-contract.yaml`, `invalid/invisible-in-urim.lock`, `invalid/invisible-in-version.yaml`
 - **Tests:** JS `C-088 shared file cases` · Python `test_shared_file_cases[C-088]` · Rust `contract/files.rs::c088_no_invisible_in_identifiers`
 
 ### C-089 Output is sanitized
 
-- **Behavior:** In every result line, the file name and every echoed value (`urim`, `contract`, `version`, `dctp`) have C0 controls, DEL, C1 controls, lone surrogates and C-087 characters escaped as `\u{XXXX}` (uppercase hex, at least 4 digits). A backslash is not escaped, so `a\u{0041}b` in a file prints as typed. A file name that is not valid UTF-8 shows U+FFFD for each undecodable byte.
+- **Behavior:** In every result line, the file name and every echoed value (`urim`, `contract`, `version`) have C0 controls, DEL, C1 controls, lone surrogates and C-087 characters escaped as `\u{XXXX}` (uppercase hex, at least 4 digits). A backslash is not escaped, so `a\u{0041}b` in a file prints as typed. A file name that is not valid UTF-8 shows U+FFFD for each undecodable byte.
 - **Spec:** §5.1.1.
 - **Fixtures (4):** `hostile/ansi-osc8-in-urim.lock`, `valid/backslash-in-urim.lock`, `valid/escape-in-contract.yaml`, `valid/escape-in-urim.lock`
 - **Tests:** JS `C-089 shared file cases`, `limits.test.mjs` › `C-089 …` · Python `test_shared_file_cases[C-089]`, `test_limits.py::test_c089_unsafe_characters_in_the_file_name_are_escaped` · Rust `contract/files.rs::c089_output_sanitized`, `contract/limits.rs::c089_unsafe_characters_in_the_file_name_are_escaped`
@@ -204,14 +204,14 @@ Output is sanitized in every result line (C-089).
 
 ### C-091 Prototype-like keys are inert
 
-- **Behavior:** Keys such as `__proto__`, `constructor` and `toString` are ordinary keys. They never satisfy a lookup for `hoshen`, `urim`, `dctp` or any other required key, and they never change how a value behaves. JS builds `Map`s, never plain objects.
+- **Behavior:** Keys such as `__proto__`, `constructor` and `toString` are ordinary keys. They never satisfy a lookup for `hoshen`, `urim` or any other required key, and they never change how a value behaves. JS builds `Map`s, never plain objects.
 - **Spec:** §5.1.1.
 - **Fixtures (4):** `hostile/proto-only-hoshen.yaml`, `hostile/proto-pollution-nested.lock`, `invalid/proto-key-not-urim.yaml`, `valid/proto-keys-inert.lock`
 - **Tests:** JS `C-091 shared file cases` · Python `test_shared_file_cases[C-091]` · Rust `contract/files.rs::c091_prototype_keys_inert`
 
 ### C-092 Identifiers are ASCII; look-alike keys never match
 
-- **Behavior:** If the string value of `urim`, `dctp`, `contract` or `version` contains any character above U+007F → `<file>: error: non-ASCII character in <key>`. This runs right after that key's C-088 check, so an invisible character still reports C-088. C1 controls such as U+009B (a one-byte CSI on some terminals) are therefore refused in identifiers before they can be echoed; C-089 still escapes them in paths. It stops homoglyph spoofing such as `urim: "аcme"` with a Cyrillic `а`. Keys are matched exactly, so a look-alike key (`hоshen` with a Cyrillic `о`) never counts as the real one and the file fails as if the key were absent. Other keys and values may contain non-ASCII text; invisible and bidi characters in any key are still refused (C-087).
+- **Behavior:** If the string value of `urim`, `contract` or `version` contains any character above U+007F → `<file>: error: non-ASCII character in <key>`. This runs right after that key's C-088 check, so an invisible character still reports C-088. C1 controls such as U+009B (a one-byte CSI on some terminals) are therefore refused in identifiers before they can be echoed; C-089 still escapes them in paths. It stops homoglyph spoofing such as `urim: "аcme"` with a Cyrillic `а`. Keys are matched exactly, so a look-alike key (`hоshen` with a Cyrillic `о`) never counts as the real one and the file fails as if the key were absent. Other keys and values may contain non-ASCII text; invisible and bidi characters in any key are still refused (C-087).
 - **Open for David:** whether every mapping key should also be ASCII-only. That is the strongest homoglyph defence, but it would forbid non-English option and question keys. Recommendation: keep keys Unicode (minus C-087) until the spec defines an identifier grammar, then apply that grammar in all three ports.
 - **Spec:** §5.1.1 says identifiers MUST NOT contain invisible characters; ASCII-only is an implementation assumption, not in spec (hostile-input suite decision).
 - **Fixtures (5):** `invalid/c1-control-in-contract.yaml`, `invalid/homoglyph-hoshen-key.lock`, `invalid/homoglyph-in-urim.lock`, `invalid/homoglyph-in-version.yaml`, `valid/non-ascii-question-key.yaml`
@@ -249,7 +249,7 @@ Output is sanitized in every result line (C-089).
 
 ### C-024 64-bit integers
 
-- **Behavior:** Every integer in the document must be in −2^63..2^64−1. Anything outside that range anywhere → `invalid YAML`. The bounds themselves parse (`hoshen: 18446744073709551615` → `unsupported hoshen version 18446744073709551615 (supported: 1)`).
+- **Behavior:** Every integer in the document must be in −2^63..2^64−1. Anything outside that range anywhere → `invalid YAML`. The bounds themselves parse (`hoshen: 18446744073709551615` → `unsupported hoshen version 18446744073709551615 (supported: 2)`).
 - **Spec:** Implementation assumption, not in spec.
 - **Fixtures (6):** `invalid/hex-out-of-range.lock`, `invalid/hoshen-i64-min.lock`, `invalid/hoshen-u64-max.lock`, `invalid/int-below-i64-min.lock`, `invalid/int-out-of-range-elsewhere.lock`, `invalid/int-out-of-range.lock`
 - **Tests:** JS `C-024 shared file cases` · Python `test_shared_file_cases[C-024]` · Rust `contract/files.rs::c024_int_range`
@@ -263,7 +263,7 @@ Output is sanitized in every result line (C-089).
 
 ### C-026 Integer forms
 
-- **Behavior:** `0x` hex, `0o` octal and a `+` sign are integers (`hoshen: 0x1` is hoshen 1).
+- **Behavior:** `0x` hex, `0o` octal and a `+` sign are integers (`hoshen: 0x2` is hoshen 2).
 - **Spec:** §5.3 (core schema).
 - **Fixtures (3):** `valid/hoshen-hex.lock`, `valid/hoshen-octal.lock`, `valid/hoshen-plus-sign.lock`
 - **Tests:** JS `C-026 shared file cases` · Python `test_shared_file_cases[C-026]` · Rust `contract/files.rs::c026_int_forms`
@@ -326,9 +326,9 @@ Output is sanitized in every result line (C-089).
 
 ### C-040 hoshen wins
 
-- **Behavior:** If `hoshen` is present the file is a lockfile, even if `dctp`/`urim` contract keys are also present.
+- **Behavior:** If `hoshen` is present the file is a lockfile, even if contract keys (`contract`, `version`, `state`, `questions`) are also present; a lockfile still needs its own `urim`.
 - **Spec:** §6.2 ("MUST read `hoshen` before anything else").
-- **Fixtures (2):** `invalid/lockfile-dctp-is-not-urim.lock`, `valid/lockfile-wins-over-dctp.lock`
+- **Fixtures (2):** `invalid/lockfile-contract-keys-not-urim.lock`, `valid/lockfile-wins-over-contract-keys.lock`
 - **Tests:** JS `C-040 shared file cases` · Python `test_shared_file_cases[C-040]` · Rust `contract/files.rs::c040_hoshen_precedence`
 
 ### C-041 hoshen must be an integer
@@ -340,10 +340,17 @@ Output is sanitized in every result line (C-089).
 
 ### C-042 Unsupported hoshen
 
-- **Behavior:** An integer outside the supported set → `<file>: error: unsupported hoshen version N (supported: 1)`, with N in decimal (`0x2` → `2`, `-0` → `0`). This names both versions.
+- **Behavior:** An integer outside the supported set → `<file>: error: unsupported hoshen version N (supported: 2)`, with N in decimal (`0x3` → `3`, `-0` → `0`). 1 has its own message (C-094). This names both versions.
 - **Spec:** §6.2 ("MUST refuse, with an error naming both versions").
 - **Fixtures (5):** `invalid/hoshen-negative-zero.lock`, `invalid/hoshen-negative.lock`, `invalid/hoshen-unsupported-hex.lock`, `invalid/hoshen-unsupported.lock`, `invalid/hoshen-zero.lock`
 - **Tests:** JS `C-042 shared file cases` · Python `test_shared_file_cases[C-042]` · Rust `contract/files.rs::c042_hoshen_unsupported`
+
+### C-094 hoshen 1 was never released
+
+- **Behavior:** An integer `hoshen` equal to 1, in any accepted spelling (`1`, `+1`, `0x1`, `0o1`), → `<file>: error: hoshen 1 was never released; the first lockfile format is hoshen 2`. Runs right after C-041 and before C-042, so it is not reported as merely unsupported, and before `urim` is looked at.
+- **Spec:** Decision D-14 (David): the first published lockfile format is `hoshen: 2`, which will also require `resolution.hash` and an `integrity` field. That spec text is not written yet, so v0.0.1 checks only the version number; the extra fields are not checked.
+- **Fixtures (4):** `../spec/examples/urim.lock`, `invalid/hoshen-never-released-hex.lock`, `invalid/hoshen-never-released-no-urim.lock`, `invalid/hoshen-never-released.lock`
+- **Tests:** JS `C-094 shared file cases` · Python `test_shared_file_cases[C-094]` · Rust `contract/files.rs::c094_hoshen_one_never_released`
 
 ### C-043 urim required
 
@@ -363,7 +370,7 @@ Output is sanitized in every result line (C-089).
 
 - **Behavior:** → stdout `<file>: ok (lockfile, hoshen N, urim V)`, exit 0. V is printed verbatim (an empty string is allowed). Other fields (`generated_at`, `compiler`, `contracts`) are not checked in v0.0.1.
 - **Spec:** §6.2.
-- **Fixtures (3):** `../spec/examples/urim.lock`, `valid/lock-urim-empty-string.lock`, `valid/minimal.lock`
+- **Fixtures (2):** `valid/lock-urim-empty-string.lock`, `valid/minimal.lock`
 - **Tests:** JS `C-045 shared file cases` · Python `test_shared_file_cases[C-045]` · Rust `contract/files.rs::c045_lockfile_ok`
 
 ### C-046 Lockfile check order
@@ -373,20 +380,17 @@ Output is sanitized in every result line (C-089).
 - **Fixtures (2):** `invalid/lock-order-hoshen-type-first.lock`, `invalid/lock-order-version-before-urim.lock`
 - **Tests:** JS `C-046 shared file cases` · Python `test_shared_file_cases[C-046]` · Rust `contract/files.rs::c046_lockfile_order`
 
-## 6. Contract (root has `dctp` or `urim`, no `hoshen`)
+## 6. Contract (root has `urim`, no `hoshen`)
 
 ### C-050 Only one version key
 
-- **Behavior:** Both `dctp` and `urim` → `<file>: error: set only one of 'dctp' or 'urim'`, checked before their types.
-- **Spec:** §5.1 names `dctp`; accepting `urim` as an alias is an implementation assumption.
-- **Fixtures (2):** `invalid/contract-both-keys-bad-types.decision.yaml`, `invalid/contract-both-version-keys.decision.yaml`
-- **Tests:** JS `C-050 shared file cases` · Python `test_shared_file_cases[C-050]` · Rust `contract/files.rs::c050_contract_both_keys`
+- **Status:** retired before 0.1 by C-093. There is one version key, `urim`; the old key is refused outright, so "set only one" can no longer happen.
 
 ### C-051 Version key is a string
 
-- **Behavior:** `<file>: error: dctp must be a string` (or `urim must be a string`).
-- **Spec:** §5.1 (`dctp: "0.1"`).
-- **Fixtures (3):** `invalid/contract-dctp-not-string.decision.yaml`, `invalid/contract-dctp-null.decision.yaml`, `invalid/contract-urim-not-string.decision.yaml`
+- **Behavior:** `<file>: error: urim must be a string`.
+- **Spec:** §5.1 (a string such as `"0.1"`). The key name is `urim` by decision D-14 (David); the spec copy still uses the pre-0.1 name until it is re-synced.
+- **Fixtures (1):** `invalid/contract-urim-not-string.decision.yaml`
 - **Tests:** JS `C-051 shared file cases` · Python `test_shared_file_cases[C-051]` · Rust `contract/files.rs::c051_contract_key_type`
 
 ### C-052 Required keys
@@ -419,23 +423,30 @@ Output is sanitized in every result line (C-089).
 
 ### C-056 Contract ok
 
-- **Behavior:** → stdout `<file>: ok (contract ID@VERSION, KEY V)`, exit 0, values printed verbatim (multi-line strings included).
+- **Behavior:** → stdout `<file>: ok (contract ID@VERSION, urim V)`, exit 0, values printed verbatim (multi-line strings included).
 - **Spec:** §5.1.
-- **Fixtures (4):** `../spec/examples/incident-triage.decision.yaml`, `../spec/examples/kyc-document-check.decision.yaml`, `valid/contract-multiline-id.decision.yaml`, `valid/minimal-urim.decision.yaml`
+- **Fixtures (2):** `valid/contract-multiline-id.decision.yaml`, `valid/minimal-urim.decision.yaml`
 - **Tests:** JS `C-056 shared file cases` · Python `test_shared_file_cases[C-056]` · Rust `contract/files.rs::c056_contract_ok`
 
 ### C-057 Contract check order
 
-- **Behavior:** both keys → key type → missing keys → contract type → version type → state → questions.
+- **Behavior:** renamed key (C-093, before anything else in the root) → key type → missing keys → contract type → version type → state → questions.
 - **Spec:** Implementation assumption, not in spec.
 - **Fixtures (3):** `invalid/contract-order-key-type-first.decision.yaml`, `invalid/contract-order-missing-before-types.decision.yaml`, `invalid/contract-order-state-before-questions.decision.yaml`
 - **Tests:** JS `C-057 shared file cases` · Python `test_shared_file_cases[C-057]` · Rust `contract/files.rs::c057_contract_order`
 
 ## 7. Everything else
 
+### C-093 The pre-0.1 version key is refused
+
+- **Behavior:** A root mapping with the key `dctp` → `<file>: error: the dctp: key was renamed to urim: before 0.1; replace it`. This runs right after the root-is-a-mapping check and before `hoshen` is read, so it applies to lockfiles and contracts alike, whatever the key's value and whether or not `urim` is also present. The old key is never read as an alias. This section, the C-093 fixtures and tests, and one `RENAMED_KEY` constant per port are the only places outside history (CHANGELOG, ADRs) that may spell the old name; `scripts/check-names` enforces that.
+- **Spec:** Decision D-14 (David): the version key is `urim` only, with no alias. The spec copy still uses the old name until it is re-synced, so its example contracts fail this check today (they are listed below on purpose, as a tripwire for the re-sync).
+- **Fixtures (7):** `../spec/examples/incident-triage.decision.yaml`, `../spec/examples/kyc-document-check.decision.yaml`, `invalid/renamed-key-before-types.decision.yaml`, `invalid/renamed-key-in-lockfile.lock`, `invalid/renamed-key-null.decision.yaml`, `invalid/renamed-key-with-urim.decision.yaml`, `invalid/renamed-key.decision.yaml`
+- **Tests:** JS `C-093 shared file cases` · Python `test_shared_file_cases[C-093]` · Rust `contract/files.rs::c093_renamed_key_refused`
+
 ### C-060 Not a urim document
 
-- **Behavior:** A mapping with none of `hoshen`/`dctp`/`urim` (including `{}` and provider descriptors) → `<file>: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'`.
+- **Behavior:** A mapping with neither `hoshen` nor `urim` (including `{}` and provider descriptors) → `<file>: error: not a urim document: expected a lockfile with 'hoshen' or a contract with 'urim'`.
 - **Spec:** Implementation assumption, not in spec.
 - **Fixtures (3):** `../spec/examples/providers/cloudflare-clef-flash.provider.yaml`, `invalid/empty-mapping.yaml`, `invalid/unrecognized.yaml`
 - **Tests:** JS `C-060 shared file cases` · Python `test_shared_file_cases[C-060]` · Rust `contract/files.rs::c060_not_urim`
@@ -456,8 +467,8 @@ Output is sanitized in every result line (C-089).
 
 ### C-072 Constants
 
-- **Behavior:** `SUPPORTED_HOSHEN` = {1} (JS `[1n]` bigint array, Python `frozenset({1})`, Rust `&[1]`). `VERSION` equals the package manifest version.
-- **Spec:** §6.2 ("currently `1`").
+- **Behavior:** `SUPPORTED_HOSHEN` = {2} (JS `[2n]` bigint array, Python `frozenset({2})`, Rust `&[2]`). `VERSION` equals the package manifest version.
+- **Spec:** §6.2 says "currently `1`"; decision D-14 (David) makes `hoshen: 2` the first published format (C-094). Spec text for 2 is pending.
 - **Tests:** JS `api.test.mjs` › `C-072 …` · Python `test_api.py::test_c072_supported_hoshen_and_version` · Rust `contract/api.rs::c072_supported_hoshen_and_version`
 
 
@@ -516,8 +527,8 @@ Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `
 
 | fixture | JS | Python | Rust |
 |---|---|---|---|
-| `divergent/yaml-1.3-directive.lock` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 0: `ok (lockfile, hoshen 1, urim x)` |
-| `divergent/unknown-directive.lock` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 0: `ok (lockfile, hoshen 1, urim x)` |
+| `divergent/yaml-1.3-directive.lock` | exit 0: `ok (lockfile, hoshen 2, urim x)` | exit 0: `ok (lockfile, hoshen 2, urim x)` | exit 0: `ok (lockfile, hoshen 2, urim x)` |
+| `divergent/unknown-directive.lock` | exit 0: `ok (lockfile, hoshen 2, urim x)` | exit 0: `ok (lockfile, hoshen 2, urim x)` | exit 0: `ok (lockfile, hoshen 2, urim x)` |
 
 - **Why:** libyaml rejected them; JS's yaml and PyYAML accept the document. Since the Rust port moved from serde_norway (libyaml) to saphyr-parser, Rust accepts them too, so the three agree today. The entry stays open: accepting everywhere is one of the two options below, and it has not been chosen. Until it is, each port pins `ok`.
 - **Recommendation:** Accept with a 1.2 reading everywhere, or reject everywhere. Low priority.
@@ -530,7 +541,7 @@ Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `
 
 | fixture | JS | Python | Rust |
 |---|---|---|---|
-| `divergent/duplicate-nan-key.lock` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 1: `error: invalid YAML` | exit 1: `error: invalid YAML` |
+| `divergent/duplicate-nan-key.lock` | exit 0: `ok (lockfile, hoshen 2, urim x)` | exit 1: `error: invalid YAML` | exit 1: `error: invalid YAML` |
 
 - **Why:** NaN ≠ NaN, so JS's uniqueness check passes them; PyYAML and the Rust port treat the two `.nan` keys as duplicates (Rust's `src/value.rs` keeps the serde_norway behavior it replaced).
 - **Recommendation:** Reject as duplicates (2 of 3, matching YAML's node-equality rule).
@@ -549,7 +560,7 @@ Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `
 
 | fixture | JS | Python | Rust |
 |---|---|---|---|
-| `divergent/empty-implicit-key.lock` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 1: `error: invalid YAML` | exit 0: `ok (lockfile, hoshen 1, urim x)` |
+| `divergent/empty-implicit-key.lock` | exit 0: `ok (lockfile, hoshen 2, urim x)` | exit 1: `error: invalid YAML` | exit 0: `ok (lockfile, hoshen 2, urim x)` |
 
 - **Why:** YAML 1.2 allows an empty implicit key (spec example 8.18, `: # Both empty`; also `{: 1}` in flow), and JS's yaml and saphyr-parser accept it as a null key. PyYAML rejects it, and libyaml did too, so before the Rust port moved to saphyr-parser it was JS against Python and Rust. Found by the scalar differential corpus, which no fixture covered.
 - **Recommendation:** Reject everywhere as a profile rule (a null key is never useful in a lockfile or contract and the ports cannot agree on it), or accept everywhere and make the Python loader accept it. Low priority.
@@ -558,9 +569,9 @@ Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `
 
 | fixture | JS | Python | Rust |
 |---|---|---|---|
-| `divergent/cr-only-line-breaks.lock` (`hoshen: 1\rurim: x\r`) | exit 1: `error: invalid YAML` | exit 0: `ok (lockfile, hoshen 1, urim x)` | exit 0: `ok (lockfile, hoshen 1, urim x)` |
+| `divergent/cr-only-line-breaks.lock` (`hoshen: 2\rurim: x\r`) | exit 1: `error: invalid YAML` | exit 0: `ok (lockfile, hoshen 2, urim x)` | exit 0: `ok (lockfile, hoshen 2, urim x)` |
 
-- **Why:** YAML 1.2 `b-break` includes a lone CR. PyYAML and saphyr-parser break lines there. The JS `yaml` package (2.x as locked) lexes the CR as content, reads `{hoshen: {"1\rurim": "x\r"}}` and reports a nested-mapping error. The same bytes therefore have two structures, which is the parser-differential reason C-082 already refuses NEL, LS and PS. JS fails safe here. Found by the hostile-input suite (CRLF and mixed line-ending category); CRLF and CRLF mixed with LF agree in all three ports (`valid/crlf.lock`, `hostile/mixed-crlf-lf.lock`).
+- **Why:** YAML 1.2 `b-break` includes a lone CR. PyYAML and saphyr-parser break lines there. The JS `yaml` package (2.x as locked) lexes the CR as content, reads `{hoshen: {"2\rurim": "x\r"}}` and reports a nested-mapping error. The same bytes therefore have two structures, which is the parser-differential reason C-082 already refuses NEL, LS and PS. JS fails safe here. Found by the hostile-input suite (CRLF and mixed line-ending category); CRLF and CRLF mixed with LF agree in all three ports (`valid/crlf.lock`, `hostile/mixed-crlf-lf.lock`).
 - **Recommendation:** Add a lone CR (a CR not followed by LF) to the C-082 profile characters, so all three ports say `invalid YAML`. This would be one shared check before parsing, needs no parser change and costs nothing for CRLF files. The alternative, accepting everywhere, would need a JS pre-pass that rewrites line breaks, which is more code on the trust path.
 
 ## B. Bugs found by this suite

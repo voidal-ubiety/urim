@@ -26,8 +26,9 @@ Rust uses a lib/bin split: `main.rs` only parses argv, writes one line and retur
 
 ```
 path ─read bytes─▶ strict UTF-8 ─strip BOM─▶ YAML (1 document, core schema)
-     ─▶ root mapping ─▶ "hoshen" present? ── lockfile checks
-                       └ "dctp"/"urim"?  ── contract checks ─▶ CheckResult
+     ─▶ root mapping ─▶ renamed key? ── error (C-093)
+                       ├ "hoshen" present? ── lockfile checks
+                       └ "urim" present?   ── contract checks ─▶ CheckResult
 ```
 
 * **Result:** each port returns a value with the printed line and ok/failed status.

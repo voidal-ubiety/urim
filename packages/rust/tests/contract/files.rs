@@ -50,7 +50,6 @@ file_contract! {
     c044_urim_not_string => "C-044",
     c045_lockfile_ok => "C-045",
     c046_lockfile_order => "C-046",
-    c050_contract_both_keys => "C-050",
     c051_contract_key_type => "C-051",
     c052_contract_missing_keys => "C-052",
     c053_contract_string_fields => "C-053",
@@ -70,4 +69,6 @@ file_contract! {
     c090_first_violation_in_stream_order => "C-090",
     c091_prototype_keys_inert => "C-091",
     c092_identifiers_are_ascii => "C-092",
+    c093_renamed_key_refused => "C-093",
+    c094_hoshen_one_never_released => "C-094",
 }

@@ -9,7 +9,7 @@ import * as urim from "../dist/index.js";
 
 const dir = mkdtempSync(join(tmpdir(), "urim-limits-"));
 after(() => rmSync(dir, { recursive: true, force: true }));
-const LOCK = "hoshen: 1\nurim: x\n";
+const LOCK = "hoshen: 2\nurim: x\n";
 /** A valid lockfile padded with a comment to exactly `size` bytes. */
 const padded = (size) => `${LOCK}#${"x".repeat(size - LOCK.length - 2)}\n`;
 
@@ -21,7 +21,7 @@ test("C-080 MAX_BYTES and MAX_DEPTH are exported and match the contract", () => 
 test("C-080 a file of exactly MAX_BYTES is accepted; one byte more is too large", () => {
   const ok = join(dir, "max.lock");
   writeFileSync(ok, padded(urim.MAX_BYTES));
-  assert.equal(urim.checkFile(ok).line, `${ok}: ok (lockfile, hoshen 1, urim x)`);
+  assert.equal(urim.checkFile(ok).line, `${ok}: ok (lockfile, hoshen 2, urim x)`);
   const big = join(dir, "big.lock");
   writeFileSync(big, padded(urim.MAX_BYTES + 1));
   assert.equal(urim.checkFile(big).line, `${big}: error: file too large (max 1048576 bytes)`);
@@ -46,7 +46,7 @@ test("C-081 FIFOs and devices are refused without blocking; symlinks to files ar
   writeFileSync(target, LOCK);
   const link = join(dir, "link.lock");
   symlinkSync(target, link);
-  assert.equal(urim.checkFile(link).line, `${link}: ok (lockfile, hoshen 1, urim x)`);
+  assert.equal(urim.checkFile(link).line, `${link}: ok (lockfile, hoshen 2, urim x)`);
 });
 
 test("C-013 a read error after a successful open reports cannot read file", () => {
@@ -74,6 +74,6 @@ test("C-071 misuse of the API (non-string text) is a TypeError, not a check resu
 });
 
 test("C-080 a 300k-item flow sequence inside MAX_BYTES is checked, not a crash (bug B-8)", () => {
-  const text = `hoshen: 1\nurim: x\nq: [${"1,".repeat(300_000)}1]\n`;
-  assert.equal(urim.checkText("wide.lock", text).line, "wide.lock: ok (lockfile, hoshen 1, urim x)");
+  const text = `hoshen: 2\nurim: x\nq: [${"1,".repeat(300_000)}1]\n`;
+  assert.equal(urim.checkText("wide.lock", text).line, "wide.lock: ok (lockfile, hoshen 2, urim x)");
 });

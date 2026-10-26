@@ -68,7 +68,7 @@ fn c012_permission_denied_is_cannot_read() {
     let dir = std::env::temp_dir().join(format!("urim-c012-{}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
     let file = dir.join("locked.lock");
-    std::fs::write(&file, "hoshen: 1\nurim: x\n").unwrap();
+    std::fs::write(&file, "hoshen: 2\nurim: x\n").unwrap();
     std::fs::set_permissions(&file, std::fs::Permissions::from_mode(0o000)).unwrap();
     let readable = std::fs::read(&file).is_ok(); // root ignores permissions
     let path = file.to_str().unwrap();
@@ -90,10 +90,10 @@ fn d012_non_utf8_path_argument() {
     let dir = std::env::temp_dir().join(format!("urim-d012-{}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
     let name = OsStr::from_bytes(b"f\xff.lock");
-    std::fs::write(dir.join(name), "hoshen: 1\nurim: x\n").unwrap();
+    std::fs::write(dir.join(name), "hoshen: 2\nurim: x\n").unwrap();
     let out =
         Command::new(env!("CARGO_BIN_EXE_urim")).arg("check").arg(name).current_dir(&dir).output().unwrap();
     std::fs::remove_dir_all(&dir).unwrap();
     assert_eq!(out.status.code(), Some(0));
-    assert_eq!(out.stdout, "f\u{fffd}.lock: ok (lockfile, hoshen 1, urim x)\n".as_bytes());
+    assert_eq!(out.stdout, "f\u{fffd}.lock: ok (lockfile, hoshen 2, urim x)\n".as_bytes());
 }

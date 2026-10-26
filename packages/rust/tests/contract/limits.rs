@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use urim::{MAX_BYTES, MAX_DEPTH, Problem, check_file, check_text};
 
-const LOCK: &str = "hoshen: 1\nurim: x\n";
+const LOCK: &str = "hoshen: 2\nurim: x\n";
 
 /// A fresh, empty scratch directory unique to this test process and `name`.
 fn scratch(name: &str) -> PathBuf {
@@ -54,7 +54,7 @@ fn c081_fifos_and_devices_are_refused_symlinks_followed() {
     std::fs::write(&target, LOCK).unwrap();
     let link = dir.join("link.lock");
     std::os::unix::fs::symlink(&target, &link).unwrap();
-    assert_eq!(check_file(&link).line(), format!("{}: ok (lockfile, hoshen 1, urim x)", link.display()));
+    assert_eq!(check_file(&link).line(), format!("{}: ok (lockfile, hoshen 2, urim x)", link.display()));
     std::fs::remove_dir_all(dir).unwrap();
 }
 

@@ -1,4 +1,4 @@
-# Minimal contract using the urim key instead of dctp.
+# Minimal contract using the urim version key.
 urim: "0.1"
 contract: minimal
 version: 0.0.1

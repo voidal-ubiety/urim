@@ -1,4 +1,4 @@
 # C-024: the range check applies to every integer, not just hoshen
-hoshen: 1
+hoshen: 2
 urim: "0.1"
 n: 99999999999999999999

@@ -2,5 +2,5 @@ a: &a [1,1,1,1,1,1,1,1,1,1]
 b: &b [*a,*a,*a,*a,*a,*a,*a,*a,*a,*a]
 c: &c [*b,*b,*b,*b,*b,*b,*b,*b,*b,*b]
 d: [*c,*c]
-hoshen: 1
+hoshen: 2
 urim: x

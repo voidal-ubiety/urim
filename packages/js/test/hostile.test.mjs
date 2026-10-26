@@ -14,7 +14,7 @@ const CANARY = JSON.parse(
 test("C-091 __proto__/constructor/prototype keys never touch Object.prototype", () => {
   const before = Object.getOwnPropertyNames(Object.prototype).sort();
   const text = fixture("proto-pollution-nested.lock");
-  assert.equal(urim.checkText("p.lock", text).line, "p.lock: ok (lockfile, hoshen 1, urim x)");
+  assert.equal(urim.checkText("p.lock", text).line, "p.lock: ok (lockfile, hoshen 2, urim x)");
   const value = parseDocument(text);
   assert.deepEqual(Object.getOwnPropertyNames(Object.prototype).sort(), before);
   assert.equal({}.polluted, undefined);
@@ -27,7 +27,7 @@ test("C-091 __proto__/constructor/prototype keys never touch Object.prototype", 
     [...value.strings.keys()],
     ["hoshen", "urim", "__proto__", "constructor", "prototype", "q"],
   );
-  assert.equal(value.strings.get("hoshen"), 1n); // the smuggled `hoshen: 2` stayed nested
+  assert.equal(value.strings.get("hoshen"), 2n); // the smuggled `hoshen: 3` stayed nested
 });
 
 test("C-085 deserialization-gadget tags are rejected and nothing executes", () => {
