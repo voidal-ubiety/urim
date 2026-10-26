@@ -12,7 +12,7 @@ from .conftest import PACKAGE_ROOT
 
 def test_c070_check_text_uses_file_only_in_the_message() -> None:
     result = check_text("no/such/file.lock", 'hoshen: 1\nurim: "0.1"\n')
-    assert result == urim.CheckResult(True, "no/such/file.lock: ok (lockfile, hoshen 1, urim 0.1)")
+    assert result == urim.CheckResult(ok=True, line="no/such/file.lock: ok (lockfile, hoshen 1, urim 0.1)")
     assert check_text("", "\ufeffhoshen: 1\nurim: x\n").line == ": ok (lockfile, hoshen 1, urim x)"
 
 

@@ -77,3 +77,14 @@ def test_c012_unreadable_file(tmp_path: Path, capsys: pytest.CaptureFixture[str]
         assert capsys.readouterr() == ("", f"{path}: error: cannot read file\n")
     finally:
         path.chmod(0o600)
+
+
+@pytest.mark.skipif(os.name != "posix", reason="POSIX byte paths only")
+def test_d012_non_utf8_path_argument(tmp_path: Path) -> None:
+    name = b"f\xff.lock"
+    (tmp_path / os.fsdecode(name)).write_bytes(b"hoshen: 1\nurim: x\n")
+    r = subprocess.run(
+        [sys.executable, "-m", "urim", "check", name], cwd=tmp_path, capture_output=True, check=False
+    )
+    assert r.returncode == 0
+    assert r.stdout.endswith(b": ok (lockfile, hoshen 1, urim x)\n")

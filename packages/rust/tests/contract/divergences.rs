@@ -1,10 +1,10 @@
 //! D-xxx: known cross-language divergences; pins this implementation's behavior.
-mod support;
+use crate::support;
 
 #[test]
 fn d000_divergences_pin_rust_behavior() {
     let cases = support::load("divergences.json");
-    assert!(!cases.is_empty());
+    assert_ne!(cases.len(), 0, "no divergence cases");
     for case in &cases {
         let rust = &case["expect"]["rust"];
         let pinned = serde_json::json!({

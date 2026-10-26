@@ -1,5 +1,5 @@
 //! One test per contract ID in CONTRACT.md, driven by `fixtures/cases.json`.
-mod support;
+use crate::support;
 
 macro_rules! file_contract {
     ($($name:ident => $id:literal),+ $(,)?) => {

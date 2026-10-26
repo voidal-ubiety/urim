@@ -23,4 +23,6 @@ def test_shared_file_cases(cid: str, cases: list[dict[str, Any]]) -> None:
 
 def test_c000_every_case_has_a_contract_id() -> None:
     for cid in FILE_CASES:
-        assert cid.startswith("C-") and len(cid) == 5 and cid[2:].isdigit()
+        assert cid.startswith("C-")
+        assert len(cid) == 5
+        assert cid[2:].isdigit()

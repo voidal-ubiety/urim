@@ -1,20 +1,25 @@
 #!/usr/bin/env bash
-# One command for the whole living contract: tests with 100% coverage in all three
-# languages, cross-language parity, and the CONTRACT.md <-> tests cross-check.
+# The single gate. Lint, type-check and format-check all three ports; run their tests
+# at 100% coverage; check cross-language parity and the CONTRACT.md <-> tests mapping.
+# Any failure stops the script with a non-zero exit.
 #
 #   scripts/verify.sh            # from anywhere in the checkout
 #
 # Needs: node >= 20 + npm; uv (or $PYTHON pointing at a venv with `--group dev`
-# installed); cargo + cargo-llvm-cov (nightly toolchain for branch coverage).
+# installed); rustup with stable (+clippy, rustfmt), nightly (branch coverage) and
+# 1.85.0 (MSRV) toolchains; cargo-llvm-cov, cargo-deny, cargo-audit.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 [[ -d "$HOME/.cargo/bin" ]] && PATH="$HOME/.cargo/bin:$PATH"
 step() { printf '\n==> %s\n' "$*"; }
+need() { command -v "$1" >/dev/null 2>&1 || { printf 'verify: missing %s (%s)\n' "$1" "$2" >&2; exit 1; }; }
 
 # ---------- JS ----------
 step "js: install"
 cd "$ROOT/packages/js"
 [[ -d node_modules ]] || npm ci --no-audit --no-fund
+step "js: biome lint + format check, tsc --strict"
+npm run -s lint
 step "js: tests + c8 coverage (100% lines/branches/functions/statements)"
 npm run -s coverage
 
@@ -27,11 +32,28 @@ if [[ -z "${PYTHON:-}" ]]; then
   fi
   PYTHON="$ROOT/packages/python/.venv/bin/python"
 fi
+step "python: ruff check, ruff format --check, mypy --strict"
+"$PYTHON" -m ruff check -q .
+"$PYTHON" -m ruff format -q --check .
+"$PYTHON" -m mypy
 step "python: pytest + coverage (branch, fail_under=100)"
 "$PYTHON" -m pytest -q -W error --cov --cov-report=term-missing
 
 # ---------- Rust ----------
 cd "$ROOT/packages/rust"
+need cargo-deny "cargo install --locked cargo-deny"
+need cargo-audit "cargo install --locked cargo-audit"
+step "rust: cargo fmt --check, clippy -D warnings (pedantic/nursery/cargo + restriction set)"
+cargo fmt --check
+cargo clippy -q --all-targets --all-features -- -D warnings
+step "rust: rustdoc -D warnings + doctests"
+RUSTDOCFLAGS="-D warnings" cargo doc -q --no-deps
+cargo test -q --doc
+step "rust: MSRV 1.85 build"
+cargo +1.85.0 check -q --all-targets --target-dir target/msrv
+step "rust: cargo deny (advisories, licenses, bans, sources) + cargo audit"
+cargo deny -L error check
+cargo audit -q -D warnings
 step "rust: build (debug binary used by parity)"
 cargo build -q
 if cargo +nightly --version >/dev/null 2>&1; then

@@ -1,5 +1,5 @@
 //! C-001..C-007, C-012: the `urim` binary, driven by `fixtures/cli.json` (cwd = fixtures/).
-mod support;
+use crate::support;
 
 use std::process::{Command, Output};
 
@@ -15,12 +15,19 @@ fn assert_cli_cases(id: &str) {
     let cases = support::by_id("cli.json", id);
     assert!(!cases.is_empty(), "no cli cases tagged {id}");
     for case in &cases {
-        let args: Vec<&str> =
-            case["args"].as_array().unwrap().iter().map(|a| a.as_str().unwrap()).collect();
+        let args: Vec<&str> = case["args"].as_array().unwrap().iter().map(|a| a.as_str().unwrap()).collect();
         let out = run(&args);
         assert_eq!(i64::from(out.status.code().unwrap()), case["exit"].as_i64().unwrap(), "exit {args:?}");
-        assert_eq!(String::from_utf8(out.stdout).unwrap(), case["stdout"].as_str().unwrap(), "stdout {args:?}");
-        assert_eq!(String::from_utf8(out.stderr).unwrap(), case["stderr"].as_str().unwrap(), "stderr {args:?}");
+        assert_eq!(
+            String::from_utf8(out.stdout).unwrap(),
+            case["stdout"].as_str().unwrap(),
+            "stdout {args:?}"
+        );
+        assert_eq!(
+            String::from_utf8(out.stderr).unwrap(),
+            case["stderr"].as_str().unwrap(),
+            "stderr {args:?}"
+        );
     }
 }
 
@@ -73,4 +80,20 @@ fn c012_permission_denied_is_cannot_read() {
     }
     assert_eq!(out.status.code(), Some(1));
     assert_eq!(String::from_utf8(out.stderr).unwrap(), format!("{path}: error: cannot read file\n"));
+}
+
+#[cfg(unix)]
+#[test]
+fn d012_non_utf8_path_argument() {
+    use std::ffi::OsStr;
+    use std::os::unix::ffi::OsStrExt;
+    let dir = std::env::temp_dir().join(format!("urim-d012-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let name = OsStr::from_bytes(b"f\xff.lock");
+    std::fs::write(dir.join(name), "hoshen: 1\nurim: x\n").unwrap();
+    let out =
+        Command::new(env!("CARGO_BIN_EXE_urim")).arg("check").arg(name).current_dir(&dir).output().unwrap();
+    std::fs::remove_dir_all(&dir).unwrap();
+    assert_eq!(out.status.code(), Some(0));
+    assert_eq!(out.stdout, "f\u{fffd}.lock: ok (lockfile, hoshen 1, urim x)\n".as_bytes());
 }

@@ -8,12 +8,20 @@ import { PACKAGE_ROOT } from "./support.mjs";
 
 test("C-070 checkText validates text; the file name is only used in the message", () => {
   const r = urim.checkText("no/such/file.lock", 'hoshen: 1\nurim: "0.1"\n');
-  assert.deepEqual(r, { ok: true, line: "no/such/file.lock: ok (lockfile, hoshen 1, urim 0.1)", exitCode: 0 });
+  assert.deepEqual(r, {
+    ok: true,
+    line: "no/such/file.lock: ok (lockfile, hoshen 1, urim 0.1)",
+    exitCode: 0,
+  });
   assert.equal(urim.checkText("", "\uFEFFhoshen: 1\nurim: x\n").line, ": ok (lockfile, hoshen 1, urim x)");
 });
 
 test("C-071 a result carries ok, the exact line, and exit code 0 or 1", () => {
-  assert.deepEqual(urim.checkText("f", "[]"), { ok: false, line: "f: error: root must be a mapping", exitCode: 1 });
+  assert.deepEqual(urim.checkText("f", "[]"), {
+    ok: false,
+    line: "f: error: root must be a mapping",
+    exitCode: 1,
+  });
   assert.deepEqual(urim.checkFile(join("definitely", "missing")), {
     ok: false,
     line: `${join("definitely", "missing")}: error: cannot read file`,

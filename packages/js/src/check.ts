@@ -1,13 +1,12 @@
 // `urim check`: validate a hoshen lockfile or a contract's top-level shape.
-// Behavior is specified in fixtures/README.md and shared with the Python and Rust ports.
+// Behavior is specified in CONTRACT.md (repo root) and shared with the Python and Rust ports.
 import { readFileSync } from "node:fs";
-import { isCollection, isPair, isScalar, parseAllDocuments, visit } from "yaml";
 import type { Tags } from "yaml";
+import { isCollection, isPair, isScalar, parseAllDocuments, visit } from "yaml";
 
 export const SUPPORTED_HOSHEN: readonly bigint[] = [1n];
 const CONTRACT_REQUIRED = ["contract", "version", "state", "questions"] as const;
-const NOT_URIM =
-  "not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'";
+const NOT_URIM = "not a urim document: expected a lockfile with 'hoshen' or a contract with 'dctp' or 'urim'";
 
 export interface CheckResult {
   ok: boolean;
@@ -28,9 +27,8 @@ const pass = (file: string, detail: string): CheckResult => ({
   exitCode: 0,
 });
 
-const isMapping = (v: unknown): v is Mapping =>
-  typeof v === "object" && v !== null && !Array.isArray(v);
-const has = (m: Mapping, k: string): boolean => Object.prototype.hasOwnProperty.call(m, k);
+const isMapping = (v: unknown): v is Mapping => typeof v === "object" && v !== null && !Array.isArray(v);
+const has = (m: Mapping, k: string): boolean => Object.hasOwn(m, k);
 
 class InvalidYaml extends Error {}
 
@@ -55,17 +53,21 @@ function parseSingleDocument(text: string): unknown {
     intAsBigInt: true,
     uniqueKeys: true,
   });
-  if (!Array.isArray(docs)) throw new InvalidYaml(); // EmptyStream: no documents
-  if (docs.length === 0) return null;
-  if (docs.length > 1) throw new InvalidYaml();
-  const doc = docs[0];
+  // An empty stream is an empty array (the `EmptyStream` type), which YAML reads as null.
+  const [doc, ...rest] = docs;
+  if (doc === undefined) return null;
+  if (rest.length > 0) throw new InvalidYaml();
   if (doc.errors.length > 0) throw new InvalidYaml();
   visit(doc, {
     Pair(_, pair) {
       if (isPair(pair) && isCollection(pair.key)) throw new InvalidYaml(); // keys must be scalars
     },
     Scalar(_, node) {
-      if (isScalar(node) && typeof node.value === "bigint" && (node.value < INT_MIN || node.value > INT_MAX)) {
+      if (
+        isScalar(node) &&
+        typeof node.value === "bigint" &&
+        (node.value < INT_MIN || node.value > INT_MAX)
+      ) {
         throw new InvalidYaml(); // outside 64-bit range
       }
     },

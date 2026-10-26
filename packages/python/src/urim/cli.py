@@ -11,6 +11,7 @@ USAGE = "usage: urim check <file>"
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Run the CLI on ``argv`` (default ``sys.argv[1:]``); returns the process exit code."""
     args = sys.argv[1:] if argv is None else argv
     if args in (["--version"], ["-V"]):
         print(f"urim {__version__}")

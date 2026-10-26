@@ -1,0 +1,33 @@
+# cargo-deny policy for the urim crate. Run: cargo deny check
+# Dependency policy and rationale: ../../CONTRIBUTING.md#dependency-policy
+
+[graph]
+all-features = true
+
+[advisories]
+# Any RUSTSEC advisory (vulnerability, unmaintained, unsound, yanked) fails the gate.
+unmaintained = "all"
+yanked = "deny"
+ignore = []
+
+[licenses]
+# Permissive licenses only; every license in the tree is listed explicitly.
+allow = ["MIT", "Apache-2.0"]
+confidence-threshold = 0.93
+
+[bans]
+multiple-versions = "deny"
+wildcards = "deny"
+allow-wildcard-paths = false
+highlight = "all"
+deny = [
+    # deprecated/archived; replaced by serde_norway (see DESIGN.md)
+    { crate = "serde_yaml", reason = "archived upstream; use the vetted parser in DESIGN.md" },
+]
+
+[sources]
+# crates.io only: no git dependencies, no alternative registries.
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []
