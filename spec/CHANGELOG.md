@@ -30,7 +30,7 @@ Merges the capability (`drafts/SPEC-capabilities.md`), runtime-behavior (`drafts
 - `instructions` is now string-only, and `emulate: split` is declared but not specified (§12 Q7).
 - Any key change bumps the hoshen hash.
 - The repo links `CONTRIBUTING.md#dependency-policy`, but the file doesn't exist. It should be the DCO version (D-32).
-- Every commit in the repo uses `david@urim.invalid`; the decided public email is `hello@davidthomason.dev` (package metadata still to update).
+- Every commit now uses `hello@davidthomason.dev`, the decided public email (package metadata still to update).
 
 ## Unreleased (Urim YAML profile) — 2026-10-26, ~10:05 ET
 
