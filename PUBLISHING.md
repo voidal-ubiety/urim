@@ -1,75 +1,108 @@
 # Publishing urim 0.0.1
 
-Nothing here has been published or pushed yet. Run these commands yourself. Each registry claims the name on the **first successful publish**. Do the first publish of each package interactively from your own machine. Trusted publishing (CI) can be set up afterwards.
+> Nothing here has been published or pushed. David runs every command in this file himself. Each registry gives the name to whoever publishes it first, so do the first publish of each package by hand from your own machine. Trusted publishing (CI) comes after that. The full release procedure, including the history rewrite (§3a), is `/workspace/urim-shipping/RELEASE-RUNBOOK.md`. This file does not repeat it.
 
-Before publishing, run every check from the repo root with one command:
+Only one package ships, named `urim`, on every registry: npm `urim` (unscoped), PyPI `urim`, crates.io `urim` and JSR `@urim/urim`.
+
+## 0. Checks
+
+Run these from the repo root:
 
 ```sh
-scripts/verify.sh
+scripts/verify.sh            # tests at 100% coverage in all three ports, parity, contract, generated-file and project checks
+scripts/verify.sh --release  # also the DCO check and scripts/audit-legal --release (M3 fails until the §3a history rewrite)
 ```
 
-It runs, in order: each package's tests with coverage enforced at 100% (JS c8; Python pytest-cov with branch coverage; Rust cargo-llvm-cov, with branch coverage on a nightly toolchain); `scripts/parity.sh`, which requires byte-identical output from all three CLIs; and `scripts/contract-check.py`, which requires every ID in [`CONTRACT.md`](CONTRACT.md) to have a test in every language. It needs node + npm, [uv](https://docs.astral.sh/uv/) (or `PYTHON=/path/to/venv/bin/python` with `pip install -e packages/python --group dev`; pip >= 25.1 reads dependency groups), and cargo with `cargo-llvm-cov`.
+`scripts/check-project` fails if the version differs anywhere it appears. That covers `packages/js/package.json`, `package-lock.json`, `jsr.json`, `VERSION` in `src/index.ts`, `pyproject.toml`, `__version__`, `Cargo.toml` and `Cargo.lock`. Rust reads its version from Cargo.toml. It also fails if the README status lines are out of date with `spec/SPEC.md`, or if any manifest URL differs from `config/project.json`.
 
-When you bump a version, update `fixtures/cli.json` (the `--version` cases) along with the three manifests.
+## 1. Project URLs: one value
 
-## 1. GitHub (once github.com/no-complect/urim exists)
+The repository URL lives in `config/project.json` (`repository`), and so do `homepage` and `documentation` (both `https://urim.sh`). To move the repo, edit that file, run `scripts/check-project --write`, and commit. The script rewrites:
 
-Create the repo empty, with no README or license, so the first push does not conflict. Then:
+- `packages/js/package.json`: `homepage`, `repository.url`, `bugs.url`
+- `packages/python/pyproject.toml`: `[project.urls]` Homepage, Documentation, Repository, Issues
+- `packages/rust/Cargo.toml`: `homepage`, `repository`, `documentation`
+- the `<!-- generated:links -->` blocks in `README.md` and `packages/*/README.md`
+
+The repository owner is the GitHub account **`voidal-ubiety`** (repo `voidal-ubiety/urim`), the name of the future holding company (David, t64u/t65u). The homepage stays `https://urim.sh`. `check-project` fails if any other file hard-codes the owner, or if any `github.com/<owner>/urim` URL names a different owner.
+
+Remaining spots that name a GitHub account. They are not the repository URL, so they are not changed:
+
+- `spec/SPEC.md`, line 6: the Author row, `David Thomason (github.com/no-complect)`, is David's personal GitHub account, not the repo owner. It is also a copy of the upstream decision-contract-spec SPEC.md, so it must not be edited here.
+- `config/people.yaml`: David's personal GitHub handle for CODEOWNERS (see "People" below).
+- Outside this repo: `/workspace/decision-contract-spec/SPEC.md`, the upstream file (read-only for agents).
+- Sigstore provenance or attestations for any version published from CI record the repo owner permanently (RELEASE-RUNBOOK §7, L9). Publish from CI only after the repo is under `voidal-ubiety`.
+
+People: names, emails and GitHub handles live in `config/people.yaml`. Edit it and run `scripts/gen-codeowners --write` to regenerate `.github/CODEOWNERS`. `verify.sh` fails if they drift. CODEOWNERS entries must be users or `@org/team` handles with write access to the repo; a bare organisation name is not a valid owner.
+
+Spec copy flagged for an upstream fix (do not edit `spec/` here):
+
+- `spec/SPEC.md` §7.4, row `urim check <file>`: "It does not yet accept the 0.2 keys (CHANGELOG.md, "Known conflicts")." The ports in this repo now accept 0.2. The README's generated CLI reference swaps that sentence for the current one (`STALE_CHECK_NOTE` in `scripts/check-project`). Once upstream fixes it and `scripts/sync-spec` re-copies, delete the override.
+
+## 2. GitHub
+
+Create the repo empty under the `voidal-ubiety` account, with no README or license, so the first push doesn't conflict (David only; nothing has been created):
 
 ```sh
-git remote add origin git@github.com:no-complect/urim.git
+git remote add origin "$(scripts/check-project --get repository).git"
 git push -u origin main
 ```
 
-## 2. npm: `urim`
+Check before the first push (public, read-only lookup on 2026-10-26): a GitHub account `voidal-ubiety` exists, created 2025-04-25, and its type is **User**, not Organization. The repo `voidal-ubiety/urim` does not exist. Whether `voidal-ubiety` stays a user or becomes an organisation is David's open decision P8 (`/workspace/urim-shipping/RELEASE-RUNBOOK.md` §3b0; don't copy the steps here). `config/people.yaml` uses David's personal handle, which is valid either way. Under an organisation, CODEOWNERS can switch to `@voidal-ubiety/<team>` handles.
 
-npm requires 2FA to publish. `npm login` creates a 2-hour session, and `npm publish` asks for a 2FA code. Classic tokens were revoked in Dec 2025.
+npm provenance needs a **public** repo. npm does not generate provenance for private repositories, even when the package is public (https://docs.npmjs.com/trusted-publishers).
 
-```sh
-npm login                         # account must have 2FA enabled
-cd packages/js
-npm ci
-npm publish --access public       # prepack runs the TypeScript build; enter OTP when prompted
-npm view urim                     # confirm
-```
-
-Optional, later: configure a trusted publisher (GitHub Actions OIDC) in the package settings on npmjs.com. It needs npm CLI >= 11.5.1 and Node >= 22.14. Then set Publishing access to "Require two-factor authentication and disallow tokens". The package has to exist before a trusted publisher can be set up, so the first publish has to be the manual one above.
-
-## 3. PyPI: `urim`
-
-PyPI requires 2FA on every account. You can upload two ways.
-
-**A. API token with twine (simplest for the first upload)**
+## 3. npm: `urim`
 
 ```sh
-cd packages/python
-rm -rf dist && python -m build
-twine check dist/*
-twine upload dist/*               # username: __token__  password: pypi-... (account-scoped token for the first upload)
+npm login                         # 2FA required
+cd packages/js && npm ci --ignore-scripts && npm run build
+npm pack --dry-run                # check the file list: dist/, README.md, LICENSE, NOTICE, package.json
+npm publish                       # prepack builds; enter the OTP. No --access flag: `urim` is unscoped, so it is public
+npm view urim
 ```
 
-Once the project exists, replace the account-wide token with one scoped to the project.
+`engines.node` is `>=22`. Node 18 reached end of life on 2025-04-30 and Node 20 on 2026-04-30 (https://nodejs.org/en/about/previous-releases).
 
-**B. Trusted publishing (GitHub Actions, no token).** On pypi.org, go to Account → Publishing → "Add a pending publisher". Enter project `urim`, owner `no-complect`, repo `urim`, and your workflow file name. Then publish from that workflow with `pypa/gh-action-pypi-publish`. A pending publisher does **not** reserve the name. The name is claimed only when the first upload succeeds, so use option A if you need the name right away.
+Trusted publishing, later: the package must exist first. Use npm CLI ≥ 11.5.1 and Node ≥ 22.14.0 (`.github/workflows/publish.yml` pins these). A new trusted-publisher config **expires unless its first publish succeeds within 2 days**, so tag and publish from CI right after you create it. After that, set Publishing access to "Require two-factor authentication and disallow tokens" and revoke any tokens.
 
-## 4. crates.io: `urim`
+Reversibility: you can unpublish within 72 h if nothing depends on the package. `urim@0.0.1` can never be reused (https://docs.npmjs.com/policies/unpublish).
 
-crates.io accounts are created only through GitHub login, and you need a verified email on your crates.io account before you can publish.
+## 4. PyPI: `urim`
 
 ```sh
-# log in at https://crates.io with GitHub, verify email, create an API token (scope: publish-new, publish-update)
-cargo login                       # paste the token
-cd packages/rust
-cargo publish --dry-run
-cargo publish
+cd packages/python && rm -rf dist && python -m build && twine check dist/*
+twine upload dist/*               # __token__ + an account-scoped token for the first upload; scope it to the project afterwards
 ```
 
-Publishes to crates.io are permanent. A version can be yanked but never deleted, so check the dry run first.
+A pending trusted publisher does **not** reserve the name. Deleting a release is permanent and frees the name for anyone. Yank instead.
 
-## Order
+## 5. crates.io: `urim`
 
-The suggested order: GitHub push → npm → PyPI → crates.io. The repo URLs in every manifest point at github.com/no-complect/urim, so push first to avoid dead links. If claiming the names is urgent, publish the packages first. The links start working once the repo exists.
+```sh
+cargo login                       # token from crates.io (GitHub login, verified email)
+cd packages/rust && cargo package --list && cargo publish --dry-run && cargo publish
+```
 
-## Later releases
+The first publish needs an API token. Trusted publishing (`rust-lang/crates-io-auth-action@v1`) can be configured only once the crate exists. Deletion is possible only within 72 h of publishing, or when the crate has a single owner, fewer than 1000 downloads for each month it has been published, and no reverse dependencies. Otherwise yank (`cargo yank --version 0.0.1`). The code stays downloadable (https://crates.io/policies, checked 2026-10-26).
 
-Bump the version in `packages/js/package.json`, `packages/python/pyproject.toml`, `packages/python/src/urim/__init__.py`, `packages/rust/Cargo.toml`, and `VERSION` in `packages/js/src/index.ts` (Rust reads its version from Cargo.toml). Then tag the release (`git tag v0.0.2 && git push --tags`).
+## 6. JSR: `@urim/urim`
+
+`packages/js/jsr.json` names the package `@urim/urim`, and its version is checked against package.json. The `@urim` scope was free at the 2026-10-26 10:47 ET scan. Create the scope only when David says yes.
+
+```sh
+cd packages/js && npx jsr publish --dry-run   # UNVERIFIED: not run yet (it needs network); check that the .js import specifiers resolve to src/*.ts and that `yaml` resolves via package.json
+npx jsr publish
+```
+
+JSR is immutable. A scope admin can delete a version only within 24 h, and only if it has almost no downloads and no dependents need it (https://jsr.io/docs/immutability). Otherwise yank.
+
+## 7. Order and tags
+
+The order is GitHub push, then npm, PyPI, crates.io and JSR. Tag each release signed, after its notes are in `CHANGELOG.md`:
+
+```sh
+git tag -s v0.0.2 -m v0.0.2 && git push origin v0.0.2
+```
+
+When you bump the version, change every file listed in §0 (`scripts/check-project` lists any you missed), plus the `--version` cases in `fixtures/cli.json`.

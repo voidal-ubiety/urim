@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+"""Sandbox tripwire: `urim check` makes no network calls, runs no programs and writes no files.
+
+    scripts/check-sandbox [--only js,python,rust]
+
+It runs every CLI under strace(1) on each valid fixture and each hostile fixture
+(fixtures/valid, fixtures/hostile: the deserialization gadgets, billion laughs, etc.) and
+fails on any of these syscalls:
+  - socket, socketpair, connect, bind, listen, accept, sendto, sendmsg (no network, no IPC);
+  - an execve/execveat other than the first one, or a fork/vfork, or a clone without
+    CLONE_THREAD (no child processes; Node's worker threads are threads, so they're allowed);
+  - open/openat/creat with O_WRONLY, O_RDWR or O_CREAT (no file writes; stdout and stderr are
+    inherited, not opened).
+It checks what these runs actually did. It does not prove that some other input can't reach
+code that does more, and it doesn't cover the interpreter's own startup outside these runs
+(e.g. Python writing .pyc files is turned off with PYTHONDONTWRITEBYTECODE). See SECURITY.md.
+Exit 0 OK, 1 violation, 2 strace or a CLI missing (SKIP is never a pass in --release).
+"""
+from __future__ import annotations
+
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+NET = {"socket", "socketpair", "connect", "bind", "listen", "accept", "accept4", "sendto", "sendmsg"}
+SYSCALLS = "socket,socketpair,connect,bind,listen,accept,accept4,sendto,sendmsg,execve,execveat,fork,vfork,clone,clone3,open,openat,creat"
+LINE = re.compile(r"^\d+\s+(\w+)\((.*)")
+
+
+def clis() -> dict[str, list[str]]:
+    py = os.environ.get("PYTHON", str(ROOT / "packages/python/.venv/bin/python"))
+    return {
+        "js": ["node", str(ROOT / "packages/js/dist/cli.js")],
+        "python": [py, "-m", "urim"],
+        "rust": [os.environ.get("URIM_RUST", str(ROOT / "packages/rust/target/debug/urim"))],
+    }
+
+
+def violations(trace: str) -> list[str]:
+    bad = []
+    execs = 0
+    for line in trace.splitlines():
+        m = LINE.match(line)
+        if not m:
+            continue
+        call, args = m.groups()
+        if call in NET:
+            bad.append(line)
+        elif call in ("execve", "execveat"):
+            execs += 1
+            if execs > 1:
+                bad.append(line)
+        elif call in ("fork", "vfork") or (call in ("clone", "clone3") and "CLONE_THREAD" not in args):
+            bad.append(line)
+        elif call in ("open", "openat", "creat") and (call == "creat" or re.search(r"O_WRONLY|O_RDWR|O_CREAT", args)):
+            bad.append(line)
+    return bad
+
+
+def main(argv: list[str]) -> int:
+    if not shutil.which("strace"):
+        print("check-sandbox: strace not found", file=sys.stderr)
+        return 2
+    only = set(argv[1].split(",")) if argv[:1] == ["--only"] else {"js", "python", "rust"}
+    files = sorted(p for d in ("valid", "hostile") for p in (ROOT / "fixtures" / d).iterdir() if p.is_file())
+    env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1", "NO_COLOR": "1"}
+    failed = 0
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "trace"
+        for name, cmd in clis().items():
+            if name not in only:
+                continue
+            if not shutil.which(cmd[0]) and not Path(cmd[0]).exists():
+                print(f"check-sandbox: {name} CLI not found: {cmd[0]}", file=sys.stderr)
+                return 2
+            for f in files:
+                subprocess.run(["strace", "-f", "-qq", "-e", f"trace={SYSCALLS}", "-e", "signal=none",
+                                "-o", str(out), *cmd, "check", str(f)],
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env, timeout=60, check=False)
+                for v in violations(out.read_text(encoding="utf-8", errors="replace")):
+                    failed += 1
+                    print(f"check-sandbox: {name} {f.relative_to(ROOT)}: {v[:200]}", file=sys.stderr)
+    if failed:
+        return 1
+    print(f"check-sandbox OK: {len(files)} files x {len(only)} CLIs: no network, no child processes, no file writes")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

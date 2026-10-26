@@ -1,0 +1,32 @@
+# The one place for people-specific values. Swap an entry here and run
+#   scripts/gen-codeowners --write
+# to regenerate .github/CODEOWNERS; scripts/gen-codeowners --check (verify.sh) fails on drift,
+# and scripts/audit-legal reads the copyright holder and security contact from here.
+#
+# GitHub handles are personal accounts (CODEOWNERS needs users or @org/team handles). A value
+# in <...> is a placeholder, not a real handle. The repository owner (the voidal-ubiety
+# organisation) is not here: it is part of the one repository URL in config/project.json.
+
+maintainers:
+  - id: david
+    name: David Thomason
+    email: hello@davidthomason.dev
+    github: "no-complect"   # David's personal account (spec/SPEC.md Author row)
+
+copyright: "Copyright 2026 David Thomason and Urim contributors"
+security_contact: hello@davidthomason.dev
+
+# CODEOWNERS rules, in file order (GitHub: the last matching pattern wins).
+# owners are maintainer ids from the list above.
+codeowners:
+  - pattern: "*"
+    owners: [david]
+  - pattern: "/spec/"
+    owners: [david]
+    note: exact copy of upstream decision-contract-spec; change it upstream
+  - pattern: "/docs/legal/"
+    owners: [david]
+  - pattern: "/.github/"
+    owners: [david]
+  - pattern: "/config/"
+    owners: [david]

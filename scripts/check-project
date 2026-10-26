@@ -1,0 +1,335 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+"""Project-wide values from one source each, checked or written everywhere they appear.
+
+    scripts/check-project            check (verify.sh runs this); exit 1 on any drift
+    scripts/check-project --write    rewrite manifests and generated README blocks
+    scripts/check-project --get KEY  print a config/project.json value (for PUBLISHING.md)
+
+Sources:
+  * package version: packages/js/package.json. Every other manifest, lockfile and VERSION
+    constant must equal it (no --write: a version bump is a deliberate edit everywhere).
+  * spec version: the title line of spec/SPEC.md. Its MAJOR.MINOR must equal the protocol in
+    schema/urim-<protocol>.json, which gen-schema copies into the ports.
+  * repository, homepage, documentation: config/project.json.
+
+The repository URL may appear only in the manifests and in generated README blocks. Any other
+file that names the GitHub org is a failure unless it is in KNOWN_COPIES below (copies we must
+not edit); PUBLISHING.md lists those same spots, and this script checks that it does.
+"""
+from __future__ import annotations
+
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def people_copyright() -> str:
+    """The copyright line from config/people.yaml (read by regex; this script needs no yaml)."""
+    text = (ROOT / "config" / "people.yaml").read_text(encoding="utf-8")
+    m = re.search(r'^copyright: "([^"]+)"$', text, re.M)
+    if not m:
+        raise SystemExit('check-project: config/people.yaml has no copyright: "..." line')
+    return m.group(1)
+CONFIG = json.loads((ROOT / "config/project.json").read_text(encoding="utf-8"))
+# Files we may not edit that still name the org. Each needs a line in PUBLISHING.md.
+KNOWN_COPIES = {
+    "spec/SPEC.md": "copy of decision-contract-spec SPEC.md (do not edit; change it upstream)",
+}
+PACKAGE_READMES = ["packages/js/README.md", "packages/python/README.md", "packages/rust/README.md"]
+problems: list[str] = []
+
+
+def read(rel: str) -> str:
+    return (ROOT / rel).read_text(encoding="utf-8")
+
+
+def org_pattern() -> re.Pattern[str]:
+    m = re.match(r"https://(github\.com/[^/]+)/", CONFIG["repository"])
+    if not m:
+        sys.exit(f"check-project: repository must be https://github.com/<org>/<repo>: {CONFIG['repository']}")
+    return re.compile(re.escape(m.group(1)))
+
+
+def spec_version() -> tuple[str, str]:
+    m = re.search(r"^# .* v(\d+)\.(\d+)\.(\d+) draft\s*$", read("spec/SPEC.md"), re.M)
+    if not m:
+        sys.exit("check-project: no 'vX.Y.Z draft' in the spec/SPEC.md title")
+    return f"v{m.group(1)}.{m.group(2)}.{m.group(3)}-draft", f"{m.group(1)}.{m.group(2)}"
+
+
+def toml_value(text: str, key: str) -> str | None:
+    m = re.search(rf'^{re.escape(key)}\s*=\s*"([^"]*)"', text, re.M)
+    return m.group(1) if m else None
+
+
+def versions() -> str:
+    pkg = json.loads(read("packages/js/package.json"))["version"]
+    lock = json.loads(read("packages/js/package-lock.json"))
+    cargo_lock = re.search(r'name = "urim"\nversion = "([^"]+)"', read("packages/rust/Cargo.lock"))
+    found = {
+        "packages/js/package.json": pkg,
+        "packages/js/package-lock.json": lock.get("version"),
+        "packages/js/package-lock.json packages[\"\"]": lock.get("packages", {}).get("", {}).get("version"),
+        "packages/js/jsr.json": json.loads(read("packages/js/jsr.json")).get("version"),
+        "packages/js/src/index.ts VERSION": _grep("packages/js/src/index.ts", r'export const VERSION = "([^"]+)";'),
+        "packages/python/pyproject.toml": toml_value(read("packages/python/pyproject.toml"), "version"),
+        "packages/python/src/urim/__init__.py __version__": _grep(
+            "packages/python/src/urim/__init__.py", r'^__version__ = "([^"]+)"'
+        ),
+        "packages/rust/Cargo.toml": toml_value(read("packages/rust/Cargo.toml"), "version"),
+        "packages/rust/Cargo.lock": cargo_lock.group(1) if cargo_lock else None,
+    }
+    cli = json.loads(read("fixtures/cli.json"))
+    for case in cli if isinstance(cli, list) else cli.get("cases", []):
+        out = case.get("stdout", "")
+        if out.startswith("urim ") and out.count("\n") == 1 and "." in out:
+            found[f"fixtures/cli.json --version case {case.get('args')}"] = out[5:-1]
+    for where, v in found.items():
+        if v != pkg:
+            problems.append(f"version: {where} has {v!r}, packages/js/package.json has {pkg!r}")
+    if 'pub const VERSION: &str = env!("CARGO_PKG_VERSION");' not in read("packages/rust/src/lib.rs"):
+        problems.append("version: packages/rust/src/lib.rs VERSION must be env!(\"CARGO_PKG_VERSION\")")
+    return pkg
+
+
+def _grep(rel: str, pattern: str) -> str | None:
+    m = re.search(pattern, read(rel), re.M)
+    return m.group(1) if m else None
+
+
+def engines_match_ci() -> None:
+    engines = json.loads(read("packages/js/package.json")).get("engines", {}).get("node", "")
+    m = re.fullmatch(r">=(\d+)", engines)
+    ci = ROOT / ".github/workflows/ci.yml"
+    matrix = re.search(r'^\s*node: \[([^\]]*)\]', ci.read_text(encoding="utf-8"), re.M) if ci.exists() else None
+    if not m or not matrix:
+        problems.append(f"engines: need package.json engines.node '>=N' and a node matrix in {ci.name} (got {engines!r})")
+        return
+    lines = sorted(int(v) for v in re.findall(r"\d+", matrix.group(1)))
+    if lines[0] != int(m.group(1)):
+        problems.append(f"engines: package.json says {engines} but the CI matrix floor is Node {lines[0]}")
+
+
+def protocol_matches(protocol: str) -> None:
+    schema = ROOT / f"schema/urim-{protocol}.json"
+    if not schema.exists():
+        problems.append(f"spec: spec/SPEC.md is protocol {protocol} but schema/urim-{protocol}.json is missing")
+        return
+    got = json.loads(schema.read_text(encoding="utf-8")).get("protocol")
+    if got != protocol:
+        problems.append(f"spec: {schema.relative_to(ROOT)} protocol is {got!r}, spec/SPEC.md is {protocol!r}")
+
+
+# --- manifests ------------------------------------------------------------------------------
+def manifest_fields() -> list[tuple[str, str, str]]:
+    """(file, regex with one group around the value, wanted value)."""
+    repo, home, docs = CONFIG["repository"], CONFIG["homepage"], CONFIG["documentation"]
+    return [
+        ("packages/js/package.json", r'"homepage": "([^"]*)"', home),
+        ("packages/js/package.json", r'"repository": \{\s*"type": "git",\s*"url": "([^"]*)"', f"git+{repo}.git"),
+        ("packages/js/package.json", r'"bugs": \{\s*"url": "([^"]*)"', f"{repo}/issues"),
+        ("packages/python/pyproject.toml", r'^Homepage = "([^"]*)"', home),
+        ("packages/python/pyproject.toml", r'^Documentation = "([^"]*)"', docs),
+        ("packages/python/pyproject.toml", r'^Repository = "([^"]*)"', repo),
+        ("packages/python/pyproject.toml", r'^Issues = "([^"]*)"', f"{repo}/issues"),
+        ("packages/rust/Cargo.toml", r'^homepage = "([^"]*)"', home),
+        ("packages/rust/Cargo.toml", r'^repository = "([^"]*)"', repo),
+        ("packages/rust/Cargo.toml", r'^documentation = "([^"]*)"', docs),
+    ]
+
+
+# --- CLI reference (README "Command-line reference") -----------------------------------------
+# What the three CLIs implement today; fixtures/cli.json tests each one in every language.
+IMPLEMENTED = {"--version", "-V", "--help", "-h", "check"}
+# SPEC §7.4 was written before this repo's ports accepted 0.2. spec/ is a do-not-edit copy, so
+# the README replaces this one stale sentence (reported upstream; see PUBLISHING.md).
+STALE_CHECK_NOTE = 'It does not yet accept the 0.2 keys (CHANGELOG.md, "Known conflicts").'
+
+
+def spec_flags() -> tuple[list[list[str]], str]:
+    """Rows of SPEC §7.4's table (cells stripped) and its Rules list."""
+    text = read("spec/SPEC.md")
+    m = re.search(r"^### 7\.4 .*?$(.*?)(?=^#{1,3} )", text, re.M | re.S)
+    if not m:
+        problems.append("spec/SPEC.md: no §7.4 flags table")
+        return [], ""
+    body = m.group(1)
+    rows = [[c.strip() for c in line.strip().strip("|").split("|")]
+            for line in body.splitlines() if line.startswith("| ") and not line.startswith("| Flag or key")]
+    rules = body[body.index("Rules:"):].strip().removesuffix("---").strip() if "Rules:" in body else ""
+    return rows, rules
+
+
+def cli_tokens(cell: str) -> list[str]:
+    """CLI spellings in a first cell: `--x`, `-x`, and `urim <sub>` give `<sub>`. Keys and env vars give none."""
+    out = []
+    for code in re.findall(r"`([^`]+)`", cell):
+        if re.fullmatch(r"--?[A-Za-z][\w-]*", code):
+            out.append(code)
+        elif m := re.fullmatch(r"urim ([a-z]+)(?: .*)?", code):
+            out.append(m.group(1))
+    return out
+
+
+def cli_reference(protocol: str) -> str:
+    rows, rules = spec_flags()
+    cases = json.loads(read("fixtures/cli.json"))["cases"]
+    lines = ["| Flag or key | Applies to | Status | What it does | Why it exists |", "|---|---|---|---|---|"]
+    seen_implemented: set[str] = set()
+    for row in rows:
+        if len(row) != 5:
+            problems.append(f"spec/SPEC.md §7.4: row with {len(row)} cells: {row[:1]}")
+            continue
+        implemented = row[2] == "Implemented"
+        for tok in cli_tokens(row[0]):
+            if implemented:
+                seen_implemented.add(tok)
+                if tok not in IMPLEMENTED:
+                    problems.append(f"SPEC §7.4 marks {tok} Implemented, but the CLIs don't implement it")
+                elif not any(c["args"][:1] == [tok] and c["exit"] == 0 for c in cases):
+                    problems.append(f"fixtures/cli.json: no exit-0 case for implemented {tok}")
+            elif not any(tok in c["args"] and c["exit"] == 2 for c in cases):
+                problems.append(f"fixtures/cli.json: no usage-error case showing planned {tok} is rejected")
+        if STALE_CHECK_NOTE in row[4]:
+            row[4] = row[4].replace(STALE_CHECK_NOTE, f'It validates `urim: "{protocol}"` contracts and `hoshen: 2` lockfiles.')
+        lines.append("| " + " | ".join(row) + " |")
+    if rows and seen_implemented != IMPLEMENTED:
+        problems.append(f"SPEC §7.4 Implemented rows {sorted(seen_implemented)} != CLI {sorted(IMPLEMENTED)}")
+    rules = re.sub(r"\((§[^)]*)\)", r"(spec \1)", rules)
+    return ("Generated from [`spec/SPEC.md` §7.4](spec/SPEC.md#74-resolver-and-cli-flags) by "
+            "`scripts/check-project --write`. Only the rows marked **Implemented** exist today. "
+            "Anything Planned or PROPOSED is not in the CLI yet: the CLIs reject it as a usage error "
+            "(exit 2), and `fixtures/cli.json` tests that.\n\n" + "\n".join(lines) + "\n\n" + rules)
+
+
+# --- generated blocks -----------------------------------------------------------------------
+def blocks(version: str, spec: str, protocol: str) -> dict[str, dict[str, str]]:
+    repo, home = CONFIG["repository"], CONFIG["homepage"]
+    status = (
+        f"> **Status: pre-alpha.** The protocol is SPEC {spec} ([`spec/SPEC.md`](spec/SPEC.md)). "
+        f"v{version} of the packages ships one small, working command, `urim check`, which validates "
+        f"`urim: \"{protocol}\"` contracts and `hoshen: 2` lockfiles against the closed {protocol} schemas. "
+        "The compiler, `plan` and `apply` are not implemented yet."
+    )
+    pkg_status = (
+        f"> **Pre-alpha (v{version}).** The protocol is SPEC {spec}. This release ships one working "
+        "command, `urim check`. The compiler is not implemented yet."
+    )
+    return {
+        "README.md": {
+            "status": status,
+            "links": f"- Homepage: <{home}>\n- Repository: <{repo}>",
+            "cli": cli_reference(protocol),
+        },
+        **{
+            p: {
+                "status": pkg_status,
+                "links": f"- Homepage: <{home}>\n- Spec and source: <{repo}>\n"
+                f"- License: Apache-2.0. {people_copyright()}.",
+            }
+            for p in PACKAGE_READMES
+        },
+    }
+
+
+BLOCK = re.compile(r"(<!-- generated:(?P<name>[\w-]+)[^>]*-->\n)(?P<body>.*?)(\n<!-- /generated:(?P=name) -->)", re.S)
+
+
+def apply_blocks(rel: str, want: dict[str, str], write: bool) -> str:
+    text = read(rel)
+    seen: set[str] = set()
+
+    def fill(m: re.Match[str]) -> str:
+        name = m.group("name")
+        seen.add(name)
+        if name not in want:
+            problems.append(f"{rel}: unknown generated block {name!r}")
+            return m.group(0)
+        if m.group("body") != want[name] and not write:
+            problems.append(f"{rel}: generated block {name!r} is stale (run scripts/check-project --write)")
+        return m.group(1) + want[name] + m.group(4)
+
+    out = BLOCK.sub(fill, text)
+    for name in sorted(set(want) - seen):
+        problems.append(f"{rel}: missing generated block <!-- generated:{name} -->")
+    if write and out != text:
+        (ROOT / rel).write_text(out, encoding="utf-8")
+    return out
+
+
+def tracked_files() -> list[str]:
+    out = subprocess.run(
+        ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+        cwd=ROOT, capture_output=True, check=True,
+    ).stdout.decode()
+    return [f for f in out.split("\0") if f and (ROOT / f).is_file()]
+
+
+def main(argv: list[str]) -> int:
+    if argv[:1] == ["--get"] and len(argv) == 2:
+        print(CONFIG[argv[1]])
+        return 0
+    write = argv == ["--write"]
+    if argv not in ([], ["--write"]):
+        print(__doc__.strip().splitlines()[2], file=sys.stderr)
+        return 2
+    version = versions()
+    spec, protocol = spec_version()
+    protocol_matches(protocol)
+    engines_match_ci()
+
+    for rel, pattern, want in manifest_fields():
+        text = read(rel)
+        m = re.search(pattern, text, re.M)
+        if not m:
+            problems.append(f"{rel}: no field matching {pattern}")
+        elif m.group(1) != want:
+            if write:
+                (ROOT / rel).write_text(text[: m.start(1)] + want + text[m.end(1) :], encoding="utf-8")
+            else:
+                problems.append(f"{rel}: {m.group(1)!r} should be {want!r} (from config/project.json)")
+
+    rendered = {rel: apply_blocks(rel, want, write) for rel, want in blocks(version, spec, protocol).items()}
+    if len({rendered[p] for p in PACKAGE_READMES}) != 1:
+        problems.append("package READMEs differ: " + ", ".join(PACKAGE_READMES) + " must be identical")
+
+    org = org_pattern()
+    allowed = {rel for rel, _, _ in manifest_fields()} | {"config/project.json"}
+    publishing = read("PUBLISHING.md")
+    for rel in tracked_files():
+        if rel in allowed:
+            continue
+        try:
+            text = read(rel)
+        except UnicodeDecodeError:
+            continue
+        outside = BLOCK.sub("", text) if rel in rendered else text
+        # A repo URL under any other owner is stale (e.g. after a move). A bare profile link
+        # such as the spec's Author row (github.com/<person>) has no /urim and is fine.
+        for m in re.finditer(r"github\.com/([A-Za-z0-9-]+)/urim\b", outside):
+            if f"https://{m.group(0)}" != CONFIG["repository"]:
+                problems.append(f"{rel}: stale repository URL {m.group(0)} (config/project.json has {CONFIG['repository']})")
+        if not org.search(outside):
+            continue
+        if rel in KNOWN_COPIES:
+            if f"`{rel}`" not in publishing:
+                problems.append(f"PUBLISHING.md must list `{rel}` ({KNOWN_COPIES[rel]})")
+        else:
+            problems.append(f"{rel}: hard-codes {org.pattern.replace(chr(92), '')}; use config/project.json")
+
+    for p in problems:
+        print(f"check-project: {p}", file=sys.stderr)
+    if problems:
+        return 1
+    print(f"check-project OK: version {version} everywhere; SPEC {spec} = protocol {protocol}; "
+          f"repository from config/project.json only")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

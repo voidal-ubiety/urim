@@ -1,0 +1,6 @@
+{
+  "comment": "The one place to change project-wide values. scripts/check-project --write copies them into the manifests and the generated README blocks; --check (run by verify.sh) fails on drift.",
+  "repository": "https://github.com/voidal-ubiety/urim",
+  "homepage": "https://urim.sh",
+  "documentation": "https://urim.sh"
+}
