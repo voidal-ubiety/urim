@@ -132,9 +132,9 @@ This is the living contract for every behavior of `urim check` and the three lib
 
 ### C-023 Scalar keys only
 
-- **Behavior:** A sequence or mapping used as a mapping key, at any depth, → `invalid YAML`. JS and Python cannot represent these faithfully. (Rust bug B-2 is fixed in its own commit.)
+- **Behavior:** A sequence or mapping used as a mapping key, at any depth and also under a tag (`? !t [1]`), → `invalid YAML`. JS and Python cannot represent these faithfully.
 - **Spec:** Implementation assumption, not in spec.
-- **Fixtures (3):** `invalid/collection-key.lock`, `invalid/nested-collection-key.lock`, `invalid/tagged-key-with-collection-key.yaml`
+- **Fixtures (4):** `invalid/collection-key.lock`, `invalid/nested-collection-key.lock`, `invalid/tagged-collection-key.yaml`, `invalid/tagged-key-with-collection-key.yaml`
 - **Tests:** JS `C-023 shared file cases` · Python `test_shared_file_cases[C-023]` · Rust `contract.rs::c023_collection_keys`
 
 ### C-024 64-bit integers
@@ -406,8 +406,8 @@ Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `
 
 | fixture | JS | Python | Rust |
 |---|---|---|---|
-| `divergent/control-char.lock` | exit 0: `ok (lockfile, hoshen 1, urim a)` | exit 1: `error: invalid YAML` | exit 1: `error: invalid YAML` |
-| `divergent/nul-byte.lock` | exit 0: `ok (lockfile, hoshen 1, urim x )` | exit 1: `error: invalid YAML` | exit 1: `error: invalid YAML` |
+| `divergent/control-char.lock` | exit 0: `ok (lockfile, hoshen 1, urim a\u0007)` | exit 1: `error: invalid YAML` | exit 1: `error: invalid YAML` |
+| `divergent/nul-byte.lock` | exit 0: `ok (lockfile, hoshen 1, urim x\u0000)` | exit 1: `error: invalid YAML` | exit 1: `error: invalid YAML` |
 
 - **Why:** YAML forbids them in a stream. PyYAML and libyaml reject them; JS's yaml accepts them.
 - **Recommendation:** Reject everywhere with `invalid YAML` (2 of 3, and what YAML 1.2 §5.1 says).
@@ -472,7 +472,7 @@ Tests: JS `test/divergences.test.mjs` › `D-0xx pinned JS behavior` · Python `
 Each fix is its own commit, with the fixture failing before the fix and passing after it.
 
 - **B-1 (Python): keys of different types compared equal.** `{true: a, 1: b}` and `{1: a, 1.0: b}` were rejected as duplicate keys (→ `invalid YAML`) because Python's `True == 1 == 1.0`. YAML node equality includes the tag, and JS and Rust accept both. Pinned as **C-035**; fixed in `src/urim/check.py` by comparing keys as `(type, value)`. Separate commit, failing then passing.
-- **B-2 (Rust): a collection key under a local tag was accepted.** `? !t [1]` as a key passed in Rust, against C-023; JS and Python reject it. Pinned as a C-023 fixture.
+- **B-2 (Rust): a collection key under a local tag was accepted.** `? !t [1]` as a key passed in Rust, against C-023; JS and Python reject it. Pinned as fixture `invalid/tagged-collection-key.yaml` under C-023; fixed in `src/lib.rs` (`is_collection` looks through tags). Separate commit, failing then passing.
 
 ## X. Coverage exclusions
 

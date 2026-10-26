@@ -55,11 +55,20 @@ fn as_int(v: &Value) -> Option<i128> {
 
 /// Mapping keys must be scalars (sequence/mapping keys are rejected as invalid YAML in
 /// every implementation, since JS and Python cannot represent them faithfully).
+/// A sequence or mapping, looking through any tag (`!t [1]` is still a sequence).
+fn is_collection(v: &Value) -> bool {
+    match v {
+        Value::Sequence(_) | Value::Mapping(_) => true,
+        Value::Tagged(t) => is_collection(&t.value),
+        _ => false,
+    }
+}
+
 fn has_collection_key(v: &Value) -> bool {
     match v {
-        Value::Mapping(m) => m.iter().any(|(k, val)| {
-            matches!(k, Value::Sequence(_) | Value::Mapping(_)) || has_collection_key(k) || has_collection_key(val)
-        }),
+        // A key that is not a collection is a (possibly tagged) scalar, so it
+        // cannot contain a collection key itself; only values need recursion.
+        Value::Mapping(m) => m.iter().any(|(k, val)| is_collection(k) || has_collection_key(val)),
         Value::Sequence(s) => s.iter().any(has_collection_key),
         Value::Tagged(t) => has_collection_key(&t.value),
         _ => false,

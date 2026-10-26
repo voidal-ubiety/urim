@@ -1,0 +1,5 @@
+# C-023: a collection key under a local tag is still a collection key
+? !t [1]
+: v
+hoshen: 1
+urim: x

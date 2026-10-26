@@ -105,6 +105,12 @@
     },
     {
       "id": "C-023",
+      "path": "invalid/tagged-collection-key.yaml",
+      "exit": 1,
+      "output": "{file}: error: invalid YAML"
+    },
+    {
+      "id": "C-023",
       "path": "invalid/tagged-key-with-collection-key.yaml",
       "exit": 1,
       "output": "{file}: error: invalid YAML"
