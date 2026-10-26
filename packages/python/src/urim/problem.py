@@ -32,6 +32,11 @@ def invisible_in(key: str) -> str:
     return f"invisible or bidirectional control character in {key}"
 
 
+def non_ascii_in(key: str) -> str:
+    """C-092: a non-ASCII (for example look-alike) character in identifier ``key``."""
+    return f"non-ASCII character in {key}"
+
+
 def unsupported_hoshen(value: int) -> str:
     """C-042: a hoshen integer outside SUPPORTED_HOSHEN."""
     supported = ", ".join(str(v) for v in sorted(SUPPORTED_HOSHEN))

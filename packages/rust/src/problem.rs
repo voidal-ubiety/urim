@@ -38,6 +38,9 @@ pub enum Problem {
     /// The named identifier value contains an invisible or bidirectional-control
     /// character (C-088).
     InvisibleIn(&'static str),
+    /// The named identifier value contains a non-ASCII character, such as a look-alike
+    /// letter (C-092).
+    NonAsciiIn(&'static str),
     /// The document root is not a mapping (C-040).
     RootNotMapping,
     /// `hoshen` is present but is not an integer (C-041).
@@ -76,6 +79,7 @@ impl fmt::Display for Problem {
                 f.write_str("invisible or bidirectional control character in a mapping key")
             }
             Self::InvisibleIn(key) => write!(f, "invisible or bidirectional control character in {key}"),
+            Self::NonAsciiIn(key) => write!(f, "non-ASCII character in {key}"),
             Self::InvalidYaml => f.write_str("invalid YAML"),
             Self::RootNotMapping => f.write_str("root must be a mapping"),
             Self::HoshenNotInteger => f.write_str("hoshen must be an integer"),

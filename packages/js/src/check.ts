@@ -28,11 +28,13 @@ const pass = (file: string, detail: string): CheckResult => ({
   exitCode: 0,
 });
 
-/** The string value of identifier `name`; invisible characters are refused (C-088). */
+/** The string value of identifier `name`; invisible (C-088), then non-ASCII (C-092), characters are refused. */
 function identifier(root: YamlMap, name: string): string {
   const value = root.strings.get(name);
   if (typeof value !== "string") throw new Failure(Problem.notAString(name));
   if (hasInvisible(value)) throw new Failure(Problem.invisibleIn(name));
+  // Any UTF-16 code unit above 0x7F means a character above U+007F.
+  if (value.split("").some((unit) => unit.charCodeAt(0) > 0x7f)) throw new Failure(Problem.nonAsciiIn(name));
   return value;
 }
 

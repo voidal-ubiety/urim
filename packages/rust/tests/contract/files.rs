@@ -69,4 +69,5 @@ file_contract! {
     c089_output_sanitized => "C-089",
     c090_first_violation_in_stream_order => "C-090",
     c091_prototype_keys_inert => "C-091",
+    c092_identifiers_are_ascii => "C-092",
 }

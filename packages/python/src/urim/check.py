@@ -24,6 +24,7 @@ from urim.problem import (
     Failure,
     invisible_in,
     missing_keys,
+    non_ascii_in,
     not_a_string,
     unsupported_hoshen,
 )
@@ -53,12 +54,14 @@ def _is_int(value: object) -> bool:
 
 
 def _identifier(root: dict[Any, Any], name: str) -> str:
-    """Return the string value of identifier ``name``; invisible characters are refused (C-088)."""
+    """Return identifier ``name``'s string; invisible (C-088), then non-ASCII (C-092), are refused."""
     value = root[name]
     if not isinstance(value, str):
         raise Failure(not_a_string(name))
     if has_invisible(value):
         raise Failure(invisible_in(name))
+    if not value.isascii():
+        raise Failure(non_ascii_in(name))
     return value
 
 

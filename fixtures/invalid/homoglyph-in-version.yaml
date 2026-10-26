@@ -1,0 +1,5 @@
+dctp: "0.1"
+contract: kyc-check
+version: "1.0.О"
+state: {}
+questions: {q: {}}

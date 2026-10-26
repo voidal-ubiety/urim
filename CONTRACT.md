@@ -209,6 +209,14 @@ Output is sanitized in every result line (C-089).
 - **Fixtures (2):** `invalid/proto-key-not-urim.yaml`, `valid/proto-keys-inert.lock`
 - **Tests:** JS `C-091 shared file cases` · Python `test_shared_file_cases[C-091]` · Rust `contract/files.rs::c091_prototype_keys_inert`
 
+### C-092 Identifiers are ASCII; look-alike keys never match
+
+- **Behavior:** If the string value of `urim`, `dctp`, `contract` or `version` contains any character above U+007F → `<file>: error: non-ASCII character in <key>`. This runs right after that key's C-088 check, so an invisible character still reports C-088. C1 controls such as U+009B (a one-byte CSI on some terminals) are therefore refused in identifiers before they can be echoed; C-089 still escapes them in paths. It stops homoglyph spoofing such as `urim: "аcme"` with a Cyrillic `а`. Keys are matched exactly, so a look-alike key (`hоshen` with a Cyrillic `о`) never counts as the real one and the file fails as if the key were absent. Other keys and values may contain non-ASCII text; invisible and bidi characters in any key are still refused (C-087).
+- **Open for David:** whether every mapping key should also be ASCII-only. That is the strongest homoglyph defence, but it would forbid non-English option and question keys. Recommendation: keep keys Unicode (minus C-087) until the spec defines an identifier grammar, then apply that grammar in all three ports.
+- **Spec:** §5.1.1 says identifiers MUST NOT contain invisible characters; ASCII-only is an implementation assumption, not in spec (hostile-input suite decision).
+- **Fixtures (5):** `invalid/c1-control-in-contract.yaml`, `invalid/homoglyph-hoshen-key.lock`, `invalid/homoglyph-in-urim.lock`, `invalid/homoglyph-in-version.yaml`, `valid/non-ascii-question-key.yaml`
+- **Tests:** JS `C-092 shared file cases` · Python `test_shared_file_cases[C-092]` · Rust `contract/files.rs::c092_identifiers_are_ascii`
+
 ## 4. YAML syntax and values (any failure → `<file>: error: invalid YAML`)
 
 ### C-020 Syntax errors

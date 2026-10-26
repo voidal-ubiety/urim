@@ -16,6 +16,7 @@ export const Problem = {
   mergeKey: "merge keys (<<) are not allowed",
   invisibleInKey: "invisible or bidirectional control character in a mapping key",
   invisibleIn: (key: string) => `invisible or bidirectional control character in ${key}`,
+  nonAsciiIn: (key: string) => `non-ASCII character in ${key}`,
   rootNotMapping: "root must be a mapping",
   hoshenNotInteger: "hoshen must be an integer",
   unsupportedHoshen: (v: bigint) =>

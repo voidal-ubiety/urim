@@ -113,11 +113,15 @@ fn detail(root: &Mapping) -> Result<String, Problem> {
     }
 }
 
-/// The string value of identifier `name`; invisible characters are refused (C-088).
+/// The string value of identifier `name`; invisible (C-088) and then non-ASCII (C-092)
+/// characters are refused.
 fn identifier<'a>(value: Option<&'a Value>, name: &'static str) -> Result<&'a str, Problem> {
     let s = value.and_then(as_str).ok_or(Problem::NotAString(name))?;
     if s.chars().any(is_invisible) {
         return Err(Problem::InvisibleIn(name));
+    }
+    if !s.is_ascii() {
+        return Err(Problem::NonAsciiIn(name));
     }
     Ok(s)
 }
