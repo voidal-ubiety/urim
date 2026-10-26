@@ -1,0 +1,57 @@
+# Second example: a regulated-industry contract that exercises the
+# capability-gated resolver (image input, residency, open-weight license, box).
+dctp: "0.1"
+contract: kyc-document-check
+version: 0.3.0
+description: Pre-screen an uploaded identity document before human KYC review.
+
+state:
+  document_image: { type: image, required: true, max_bytes: 5000000 }
+  declared_country: { type: string, required: true }
+
+questions:
+  doc_type:
+    type: choice
+    instructions: What kind of document is shown?
+    options:
+      passport: A passport photo page.
+      drivers_license: A driver's license.
+      national_id: A national identity card.
+      other: Anything else, or unreadable.
+  legible:
+    type: yesno
+    instructions: Are the name, date of birth, and document number fully legible?
+  tamper_risk:
+    type: score
+    instructions: How likely is visible tampering or editing?
+    levels: [None visible, Minor artifacts, Clear signs of editing]
+  photo_region:
+    type: box                    # experimental; optional, dropped where unsupported
+    instructions: Locate the holder's portrait photo.
+
+policy:
+  send_to_review:
+    question: legible
+    when: { answer: "no" }
+    applies_to: portable
+    objective: { escalation_rate: 0.25 }
+    action: request_reupload
+    else: continue
+
+required_capabilities:
+  modalities.image: ">= ga"
+  question_types.box: optional
+  residency.regions: { includes: [us] }
+  weights.license: { any_of: [Apache-2.0, hosted] }   # excludes revenue-capped open weights
+fallbacks:
+  question_types.box: drop_question
+targets_query: "residency:us, modalities.image:ga"
+
+eval:
+  dataset: ./evals/kyc-document-check.jsonl
+  dataset_hash: "sha256:REPLACE_WITH_REAL_HASH"
+  min_cases: 300
+  repeats: 3
+  accept:
+    selective_accuracy: ">= 0.97"
+    conformance: "== 1.0"

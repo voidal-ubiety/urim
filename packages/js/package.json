@@ -1,0 +1,25 @@
+{
+  "name": "urim",
+  "version": "0.0.1",
+  "description": "Urim: a contract language for decision models. v0.0.1 ships `urim check` for contracts and hoshen lockfiles.",
+  "keywords": ["decision-models", "contracts", "lockfile", "llm", "urim"],
+  "homepage": "https://urim.sh",
+  "repository": { "type": "git", "url": "git+https://github.com/no-complect/urim.git", "directory": "packages/js" },
+  "bugs": { "url": "https://github.com/no-complect/urim/issues" },
+  "license": "Apache-2.0",
+  "author": "David Thomason",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "bin": { "urim": "dist/cli.js" },
+  "files": ["dist", "README.md", "LICENSE", "NOTICE"],
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test test/",
+    "prepack": "npm run build"
+  },
+  "dependencies": { "yaml": "^2.9.1" },
+  "devDependencies": { "@types/node": "^20.19.0", "typescript": "^5.6.0" }
+}

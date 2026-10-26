@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "urim"
+version = "0.0.1"
+description = "Urim: a contract language for decision models. v0.0.1 ships `urim check` for contracts and hoshen lockfiles."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.10"
+authors = [{ name = "David Thomason" }]
+keywords = ["decision-models", "contracts", "lockfile", "llm", "urim"]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+]
+dependencies = ["PyYAML>=6.0"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.urls]
+Homepage = "https://urim.sh"
+Repository = "https://github.com/no-complect/urim"
+Issues = "https://github.com/no-complect/urim/issues"
+
+[project.scripts]
+urim = "urim.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/urim"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/urim", "README.md", "LICENSE", "NOTICE", "pyproject.toml"]

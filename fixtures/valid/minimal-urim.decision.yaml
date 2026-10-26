@@ -1,0 +1,10 @@
+# Minimal contract using the urim key instead of dctp.
+urim: "0.1"
+contract: minimal
+version: 0.0.1
+state:
+  text: { type: string, required: true }
+questions:
+  ok:
+    type: yesno
+    instructions: Is the text acceptable?

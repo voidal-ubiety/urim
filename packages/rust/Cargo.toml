@@ -1,0 +1,31 @@
+[package]
+name = "urim"
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.85"
+description = "Urim: a contract language for decision models. v0.0.1 ships `urim check` for contracts and hoshen lockfiles."
+license = "Apache-2.0"
+authors = ["David Thomason"]
+homepage = "https://urim.sh"
+repository = "https://github.com/no-complect/urim"
+documentation = "https://docs.rs/urim"
+readme = "README.md"
+keywords = ["decision-models", "contracts", "lockfile", "llm", "yaml"]
+categories = ["command-line-utilities", "development-tools"]
+include = ["src/**", "Cargo.toml", "README.md", "LICENSE", "NOTICE"]
+
+[lib]
+name = "urim"
+path = "src/lib.rs"
+
+[[bin]]
+name = "urim"
+path = "src/main.rs"
+
+[dependencies]
+# serde_yaml is deprecated (archived by its author in 2024). serde_norway is the
+# maintained drop-in fork (same API, YAML 1.2 core scalars, rejects duplicate keys).
+serde_norway = "0.9"
+
+[dev-dependencies]
+serde_json = "1"

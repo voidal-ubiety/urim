@@ -1,0 +1,3 @@
+{"state":{"report":"Checkout returns 500 for all EU customers since 02:10 UTC deploy."},"expected":{"team":"platform","severity":3,"page":"yes"}}
+{"state":{"report":"Invoice PDF shows the wrong logo for one customer."},"expected":{"team":"billing","severity":0,"page":"no"}}
+{"state":{"report":"SSO login loops for users of one enterprise tenant; others fine."},"expected":{"team":"identity","severity":1,"page":"no"}}

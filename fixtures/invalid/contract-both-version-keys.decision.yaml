@@ -1,0 +1,6 @@
+dctp: "0.1"
+urim: "0.1"
+contract: x
+version: 1.0.0
+state: {}
+questions: { q: { type: yesno } }
