@@ -13,7 +13,7 @@ PY=${PYTHON:-python3}
 JS=(node "$ROOT/packages/js/dist/cli.js")
 RS=("$ROOT/packages/rust/target/debug/urim")
 PYC=("$PY" -m urim)
-err=$(mktemp); trap 'rm -f "$err"' EXIT
+err=$(mktemp); recs=$(mktemp); trap 'rm -f "$err" "$recs"' EXIT
 fail=0; n=0
 
 # Emit "<cwd>\0<argc>\0<arg>\0..." records for every invocation.
@@ -29,6 +29,10 @@ for c in json.load(open("fixtures/cli.json"))["cases"]:
 PYEOF
 }
 
+# Write the records to a file first: a failure inside `< <(records)` would not stop the script,
+# so a broken $PYTHON used to give "parity OK: 0 invocations" (bug B-7).
+records >"$recs"
+
 while IFS= read -r -d '' cwd; do
   IFS= read -r -d '' argc
   args=()
@@ -42,5 +46,6 @@ while IFS= read -r -d '' cwd; do
       echo "MISMATCH [$impl] (cwd $cwd) ${args[*]}"; echo "  ref: $ref"; echo "  got: $got"; fail=1
     fi
   done
-done < <(records)
+done <"$recs"
+[[ $n -gt 0 ]] || { echo "parity: no invocations found" >&2; exit 1; }
 [[ $fail -eq 0 ]] && echo "parity OK: $n invocations x 3 implementations identical" || exit 1
