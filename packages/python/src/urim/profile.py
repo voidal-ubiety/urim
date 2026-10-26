@@ -59,8 +59,11 @@ _CoreLoader.add_implicit_resolver(
 )
 _CoreLoader.add_implicit_resolver(
     "tag:yaml.org,2002:float",
+    # A float needs a dot or an exponent: `01` matches neither resolver and stays a string
+    # (C-027), as in JS and Rust (bug B-4).
     re.compile(
-        r"^(?:[-+]?(?:\.[0-9]+|[0-9]+(?:\.[0-9]*)?)(?:[eE][-+]?[0-9]+)?"
+        r"^(?:[-+]?(?:\.[0-9]+|[0-9]+\.[0-9]*)(?:[eE][-+]?[0-9]+)?"
+        r"|[-+]?[0-9]+[eE][-+]?[0-9]+"
         r"|[-+]?\.(?:inf|Inf|INF)|\.(?:nan|NaN|NAN))$"
     ),
     list("-+.0123456789"),

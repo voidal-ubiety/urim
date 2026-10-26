@@ -262,9 +262,9 @@ Output is sanitized in every result line (C-089).
 
 ### C-027 Non-integer lookalikes
 
-- **Behavior:** Decimal with leading zeros (`01`), `0X1`, and `1_0` stay strings, so `hoshen: 01` → `hoshen must be an integer`. Leading zeros are an implementation assumption that matches serde_norway.
+- **Behavior:** Decimal with leading zeros (`01`, `-007`), `0X1`, and `1_0` stay strings, so `hoshen: 01` → `hoshen must be an integer` and `urim: 01` is the string `01`. Leading zeros are an implementation assumption that matches serde_norway. A float needs a dot or an exponent, so `01` is not a float either (bug B-4).
 - **Spec:** §5.3 (core schema) plus implementation assumption.
-- **Fixtures (3):** `invalid/hoshen-leading-zero.lock`, `invalid/hoshen-underscore.lock`, `invalid/hoshen-uppercase-hex-prefix.lock`
+- **Fixtures (5):** `invalid/hoshen-leading-zero.lock`, `invalid/hoshen-underscore.lock`, `invalid/hoshen-uppercase-hex-prefix.lock`, `valid/urim-leading-zero-is-string.lock`, `valid/urim-signed-leading-zero-is-string.lock`
 - **Tests:** JS `C-027 shared file cases` · Python `test_shared_file_cases[C-027]` · Rust `contract/files.rs::c027_non_int_forms`
 
 ### C-028 Floats are not integers
@@ -311,7 +311,7 @@ Output is sanitized in every result line (C-089).
 
 - **Behavior:** Key equality includes the YAML type: `true` and `1`, or `1` and `1.0`, in the same mapping are distinct keys, not duplicates.
 - **Spec:** §5.3 ("YAML 1.2 core schema"; under YAML 1.2, node equality includes the tag). Which keys count as duplicates is an implementation assumption, extending C-021. Added for bug B-1.
-- **Fixtures (2):** `valid/bool-and-int-keys-distinct.lock`, `valid/int-and-float-keys-distinct.lock`
+- **Fixtures (3):** `valid/bool-and-int-keys-distinct.lock`, `valid/float-and-leading-zero-keys-distinct.lock`, `valid/int-and-float-keys-distinct.lock`
 - **Tests:** JS `C-035 shared file cases` · Python `test_shared_file_cases[C-035]` · Rust `contract/files.rs::c035_keys_distinct_by_type`
 
 ## 5. Lockfile (root has `hoshen`)
@@ -544,6 +544,7 @@ Each fix is its own commit, with the fixture failing before the fix and passing 
 - **B-1 (Python): keys of different types compared equal.** `{true: a, 1: b}` and `{1: a, 1.0: b}` were rejected as duplicate keys (→ `invalid YAML`) because Python's `True == 1 == 1.0`. YAML node equality includes the tag, and JS and Rust accept both. Pinned as **C-035**; fixed in `src/urim/check.py` by comparing keys as `(type, value)`. Separate commit, failing then passing.
 - **B-2 (Rust): a collection key under a local tag was accepted.** `? !t [1]` as a key passed in Rust, against C-023; JS and Python reject it. Pinned as fixture `invalid/tagged-collection-key.yaml` under C-023; fixed in `src/lib.rs` (`is_collection` looks through tags). Separate commit, failing then passing. Since v0.0.2 the fixture is refused earlier as a tag (C-085). `has_collection_key` in `src/profile.rs` still guards untagged collection keys (C-023).
 - **B-3 (Python API): a NUL in the path raised `ValueError`.** `check_file("a\0b")` let a `ValueError` from `os.open` escape, instead of returning `cannot read file` as JS and Rust do (C-013). This bug has been there since the first Python port (`open()` caught only `OSError`). It is API-only, because a NUL cannot reach the CLI through argv. The test came first and failed (`test_limits.py::test_c013_nul_in_the_path_is_cannot_read`). The fix is in `src/urim/read.py` (`except (OSError, ValueError)`), in a separate commit. JS and Rust got the same test to keep the ports in parity.
+- **B-4 (Python): decimals with leading zeros resolved as floats.** The float resolver accepted `01`, `-007` and `00` (no dot, no exponent), so `urim: 01` said `urim must be a string` while JS and Rust accept the string `01` (C-027), and `1.0` and `01` collided as duplicate keys (C-035). The existing fixture `hoshen: 01` could not catch it, because a float is not an integer either. A cross-port scalar differential corpus found it. The tests came first and failed (`test_shared_file_cases[C-027]`, `[C-035]`); the fix (a float needs a dot or an exponent, as in JS) is in `src/urim/profile.py`, in a separate commit.
 
 ## X. Coverage exclusions
 

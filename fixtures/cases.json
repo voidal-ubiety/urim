@@ -206,6 +206,18 @@
       "output": "{file}: error: hoshen must be an integer"
     },
     {
+      "id": "C-027",
+      "path": "valid/urim-leading-zero-is-string.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim 01)"
+    },
+    {
+      "id": "C-027",
+      "path": "valid/urim-signed-leading-zero-is-string.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim -007)"
+    },
+    {
       "id": "C-028",
       "path": "invalid/hoshen-exponent.lock",
       "exit": 1,
@@ -282,6 +294,12 @@
       "path": "valid/int-and-float-keys-distinct.lock",
       "exit": 0,
       "output": "{file}: ok (lockfile, hoshen 1, urim 0.1)"
+    },
+    {
+      "id": "C-035",
+      "path": "valid/float-and-leading-zero-keys-distinct.lock",
+      "exit": 0,
+      "output": "{file}: ok (lockfile, hoshen 1, urim x)"
     },
     {
       "id": "C-040",
