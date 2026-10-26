@@ -52,6 +52,20 @@ interface Walk {
   undefinedAlias?: Violation;
   /** First profile violation (rule 3). */
   violation?: Violation;
+  /** Some mapping has two equal keys (rule 4). */
+  duplicate?: true;
+}
+
+/**
+ * The identity of a scalar key for duplicate detection, matching the yaml package's own
+ * `uniqueKeys` equality (scalar values compared with `===`) in O(1) per key instead of its
+ * O(n) scan. NaN equals nothing, so it gets no identity; +0 and -0 share "number:0".
+ */
+function keyIdentity(key: Node): string | undefined {
+  if (!isScalar(key)) return undefined; // collection keys are refused later (C-023)
+  const value: unknown = key.value;
+  if (typeof value === "number" && Number.isNaN(value)) return undefined;
+  return `${typeof value}:${String(value)}`;
 }
 
 type Item = { readonly node: Node; readonly depth: number; readonly isKey: boolean };
@@ -82,7 +96,13 @@ function walk(root: Node): Walk {
     if (problem !== undefined && result.violation === undefined) result.violation = { at, problem };
     const children: Item[] = [];
     if (isMap(node)) {
+      const seen = new Set<string>();
       for (const pair of node.items) {
+        const id = keyIdentity(pair.key as Node);
+        if (id !== undefined) {
+          if (seen.has(id)) result.duplicate = true;
+          seen.add(id);
+        }
         children.push({ node: pair.key as Node, depth: depth + 1, isKey: true });
         if (pair.value) children.push({ node: pair.value as Node, depth: depth + 1, isKey: false });
       }
@@ -131,7 +151,7 @@ export function parseDocument(text: string): Value {
     schema: "core",
     customTags: coreTags,
     intAsBigInt: true,
-    uniqueKeys: true,
+    uniqueKeys: false, // checked in walk(): the package's own check is O(n^2) per mapping
   });
   // An empty stream is an empty array (the `EmptyStream` type), which YAML reads as null.
   const [doc, ...rest] = docs;
@@ -141,8 +161,7 @@ export function parseDocument(text: string): Value {
   for (const d of docs) {
     for (const e of d.errors) {
       // Exhaustion is the parser's own nesting limit (~800 levels); depth 65 always comes first.
-      if (e.code !== "DUPLICATE_KEY" && e.code !== "RESOURCE_EXHAUSTION")
-        syntax.push({ at: e.pos[0], problem: Problem.invalidYaml });
+      if (e.code !== "RESOURCE_EXHAUSTION") syntax.push({ at: e.pos[0], problem: Problem.invalidYaml });
     }
   }
   const second = rest[0];
@@ -156,6 +175,8 @@ export function parseDocument(text: string): Value {
   if (firstSyntax !== undefined) throw new Failure(Problem.invalidYaml);
   // Rule 3, then rule 4.
   if (found.violation !== undefined) throw new Failure(found.violation.problem);
-  if (doc.errors.length > 0) throw new Failure(Problem.invalidYaml); // duplicate keys
+  if (found.duplicate === true) throw new Failure(Problem.invalidYaml);
+  // The only errors not yet handled are RESOURCE_EXHAUSTION, which needs ~800 levels, so
+  // tooDeep (depth 65) has already been thrown for them.
   return toValue(doc.contents as Node);
 }
