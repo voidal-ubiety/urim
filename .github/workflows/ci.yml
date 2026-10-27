@@ -49,6 +49,11 @@ jobs:
       - name: npm ci (no install scripts)
         working-directory: packages/js
         run: npm ci --ignore-scripts --no-audit --no-fund
+      # check-deps reads the Rust closure with `cargo metadata --locked --offline`, which needs
+      # the locked crates in the local cache; a fresh runner has none. --locked fetches exactly
+      # Cargo.lock (checksums verified) and fails if the lockfile would change.
+      - name: cargo fetch (locked)
+        run: cargo fetch --locked --manifest-path packages/rust/Cargo.toml
       - run: scripts/verify.sh
 
   dco:
