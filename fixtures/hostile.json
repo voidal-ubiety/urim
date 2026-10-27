@@ -167,7 +167,12 @@
       ],
       "generate_indent": "      ",
       "output": "{file}: ok (contract hostile@0.0.1, urim 0.2)",
-      "generate_value": "0"
+      "generate_value": "0",
+      "bounds": {
+        "python": {
+          "max_ms": 9000
+        }
+      }
     },
     {
       "id": "C-021",
@@ -182,7 +187,12 @@
           "hoshen: 2\nurim: x\n",
           1
         ]
-      ]
+      ],
+      "bounds": {
+        "python": {
+          "max_ms": 9000
+        }
+      }
     },
     {
       "id": "C-024",
