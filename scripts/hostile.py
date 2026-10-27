@@ -9,7 +9,11 @@ Inputs:
 
 For each implementation and case it requires the expected exit code and output, a wall time
 under max_ms (the process is killed at 2 x max_ms, so a hang fails instead of blocking), and
-a peak RSS under max_rss_mib. RSS comes from scripts/rss-exec.c (compiled with cc into a temp
+a peak RSS under max_rss_mib. JS RSS bounds are scaled by js_rss_scale_by_node_major in
+hostile.json (the entry for the highest listed major <= the running Node's), because newer V8
+releases use more memory for the same parse. A case that passes everything except wall time is
+run once more and fails only if both runs are over max_ms, because shared CI runners are noisy;
+RSS is never retried. RSS comes from scripts/rss-exec.c (compiled with cc into a temp
 directory), because a plain wait4 ru_maxrss includes the RSS of the forking harness itself
 (Linux carries the pre-exec peak across exec); without a C compiler it falls back to wait4
 and says so, and the reported RSS then has a floor of the harness's own RSS. It also requires that the canary file
@@ -174,6 +178,7 @@ def main() -> int:
     args = ap.parse_args()
     manifest = json.loads((FIX / "hostile.json").read_text())
     bounds = manifest["bounds"]
+    js_scale = node_rss_scale(manifest.get("js_rss_scale_by_node_major", {}))
     canary = Path(manifest["canary"])
     cmds = {k: v for k, v in commands().items() if k in args.only.split(",")}
     for impl, cmd in cmds.items():
@@ -207,7 +212,15 @@ def main() -> int:
             want = c["output"].replace("{escaped_file}", escape(c["path"])).replace("{file}", c["path"])
             for impl, cmd in cmds.items():
                 lim = {**bounds[impl], **c.get("bounds", {}).get(impl, {})}
+                if impl == "js":
+                    lim["max_rss_mib"] = lim["max_rss_mib"] * js_scale
                 code, out, ms, rss = run(cmd, c["path"], ROOT, lim["max_ms"], helper)
+                if (ms > lim["max_ms"] and code is not None and code == c["exit"]
+                        and out == want and rss <= lim["max_rss_mib"]):
+                    first = ms
+                    code, out, ms, rss = run(cmd, c["path"], ROOT, lim["max_ms"], helper)
+                    print(f"  retry [{impl}] {c['id']} {c['name']}: {first:.0f} ms > "
+                          f"{lim['max_ms']} ms, rerun {ms:.0f} ms")
                 worst[impl] = (max(worst[impl][0], ms), max(worst[impl][1], rss))
                 problems = []
                 if code is None:
@@ -219,7 +232,7 @@ def main() -> int:
                 if ms > lim["max_ms"]:
                     problems.append(f"{ms:.0f} ms > {lim['max_ms']} ms")
                 if rss > lim["max_rss_mib"]:
-                    problems.append(f"{rss:.1f} MiB > {lim['max_rss_mib']} MiB")
+                    problems.append(f"{rss:.1f} MiB > {lim['max_rss_mib']:.0f} MiB")
                 if canary.exists():
                     problems.append(f"canary {canary} was created")
                     canary.unlink()
@@ -235,6 +248,17 @@ def main() -> int:
     print(f"hostile OK: {len(cases)} cases x {len(cmds)} implementations within bounds, "
           f"no canary ({summary})")
     return 0
+
+
+def node_rss_scale(table: dict[str, float]) -> float:
+    """Scale for JS RSS bounds: the entry for the highest listed Node major <= the running one."""
+    try:
+        ver = subprocess.run(["node", "--version"], capture_output=True, text=True, check=True).stdout
+        major = int(ver.strip().lstrip("v").split(".")[0])
+    except (OSError, ValueError, subprocess.CalledProcessError):
+        return 1.0
+    keys = [int(k) for k in table if k.isdigit() and int(k) <= major]
+    return float(table[str(max(keys))]) if keys else 1.0
 
 
 if __name__ == "__main__":

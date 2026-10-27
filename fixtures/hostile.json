@@ -14,6 +14,10 @@
       "max_rss_mib": 96
     }
   },
+  "js_rss_scale_by_node_major": {
+    "$comment": "Multiplier on every JS max_rss_mib, chosen by the highest major <= the running Node. Node 24 measured 1-10% over Node 22 on the same cases in CI run 40550717888 (2026-10-27); 1.15 leaves headroom. Raise only with a measured reason.",
+    "24": 1.15
+  },
   "canary": "/tmp/urim-hostile-canary",
   "cases": [
     {
