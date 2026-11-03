@@ -1,0 +1,3423 @@
+[
+  {
+    "name": "primary ok",
+    "def": "triage",
+    "script": {
+      "typesafe/jev@1.14.0": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "deps": {
+      "prices": true
+    },
+    "lock": null,
+    "calls": [
+      "typesafe/jev@1.14.0"
+    ],
+    "expected": {
+      "ok": true,
+      "value": {
+        "page": {
+          "value": "yes",
+          "confidence": 0.9,
+          "confidenceSource": "urim_derived",
+          "confidenceFormula": "typesafe_normalized",
+          "native": {
+            "name": "page",
+            "value": 0.95,
+            "confidence": null
+          }
+        },
+        "team": {
+          "value": "data",
+          "confidence": 0.9,
+          "confidenceSource": "native",
+          "confidenceFormula": "vendor_unspecified",
+          "native": {
+            "name": "team",
+            "value": "data",
+            "confidence": 0.9
+          }
+        }
+      },
+      "envelope": {
+        "envelope": "urim/1",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "tier": {
+          "id": "typesafe/jev@1.14.0",
+          "provider": "typesafe",
+          "model": "jev",
+          "version": "1.14.0",
+          "camp": "systemone",
+          "questionTypes": [
+            "noul",
+            "choice",
+            "score"
+          ],
+          "role": "primary"
+        },
+        "answers": {
+          "page": {
+            "value": "yes",
+            "confidence": 0.9,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.95,
+              "confidence": null
+            }
+          },
+          "team": {
+            "value": "data",
+            "confidence": 0.9,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "team",
+              "value": "data",
+              "confidence": 0.9
+            }
+          }
+        },
+        "thresholds": {
+          "page_oncall": {
+            "value": 0.8,
+            "source": "default",
+            "passes": true,
+            "confidence": 0.9
+          },
+          "auto_route": {
+            "value": null,
+            "source": "none",
+            "passes": true,
+            "confidence": 0.9
+          }
+        },
+        "fallback": null,
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "usage": {
+          "inputTokens": 1200,
+          "outputTokens": 3,
+          "cost": {
+            "amount": 0.004,
+            "currency": "USD",
+            "source": "estimated",
+            "priceTable": {
+              "id": "fixture-prices",
+              "asOf": "2026-10-28",
+              "url": "https://example.invalid/PLACEHOLDER"
+            }
+          }
+        },
+        "requestIds": {},
+        "at": "2026-10-28T21:00:00.000Z"
+      },
+      "fallback": null,
+      "thresholds": {
+        "page_oncall": {
+          "value": 0.8,
+          "source": "default",
+          "passes": true,
+          "confidence": 0.9
+        },
+        "auto_route": {
+          "value": null,
+          "source": "none",
+          "passes": true,
+          "confidence": 0.9
+        }
+      }
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "ok",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": {
+          "envelope": "urim/1",
+          "contract": {
+            "id": "incident-triage@2.0.0",
+            "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+          },
+          "tier": {
+            "id": "typesafe/jev@1.14.0",
+            "provider": "typesafe",
+            "model": "jev",
+            "version": "1.14.0",
+            "camp": "systemone",
+            "questionTypes": [
+              "noul",
+              "choice",
+              "score"
+            ],
+            "role": "primary"
+          },
+          "answers": {
+            "page": {
+              "value": "yes",
+              "confidence": 0.9,
+              "confidenceSource": "urim_derived",
+              "confidenceFormula": "typesafe_normalized",
+              "native": {
+                "name": "page",
+                "value": 0.95,
+                "confidence": null
+              }
+            },
+            "team": {
+              "value": "data",
+              "confidence": 0.9,
+              "confidenceSource": "native",
+              "confidenceFormula": "vendor_unspecified",
+              "native": {
+                "name": "team",
+                "value": "data",
+                "confidence": 0.9
+              }
+            }
+          },
+          "thresholds": {
+            "page_oncall": {
+              "value": 0.8,
+              "source": "default",
+              "passes": true,
+              "confidence": 0.9
+            },
+            "auto_route": {
+              "value": null,
+              "source": "none",
+              "passes": true,
+              "confidence": 0.9
+            }
+          },
+          "fallback": null,
+          "attempts": [
+            {
+              "tier": "typesafe/jev@1.14.0",
+              "outcome": "ok",
+              "latencyMs": 0
+            }
+          ],
+          "usage": {
+            "inputTokens": 1200,
+            "outputTokens": 3,
+            "cost": {
+              "amount": 0.004,
+              "currency": "USD",
+              "source": "estimated",
+              "priceTable": {
+                "id": "fixture-prices",
+                "asOf": "2026-10-28",
+                "url": "https://example.invalid/PLACEHOLDER"
+              }
+            }
+          },
+          "requestIds": {},
+          "at": "2026-10-28T21:00:00.000Z"
+        },
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": null
+      }
+    ]
+  },
+  {
+    "name": "failover provider_unavailable",
+    "def": "triage",
+    "script": {
+      "typesafe/jev@1.14.0": [
+        {
+          "fail": "provider_unavailable"
+        }
+      ],
+      "cloudflare/clef-flash@x.y.z": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "deps": {
+      "prices": true
+    },
+    "lock": null,
+    "calls": [
+      "typesafe/jev@1.14.0",
+      "cloudflare/clef-flash@x.y.z"
+    ],
+    "expected": {
+      "ok": true,
+      "value": {
+        "page": {
+          "value": "yes",
+          "confidence": 0.9,
+          "confidenceSource": "urim_derived",
+          "confidenceFormula": "typesafe_normalized",
+          "native": {
+            "name": "page",
+            "value": 0.95,
+            "confidence": null
+          }
+        },
+        "team": {
+          "value": "data",
+          "confidence": 0.9,
+          "confidenceSource": "native",
+          "confidenceFormula": "vendor_unspecified",
+          "native": {
+            "name": "team",
+            "value": "data",
+            "confidence": 0.9
+          }
+        }
+      },
+      "envelope": {
+        "envelope": "urim/1",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "tier": {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "provider": "cloudflare",
+          "model": "clef-flash",
+          "version": "x.y.z",
+          "camp": "systemone",
+          "questionTypes": [
+            "noul",
+            "choice"
+          ],
+          "role": "fallback"
+        },
+        "answers": {
+          "page": {
+            "value": "yes",
+            "confidence": 0.9,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.95,
+              "confidence": null
+            }
+          },
+          "team": {
+            "value": "data",
+            "confidence": 0.9,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "team",
+              "value": "data",
+              "confidence": 0.9
+            }
+          }
+        },
+        "thresholds": {
+          "page_oncall": {
+            "value": 0.8,
+            "source": "default",
+            "passes": true,
+            "confidence": 0.9
+          },
+          "auto_route": {
+            "value": null,
+            "source": "none",
+            "passes": true,
+            "confidence": 0.9
+          }
+        },
+        "fallback": {
+          "from": "typesafe/jev@1.14.0",
+          "reason": "provider_unavailable",
+          "attempts": 1
+        },
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "provider_unavailable",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "usage": {
+          "inputTokens": 1200,
+          "outputTokens": 3,
+          "cost": {
+            "amount": 0.001,
+            "currency": "USD",
+            "source": "estimated",
+            "priceTable": {
+              "id": "fixture-prices",
+              "asOf": "2026-10-28",
+              "url": "https://example.invalid/PLACEHOLDER"
+            }
+          }
+        },
+        "requestIds": {},
+        "at": "2026-10-28T21:00:00.000Z"
+      },
+      "fallback": {
+        "from": "typesafe/jev@1.14.0",
+        "reason": "provider_unavailable",
+        "attempts": 1
+      },
+      "thresholds": {
+        "page_oncall": {
+          "value": 0.8,
+          "source": "default",
+          "passes": true,
+          "confidence": 0.9
+        },
+        "auto_route": {
+          "value": null,
+          "source": "none",
+          "passes": true,
+          "confidence": 0.9
+        }
+      }
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "ok",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": {
+          "envelope": "urim/1",
+          "contract": {
+            "id": "incident-triage@2.0.0",
+            "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+          },
+          "tier": {
+            "id": "cloudflare/clef-flash@x.y.z",
+            "provider": "cloudflare",
+            "model": "clef-flash",
+            "version": "x.y.z",
+            "camp": "systemone",
+            "questionTypes": [
+              "noul",
+              "choice"
+            ],
+            "role": "fallback"
+          },
+          "answers": {
+            "page": {
+              "value": "yes",
+              "confidence": 0.9,
+              "confidenceSource": "urim_derived",
+              "confidenceFormula": "typesafe_normalized",
+              "native": {
+                "name": "page",
+                "value": 0.95,
+                "confidence": null
+              }
+            },
+            "team": {
+              "value": "data",
+              "confidence": 0.9,
+              "confidenceSource": "native",
+              "confidenceFormula": "vendor_unspecified",
+              "native": {
+                "name": "team",
+                "value": "data",
+                "confidence": 0.9
+              }
+            }
+          },
+          "thresholds": {
+            "page_oncall": {
+              "value": 0.8,
+              "source": "default",
+              "passes": true,
+              "confidence": 0.9
+            },
+            "auto_route": {
+              "value": null,
+              "source": "none",
+              "passes": true,
+              "confidence": 0.9
+            }
+          },
+          "fallback": {
+            "from": "typesafe/jev@1.14.0",
+            "reason": "provider_unavailable",
+            "attempts": 1
+          },
+          "attempts": [
+            {
+              "tier": "typesafe/jev@1.14.0",
+              "outcome": "provider_unavailable",
+              "latencyMs": 0
+            },
+            {
+              "tier": "cloudflare/clef-flash@x.y.z",
+              "outcome": "ok",
+              "latencyMs": 0
+            }
+          ],
+          "usage": {
+            "inputTokens": 1200,
+            "outputTokens": 3,
+            "cost": {
+              "amount": 0.001,
+              "currency": "USD",
+              "source": "estimated",
+              "priceTable": {
+                "id": "fixture-prices",
+                "asOf": "2026-10-28",
+                "url": "https://example.invalid/PLACEHOLDER"
+              }
+            }
+          },
+          "requestIds": {},
+          "at": "2026-10-28T21:00:00.000Z"
+        },
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "provider_unavailable",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": null
+      }
+    ]
+  },
+  {
+    "name": "failover on HTTP 529",
+    "def": "triage",
+    "script": {
+      "typesafe/jev@1.14.0": [
+        {
+          "status": 529,
+          "body": {
+            "error": {}
+          }
+        }
+      ],
+      "cloudflare/clef-flash@x.y.z": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "lock": null,
+    "calls": [
+      "typesafe/jev@1.14.0",
+      "cloudflare/clef-flash@x.y.z"
+    ],
+    "expected": {
+      "ok": true,
+      "value": {
+        "page": {
+          "value": "yes",
+          "confidence": 0.9,
+          "confidenceSource": "urim_derived",
+          "confidenceFormula": "typesafe_normalized",
+          "native": {
+            "name": "page",
+            "value": 0.95,
+            "confidence": null
+          }
+        },
+        "team": {
+          "value": "data",
+          "confidence": 0.9,
+          "confidenceSource": "native",
+          "confidenceFormula": "vendor_unspecified",
+          "native": {
+            "name": "team",
+            "value": "data",
+            "confidence": 0.9
+          }
+        }
+      },
+      "envelope": {
+        "envelope": "urim/1",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "tier": {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "provider": "cloudflare",
+          "model": "clef-flash",
+          "version": "x.y.z",
+          "camp": "systemone",
+          "questionTypes": [
+            "noul",
+            "choice"
+          ],
+          "role": "fallback"
+        },
+        "answers": {
+          "page": {
+            "value": "yes",
+            "confidence": 0.9,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.95,
+              "confidence": null
+            }
+          },
+          "team": {
+            "value": "data",
+            "confidence": 0.9,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "team",
+              "value": "data",
+              "confidence": 0.9
+            }
+          }
+        },
+        "thresholds": {
+          "page_oncall": {
+            "value": 0.8,
+            "source": "default",
+            "passes": true,
+            "confidence": 0.9
+          },
+          "auto_route": {
+            "value": null,
+            "source": "none",
+            "passes": true,
+            "confidence": 0.9
+          }
+        },
+        "fallback": {
+          "from": "typesafe/jev@1.14.0",
+          "reason": "provider_unavailable",
+          "attempts": 1
+        },
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "provider_unavailable",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "usage": {
+          "inputTokens": 1200,
+          "outputTokens": 3,
+          "cost": null
+        },
+        "requestIds": {},
+        "at": "2026-10-28T21:00:00.000Z"
+      },
+      "fallback": {
+        "from": "typesafe/jev@1.14.0",
+        "reason": "provider_unavailable",
+        "attempts": 1
+      },
+      "thresholds": {
+        "page_oncall": {
+          "value": 0.8,
+          "source": "default",
+          "passes": true,
+          "confidence": 0.9
+        },
+        "auto_route": {
+          "value": null,
+          "source": "none",
+          "passes": true,
+          "confidence": 0.9
+        }
+      }
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "ok",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": {
+          "envelope": "urim/1",
+          "contract": {
+            "id": "incident-triage@2.0.0",
+            "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+          },
+          "tier": {
+            "id": "cloudflare/clef-flash@x.y.z",
+            "provider": "cloudflare",
+            "model": "clef-flash",
+            "version": "x.y.z",
+            "camp": "systemone",
+            "questionTypes": [
+              "noul",
+              "choice"
+            ],
+            "role": "fallback"
+          },
+          "answers": {
+            "page": {
+              "value": "yes",
+              "confidence": 0.9,
+              "confidenceSource": "urim_derived",
+              "confidenceFormula": "typesafe_normalized",
+              "native": {
+                "name": "page",
+                "value": 0.95,
+                "confidence": null
+              }
+            },
+            "team": {
+              "value": "data",
+              "confidence": 0.9,
+              "confidenceSource": "native",
+              "confidenceFormula": "vendor_unspecified",
+              "native": {
+                "name": "team",
+                "value": "data",
+                "confidence": 0.9
+              }
+            }
+          },
+          "thresholds": {
+            "page_oncall": {
+              "value": 0.8,
+              "source": "default",
+              "passes": true,
+              "confidence": 0.9
+            },
+            "auto_route": {
+              "value": null,
+              "source": "none",
+              "passes": true,
+              "confidence": 0.9
+            }
+          },
+          "fallback": {
+            "from": "typesafe/jev@1.14.0",
+            "reason": "provider_unavailable",
+            "attempts": 1
+          },
+          "attempts": [
+            {
+              "tier": "typesafe/jev@1.14.0",
+              "outcome": "provider_unavailable",
+              "latencyMs": 0
+            },
+            {
+              "tier": "cloudflare/clef-flash@x.y.z",
+              "outcome": "ok",
+              "latencyMs": 0
+            }
+          ],
+          "usage": {
+            "inputTokens": 1200,
+            "outputTokens": 3,
+            "cost": null
+          },
+          "requestIds": {},
+          "at": "2026-10-28T21:00:00.000Z"
+        },
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "provider_unavailable",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": null
+      }
+    ]
+  },
+  {
+    "name": "non-failover error abstains",
+    "def": "triage",
+    "script": {
+      "typesafe/jev@1.14.0": [
+        {
+          "fail": "auth"
+        }
+      ],
+      "cloudflare/clef-flash@x.y.z": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "lock": null,
+    "calls": [
+      "typesafe/jev@1.14.0"
+    ],
+    "expected": {
+      "ok": false,
+      "error": {
+        "type": "auth",
+        "tier": "typesafe/jev@1.14.0"
+      },
+      "attempts": [
+        {
+          "tier": "typesafe/jev@1.14.0",
+          "outcome": "auth",
+          "latencyMs": 0
+        }
+      ]
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "abstain",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": null,
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "auth",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": {
+          "type": "auth",
+          "message": "scripted auth",
+          "tier": "typesafe/jev@1.14.0"
+        }
+      }
+    ]
+  },
+  {
+    "name": "nonconformant abstains",
+    "def": "triage",
+    "script": {
+      "typesafe/jev@1.14.0": [
+        {
+          "body": {
+            "nope": 1
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "lock": null,
+    "calls": [
+      "typesafe/jev@1.14.0"
+    ],
+    "expected": {
+      "ok": false,
+      "error": {
+        "type": "nonconformant_response",
+        "tier": "typesafe/jev@1.14.0"
+      },
+      "attempts": [
+        {
+          "tier": "typesafe/jev@1.14.0",
+          "outcome": "nonconformant_response",
+          "latencyMs": 0
+        }
+      ]
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "abstain",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": null,
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "nonconformant_response",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": {
+          "type": "nonconformant_response",
+          "message": "response has no answers map",
+          "tier": "typesafe/jev@1.14.0"
+        }
+      }
+    ]
+  },
+  {
+    "name": "all tiers failed",
+    "def": "triage",
+    "script": {
+      "typesafe/jev@1.14.0": [
+        {
+          "fail": "timeout"
+        }
+      ],
+      "cloudflare/clef-flash@x.y.z": [
+        {
+          "fail": "rate_limited"
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "lock": null,
+    "calls": [
+      "typesafe/jev@1.14.0",
+      "cloudflare/clef-flash@x.y.z"
+    ],
+    "expected": {
+      "ok": false,
+      "error": {
+        "type": "all_tiers_failed",
+        "tier": null
+      },
+      "attempts": [
+        {
+          "tier": "typesafe/jev@1.14.0",
+          "outcome": "timeout",
+          "latencyMs": 0
+        },
+        {
+          "tier": "cloudflare/clef-flash@x.y.z",
+          "outcome": "rate_limited",
+          "latencyMs": 0
+        }
+      ]
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "abstain",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": null,
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "timeout",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "rate_limited",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": {
+          "type": "all_tiers_failed",
+          "message": "every tier failed or was skipped for incident-triage@2.0.0",
+          "tier": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "budget skip with per-call price",
+    "def": "triage",
+    "script": {
+      "cloudflare/clef-flash@x.y.z": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "deps": {
+      "prices": true,
+      "budget": {
+        "maxCost": 0.002,
+        "currency": "USD"
+      }
+    },
+    "lock": null,
+    "calls": [
+      "cloudflare/clef-flash@x.y.z"
+    ],
+    "expected": {
+      "ok": true,
+      "value": {
+        "page": {
+          "value": "yes",
+          "confidence": 0.9,
+          "confidenceSource": "urim_derived",
+          "confidenceFormula": "typesafe_normalized",
+          "native": {
+            "name": "page",
+            "value": 0.95,
+            "confidence": null
+          }
+        },
+        "team": {
+          "value": "data",
+          "confidence": 0.9,
+          "confidenceSource": "native",
+          "confidenceFormula": "vendor_unspecified",
+          "native": {
+            "name": "team",
+            "value": "data",
+            "confidence": 0.9
+          }
+        }
+      },
+      "envelope": {
+        "envelope": "urim/1",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "tier": {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "provider": "cloudflare",
+          "model": "clef-flash",
+          "version": "x.y.z",
+          "camp": "systemone",
+          "questionTypes": [
+            "noul",
+            "choice"
+          ],
+          "role": "fallback"
+        },
+        "answers": {
+          "page": {
+            "value": "yes",
+            "confidence": 0.9,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.95,
+              "confidence": null
+            }
+          },
+          "team": {
+            "value": "data",
+            "confidence": 0.9,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "team",
+              "value": "data",
+              "confidence": 0.9
+            }
+          }
+        },
+        "thresholds": {
+          "page_oncall": {
+            "value": 0.8,
+            "source": "default",
+            "passes": true,
+            "confidence": 0.9
+          },
+          "auto_route": {
+            "value": null,
+            "source": "none",
+            "passes": true,
+            "confidence": 0.9
+          }
+        },
+        "fallback": {
+          "from": "typesafe/jev@1.14.0",
+          "reason": "budget",
+          "attempts": 1
+        },
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "skipped_budget",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "usage": {
+          "inputTokens": 1200,
+          "outputTokens": 3,
+          "cost": {
+            "amount": 0.001,
+            "currency": "USD",
+            "source": "estimated",
+            "priceTable": {
+              "id": "fixture-prices",
+              "asOf": "2026-10-28",
+              "url": "https://example.invalid/PLACEHOLDER"
+            }
+          }
+        },
+        "requestIds": {},
+        "at": "2026-10-28T21:00:00.000Z"
+      },
+      "fallback": {
+        "from": "typesafe/jev@1.14.0",
+        "reason": "budget",
+        "attempts": 1
+      },
+      "thresholds": {
+        "page_oncall": {
+          "value": 0.8,
+          "source": "default",
+          "passes": true,
+          "confidence": 0.9
+        },
+        "auto_route": {
+          "value": null,
+          "source": "none",
+          "passes": true,
+          "confidence": 0.9
+        }
+      }
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "ok",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": {
+          "envelope": "urim/1",
+          "contract": {
+            "id": "incident-triage@2.0.0",
+            "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+          },
+          "tier": {
+            "id": "cloudflare/clef-flash@x.y.z",
+            "provider": "cloudflare",
+            "model": "clef-flash",
+            "version": "x.y.z",
+            "camp": "systemone",
+            "questionTypes": [
+              "noul",
+              "choice"
+            ],
+            "role": "fallback"
+          },
+          "answers": {
+            "page": {
+              "value": "yes",
+              "confidence": 0.9,
+              "confidenceSource": "urim_derived",
+              "confidenceFormula": "typesafe_normalized",
+              "native": {
+                "name": "page",
+                "value": 0.95,
+                "confidence": null
+              }
+            },
+            "team": {
+              "value": "data",
+              "confidence": 0.9,
+              "confidenceSource": "native",
+              "confidenceFormula": "vendor_unspecified",
+              "native": {
+                "name": "team",
+                "value": "data",
+                "confidence": 0.9
+              }
+            }
+          },
+          "thresholds": {
+            "page_oncall": {
+              "value": 0.8,
+              "source": "default",
+              "passes": true,
+              "confidence": 0.9
+            },
+            "auto_route": {
+              "value": null,
+              "source": "none",
+              "passes": true,
+              "confidence": 0.9
+            }
+          },
+          "fallback": {
+            "from": "typesafe/jev@1.14.0",
+            "reason": "budget",
+            "attempts": 1
+          },
+          "attempts": [
+            {
+              "tier": "typesafe/jev@1.14.0",
+              "outcome": "skipped_budget",
+              "latencyMs": 0
+            },
+            {
+              "tier": "cloudflare/clef-flash@x.y.z",
+              "outcome": "ok",
+              "latencyMs": 0
+            }
+          ],
+          "usage": {
+            "inputTokens": 1200,
+            "outputTokens": 3,
+            "cost": {
+              "amount": 0.001,
+              "currency": "USD",
+              "source": "estimated",
+              "priceTable": {
+                "id": "fixture-prices",
+                "asOf": "2026-10-28",
+                "url": "https://example.invalid/PLACEHOLDER"
+              }
+            }
+          },
+          "requestIds": {},
+          "at": "2026-10-28T21:00:00.000Z"
+        },
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "skipped_budget",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": null
+      }
+    ]
+  },
+  {
+    "name": "budget per call option",
+    "def": "triage",
+    "script": {
+      "cloudflare/clef-flash@x.y.z": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "deps": {
+      "prices": true
+    },
+    "opts": {
+      "budget": {
+        "maxCost": 0.002,
+        "currency": "USD"
+      }
+    },
+    "lock": null,
+    "calls": [
+      "cloudflare/clef-flash@x.y.z"
+    ],
+    "expected": {
+      "ok": true,
+      "value": {
+        "page": {
+          "value": "yes",
+          "confidence": 0.9,
+          "confidenceSource": "urim_derived",
+          "confidenceFormula": "typesafe_normalized",
+          "native": {
+            "name": "page",
+            "value": 0.95,
+            "confidence": null
+          }
+        },
+        "team": {
+          "value": "data",
+          "confidence": 0.9,
+          "confidenceSource": "native",
+          "confidenceFormula": "vendor_unspecified",
+          "native": {
+            "name": "team",
+            "value": "data",
+            "confidence": 0.9
+          }
+        }
+      },
+      "envelope": {
+        "envelope": "urim/1",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "tier": {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "provider": "cloudflare",
+          "model": "clef-flash",
+          "version": "x.y.z",
+          "camp": "systemone",
+          "questionTypes": [
+            "noul",
+            "choice"
+          ],
+          "role": "fallback"
+        },
+        "answers": {
+          "page": {
+            "value": "yes",
+            "confidence": 0.9,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.95,
+              "confidence": null
+            }
+          },
+          "team": {
+            "value": "data",
+            "confidence": 0.9,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "team",
+              "value": "data",
+              "confidence": 0.9
+            }
+          }
+        },
+        "thresholds": {
+          "page_oncall": {
+            "value": 0.8,
+            "source": "default",
+            "passes": true,
+            "confidence": 0.9
+          },
+          "auto_route": {
+            "value": null,
+            "source": "none",
+            "passes": true,
+            "confidence": 0.9
+          }
+        },
+        "fallback": {
+          "from": "typesafe/jev@1.14.0",
+          "reason": "budget",
+          "attempts": 1
+        },
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "skipped_budget",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "usage": {
+          "inputTokens": 1200,
+          "outputTokens": 3,
+          "cost": {
+            "amount": 0.001,
+            "currency": "USD",
+            "source": "estimated",
+            "priceTable": {
+              "id": "fixture-prices",
+              "asOf": "2026-10-28",
+              "url": "https://example.invalid/PLACEHOLDER"
+            }
+          }
+        },
+        "requestIds": {},
+        "at": "2026-10-28T21:00:00.000Z"
+      },
+      "fallback": {
+        "from": "typesafe/jev@1.14.0",
+        "reason": "budget",
+        "attempts": 1
+      },
+      "thresholds": {
+        "page_oncall": {
+          "value": 0.8,
+          "source": "default",
+          "passes": true,
+          "confidence": 0.9
+        },
+        "auto_route": {
+          "value": null,
+          "source": "none",
+          "passes": true,
+          "confidence": 0.9
+        }
+      }
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "ok",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": {
+          "envelope": "urim/1",
+          "contract": {
+            "id": "incident-triage@2.0.0",
+            "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+          },
+          "tier": {
+            "id": "cloudflare/clef-flash@x.y.z",
+            "provider": "cloudflare",
+            "model": "clef-flash",
+            "version": "x.y.z",
+            "camp": "systemone",
+            "questionTypes": [
+              "noul",
+              "choice"
+            ],
+            "role": "fallback"
+          },
+          "answers": {
+            "page": {
+              "value": "yes",
+              "confidence": 0.9,
+              "confidenceSource": "urim_derived",
+              "confidenceFormula": "typesafe_normalized",
+              "native": {
+                "name": "page",
+                "value": 0.95,
+                "confidence": null
+              }
+            },
+            "team": {
+              "value": "data",
+              "confidence": 0.9,
+              "confidenceSource": "native",
+              "confidenceFormula": "vendor_unspecified",
+              "native": {
+                "name": "team",
+                "value": "data",
+                "confidence": 0.9
+              }
+            }
+          },
+          "thresholds": {
+            "page_oncall": {
+              "value": 0.8,
+              "source": "default",
+              "passes": true,
+              "confidence": 0.9
+            },
+            "auto_route": {
+              "value": null,
+              "source": "none",
+              "passes": true,
+              "confidence": 0.9
+            }
+          },
+          "fallback": {
+            "from": "typesafe/jev@1.14.0",
+            "reason": "budget",
+            "attempts": 1
+          },
+          "attempts": [
+            {
+              "tier": "typesafe/jev@1.14.0",
+              "outcome": "skipped_budget",
+              "latencyMs": 0
+            },
+            {
+              "tier": "cloudflare/clef-flash@x.y.z",
+              "outcome": "ok",
+              "latencyMs": 0
+            }
+          ],
+          "usage": {
+            "inputTokens": 1200,
+            "outputTokens": 3,
+            "cost": {
+              "amount": 0.001,
+              "currency": "USD",
+              "source": "estimated",
+              "priceTable": {
+                "id": "fixture-prices",
+                "asOf": "2026-10-28",
+                "url": "https://example.invalid/PLACEHOLDER"
+              }
+            }
+          },
+          "requestIds": {},
+          "at": "2026-10-28T21:00:00.000Z"
+        },
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "skipped_budget",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": null
+      }
+    ]
+  },
+  {
+    "name": "budget skips everything",
+    "def": "triage",
+    "script": {},
+    "input": {
+      "report": "x"
+    },
+    "deps": {
+      "prices": true,
+      "budget": {
+        "maxCost": 0.0001,
+        "currency": "USD"
+      }
+    },
+    "lock": null,
+    "calls": [],
+    "expected": {
+      "ok": false,
+      "error": {
+        "type": "all_tiers_failed",
+        "tier": null
+      },
+      "attempts": [
+        {
+          "tier": "typesafe/jev@1.14.0",
+          "outcome": "skipped_budget",
+          "latencyMs": 0
+        },
+        {
+          "tier": "cloudflare/clef-flash@x.y.z",
+          "outcome": "skipped_budget",
+          "latencyMs": 0
+        }
+      ]
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "abstain",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": null,
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "skipped_budget",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "skipped_budget",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": {
+          "type": "all_tiers_failed",
+          "message": "every tier failed or was skipped for incident-triage@2.0.0",
+          "tier": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "invalid input",
+    "def": "triage",
+    "script": {},
+    "input": {
+      "report": 3
+    },
+    "lock": null,
+    "calls": [],
+    "expected": {
+      "ok": false,
+      "error": {
+        "type": "invalid_input",
+        "tier": null
+      },
+      "attempts": []
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "abstain",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": null,
+        "attempts": [],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": {
+          "type": "invalid_input",
+          "message": "input does not match the schema",
+          "tier": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "raw opt-in per call",
+    "def": "triage",
+    "script": {
+      "typesafe/jev@1.14.0": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "opts": {
+      "raw": true
+    },
+    "lock": null,
+    "calls": [
+      "typesafe/jev@1.14.0"
+    ],
+    "expected": {
+      "ok": true,
+      "value": {
+        "page": {
+          "value": "yes",
+          "confidence": 0.9,
+          "confidenceSource": "urim_derived",
+          "confidenceFormula": "typesafe_normalized",
+          "native": {
+            "name": "page",
+            "value": 0.95,
+            "confidence": null
+          }
+        },
+        "team": {
+          "value": "data",
+          "confidence": 0.9,
+          "confidenceSource": "native",
+          "confidenceFormula": "vendor_unspecified",
+          "native": {
+            "name": "team",
+            "value": "data",
+            "confidence": 0.9
+          }
+        }
+      },
+      "envelope": {
+        "envelope": "urim/1",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "tier": {
+          "id": "typesafe/jev@1.14.0",
+          "provider": "typesafe",
+          "model": "jev",
+          "version": "1.14.0",
+          "camp": "systemone",
+          "questionTypes": [
+            "noul",
+            "choice",
+            "score"
+          ],
+          "role": "primary"
+        },
+        "answers": {
+          "page": {
+            "value": "yes",
+            "confidence": 0.9,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.95,
+              "confidence": null
+            }
+          },
+          "team": {
+            "value": "data",
+            "confidence": 0.9,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "team",
+              "value": "data",
+              "confidence": 0.9
+            }
+          }
+        },
+        "thresholds": {
+          "page_oncall": {
+            "value": 0.8,
+            "source": "default",
+            "passes": true,
+            "confidence": 0.9
+          },
+          "auto_route": {
+            "value": null,
+            "source": "none",
+            "passes": true,
+            "confidence": 0.9
+          }
+        },
+        "fallback": null,
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "usage": {
+          "inputTokens": 1200,
+          "outputTokens": 3,
+          "cost": null
+        },
+        "requestIds": {},
+        "at": "2026-10-28T21:00:00.000Z",
+        "raw": {
+          "answers": {
+            "page": {
+              "type": "noul",
+              "noul": 0.95
+            },
+            "team": {
+              "type": "choice",
+              "choice": "data",
+              "confidence": 0.9,
+              "probabilities": {
+                "billing": 0.02,
+                "platform": 0.03,
+                "identity": 0.02,
+                "data": 0.93
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 1200,
+            "output_tokens": 3
+          }
+        }
+      },
+      "fallback": null,
+      "thresholds": {
+        "page_oncall": {
+          "value": 0.8,
+          "source": "default",
+          "passes": true,
+          "confidence": 0.9
+        },
+        "auto_route": {
+          "value": null,
+          "source": "none",
+          "passes": true,
+          "confidence": 0.9
+        }
+      }
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "ok",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": {
+          "envelope": "urim/1",
+          "contract": {
+            "id": "incident-triage@2.0.0",
+            "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+          },
+          "tier": {
+            "id": "typesafe/jev@1.14.0",
+            "provider": "typesafe",
+            "model": "jev",
+            "version": "1.14.0",
+            "camp": "systemone",
+            "questionTypes": [
+              "noul",
+              "choice",
+              "score"
+            ],
+            "role": "primary"
+          },
+          "answers": {
+            "page": {
+              "value": "yes",
+              "confidence": 0.9,
+              "confidenceSource": "urim_derived",
+              "confidenceFormula": "typesafe_normalized",
+              "native": {
+                "name": "page",
+                "value": 0.95,
+                "confidence": null
+              }
+            },
+            "team": {
+              "value": "data",
+              "confidence": 0.9,
+              "confidenceSource": "native",
+              "confidenceFormula": "vendor_unspecified",
+              "native": {
+                "name": "team",
+                "value": "data",
+                "confidence": 0.9
+              }
+            }
+          },
+          "thresholds": {
+            "page_oncall": {
+              "value": 0.8,
+              "source": "default",
+              "passes": true,
+              "confidence": 0.9
+            },
+            "auto_route": {
+              "value": null,
+              "source": "none",
+              "passes": true,
+              "confidence": 0.9
+            }
+          },
+          "fallback": null,
+          "attempts": [
+            {
+              "tier": "typesafe/jev@1.14.0",
+              "outcome": "ok",
+              "latencyMs": 0
+            }
+          ],
+          "usage": {
+            "inputTokens": 1200,
+            "outputTokens": 3,
+            "cost": null
+          },
+          "requestIds": {},
+          "at": "2026-10-28T21:00:00.000Z",
+          "raw": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        },
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": null
+      }
+    ]
+  },
+  {
+    "name": "raw opt-in on client",
+    "def": "triage",
+    "script": {
+      "typesafe/jev@1.14.0": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "deps": {
+      "raw": true
+    },
+    "lock": null,
+    "calls": [
+      "typesafe/jev@1.14.0"
+    ],
+    "expected": {
+      "ok": true,
+      "value": {
+        "page": {
+          "value": "yes",
+          "confidence": 0.9,
+          "confidenceSource": "urim_derived",
+          "confidenceFormula": "typesafe_normalized",
+          "native": {
+            "name": "page",
+            "value": 0.95,
+            "confidence": null
+          }
+        },
+        "team": {
+          "value": "data",
+          "confidence": 0.9,
+          "confidenceSource": "native",
+          "confidenceFormula": "vendor_unspecified",
+          "native": {
+            "name": "team",
+            "value": "data",
+            "confidence": 0.9
+          }
+        }
+      },
+      "envelope": {
+        "envelope": "urim/1",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "tier": {
+          "id": "typesafe/jev@1.14.0",
+          "provider": "typesafe",
+          "model": "jev",
+          "version": "1.14.0",
+          "camp": "systemone",
+          "questionTypes": [
+            "noul",
+            "choice",
+            "score"
+          ],
+          "role": "primary"
+        },
+        "answers": {
+          "page": {
+            "value": "yes",
+            "confidence": 0.9,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.95,
+              "confidence": null
+            }
+          },
+          "team": {
+            "value": "data",
+            "confidence": 0.9,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "team",
+              "value": "data",
+              "confidence": 0.9
+            }
+          }
+        },
+        "thresholds": {
+          "page_oncall": {
+            "value": 0.8,
+            "source": "default",
+            "passes": true,
+            "confidence": 0.9
+          },
+          "auto_route": {
+            "value": null,
+            "source": "none",
+            "passes": true,
+            "confidence": 0.9
+          }
+        },
+        "fallback": null,
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "usage": {
+          "inputTokens": 1200,
+          "outputTokens": 3,
+          "cost": null
+        },
+        "requestIds": {},
+        "at": "2026-10-28T21:00:00.000Z",
+        "raw": {
+          "answers": {
+            "page": {
+              "type": "noul",
+              "noul": 0.95
+            },
+            "team": {
+              "type": "choice",
+              "choice": "data",
+              "confidence": 0.9,
+              "probabilities": {
+                "billing": 0.02,
+                "platform": 0.03,
+                "identity": 0.02,
+                "data": 0.93
+              }
+            }
+          },
+          "usage": {
+            "input_tokens": 1200,
+            "output_tokens": 3
+          }
+        }
+      },
+      "fallback": null,
+      "thresholds": {
+        "page_oncall": {
+          "value": 0.8,
+          "source": "default",
+          "passes": true,
+          "confidence": 0.9
+        },
+        "auto_route": {
+          "value": null,
+          "source": "none",
+          "passes": true,
+          "confidence": 0.9
+        }
+      }
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "ok",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": {
+          "envelope": "urim/1",
+          "contract": {
+            "id": "incident-triage@2.0.0",
+            "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+          },
+          "tier": {
+            "id": "typesafe/jev@1.14.0",
+            "provider": "typesafe",
+            "model": "jev",
+            "version": "1.14.0",
+            "camp": "systemone",
+            "questionTypes": [
+              "noul",
+              "choice",
+              "score"
+            ],
+            "role": "primary"
+          },
+          "answers": {
+            "page": {
+              "value": "yes",
+              "confidence": 0.9,
+              "confidenceSource": "urim_derived",
+              "confidenceFormula": "typesafe_normalized",
+              "native": {
+                "name": "page",
+                "value": 0.95,
+                "confidence": null
+              }
+            },
+            "team": {
+              "value": "data",
+              "confidence": 0.9,
+              "confidenceSource": "native",
+              "confidenceFormula": "vendor_unspecified",
+              "native": {
+                "name": "team",
+                "value": "data",
+                "confidence": 0.9
+              }
+            }
+          },
+          "thresholds": {
+            "page_oncall": {
+              "value": 0.8,
+              "source": "default",
+              "passes": true,
+              "confidence": 0.9
+            },
+            "auto_route": {
+              "value": null,
+              "source": "none",
+              "passes": true,
+              "confidence": 0.9
+            }
+          },
+          "fallback": null,
+          "attempts": [
+            {
+              "tier": "typesafe/jev@1.14.0",
+              "outcome": "ok",
+              "latencyMs": 0
+            }
+          ],
+          "usage": {
+            "inputTokens": 1200,
+            "outputTokens": 3,
+            "cost": null
+          },
+          "requestIds": {},
+          "at": "2026-10-28T21:00:00.000Z",
+          "raw": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        },
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": null
+      }
+    ]
+  },
+  {
+    "name": "severity timeout fails over",
+    "def": "severity",
+    "script": {
+      "openai/gpt-6-luna@0.0.0": [
+        {
+          "fail": "timeout"
+        }
+      ],
+      "typesafe/jev@1.14.0": [
+        {
+          "body": {
+            "answers": {
+              "sev": {
+                "type": "score",
+                "score": 1.6,
+                "confidence": 0.55,
+                "legend": {
+                  "0": "low",
+                  "1": "mid",
+                  "2": "high"
+                },
+                "probabilities": {
+                  "0": 0.1,
+                  "1": 0.2,
+                  "2": 0.7
+                }
+              },
+              "page": {
+                "type": "noul",
+                "noul": 0.05
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "lock": null,
+    "calls": [
+      "openai/gpt-6-luna@0.0.0",
+      "typesafe/jev@1.14.0"
+    ],
+    "expected": {
+      "ok": true,
+      "value": {
+        "sev": {
+          "value": "high",
+          "confidence": 0.55,
+          "confidenceSource": "native",
+          "confidenceFormula": "vendor_unspecified",
+          "native": {
+            "name": "sev",
+            "value": 1.6,
+            "confidence": 0.55
+          }
+        },
+        "page": {
+          "value": "no",
+          "confidence": 0.9,
+          "confidenceSource": "urim_derived",
+          "confidenceFormula": "typesafe_normalized",
+          "native": {
+            "name": "page",
+            "value": 0.05,
+            "confidence": null
+          }
+        }
+      },
+      "envelope": {
+        "envelope": "urim/1",
+        "contract": {
+          "id": "severity@1.0.0",
+          "hash": "sha256:5972c57e54f898c4750ecfbe4592b602098521c826b9a04c3d1b41a50a7a9846"
+        },
+        "tier": {
+          "id": "typesafe/jev@1.14.0",
+          "provider": "typesafe",
+          "model": "jev",
+          "version": "1.14.0",
+          "camp": "systemone",
+          "questionTypes": [
+            "noul",
+            "choice",
+            "score"
+          ],
+          "role": "fallback"
+        },
+        "answers": {
+          "sev": {
+            "value": "high",
+            "confidence": 0.55,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "sev",
+              "value": 1.6,
+              "confidence": 0.55
+            }
+          },
+          "page": {
+            "value": "no",
+            "confidence": 0.9,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.05,
+              "confidence": null
+            }
+          }
+        },
+        "thresholds": {},
+        "fallback": {
+          "from": "openai/gpt-6-luna@0.0.0",
+          "reason": "timeout",
+          "attempts": 1
+        },
+        "attempts": [
+          {
+            "tier": "openai/gpt-6-luna@0.0.0",
+            "outcome": "timeout",
+            "latencyMs": 0
+          },
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "usage": {
+          "inputTokens": 1200,
+          "outputTokens": 3,
+          "cost": null
+        },
+        "requestIds": {},
+        "at": "2026-10-28T21:00:00.000Z"
+      },
+      "fallback": {
+        "from": "openai/gpt-6-luna@0.0.0",
+        "reason": "timeout",
+        "attempts": 1
+      },
+      "thresholds": {}
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "ok",
+        "contract": {
+          "id": "severity@1.0.0",
+          "hash": "sha256:5972c57e54f898c4750ecfbe4592b602098521c826b9a04c3d1b41a50a7a9846"
+        },
+        "envelope": {
+          "envelope": "urim/1",
+          "contract": {
+            "id": "severity@1.0.0",
+            "hash": "sha256:5972c57e54f898c4750ecfbe4592b602098521c826b9a04c3d1b41a50a7a9846"
+          },
+          "tier": {
+            "id": "typesafe/jev@1.14.0",
+            "provider": "typesafe",
+            "model": "jev",
+            "version": "1.14.0",
+            "camp": "systemone",
+            "questionTypes": [
+              "noul",
+              "choice",
+              "score"
+            ],
+            "role": "fallback"
+          },
+          "answers": {
+            "sev": {
+              "value": "high",
+              "confidence": 0.55,
+              "confidenceSource": "native",
+              "confidenceFormula": "vendor_unspecified",
+              "native": {
+                "name": "sev",
+                "value": 1.6,
+                "confidence": 0.55
+              }
+            },
+            "page": {
+              "value": "no",
+              "confidence": 0.9,
+              "confidenceSource": "urim_derived",
+              "confidenceFormula": "typesafe_normalized",
+              "native": {
+                "name": "page",
+                "value": 0.05,
+                "confidence": null
+              }
+            }
+          },
+          "thresholds": {},
+          "fallback": {
+            "from": "openai/gpt-6-luna@0.0.0",
+            "reason": "timeout",
+            "attempts": 1
+          },
+          "attempts": [
+            {
+              "tier": "openai/gpt-6-luna@0.0.0",
+              "outcome": "timeout",
+              "latencyMs": 0
+            },
+            {
+              "tier": "typesafe/jev@1.14.0",
+              "outcome": "ok",
+              "latencyMs": 0
+            }
+          ],
+          "usage": {
+            "inputTokens": 1200,
+            "outputTokens": 3,
+            "cost": null
+          },
+          "requestIds": {},
+          "at": "2026-10-28T21:00:00.000Z"
+        },
+        "attempts": [
+          {
+            "tier": "openai/gpt-6-luna@0.0.0",
+            "outcome": "timeout",
+            "latencyMs": 0
+          },
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": null
+      }
+    ]
+  },
+  {
+    "name": "severity openai ok",
+    "def": "severity",
+    "script": {
+      "openai/gpt-6-luna@0.0.0": [
+        {
+          "body": {
+            "model": "gpt-6-luna",
+            "answers": [
+              {
+                "type": "score",
+                "name": "sev",
+                "score": 1.6,
+                "confidence": 0.7,
+                "probabilities": [
+                  {
+                    "value": 0,
+                    "label": "low",
+                    "probability": 0.1
+                  },
+                  {
+                    "value": 1,
+                    "label": "mid",
+                    "probability": 0.2
+                  },
+                  {
+                    "value": 2,
+                    "label": "high",
+                    "probability": 0.7
+                  }
+                ]
+              },
+              {
+                "type": "predicate",
+                "name": "page",
+                "probability": 0.9
+              }
+            ],
+            "usage": {
+              "input_tokens": 800,
+              "output_tokens": 0,
+              "total_tokens": 800
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "lock": null,
+    "calls": [
+      "openai/gpt-6-luna@0.0.0"
+    ],
+    "expected": {
+      "ok": true,
+      "value": {
+        "sev": {
+          "value": "high",
+          "confidence": 0.7,
+          "confidenceSource": "native",
+          "confidenceFormula": "vendor_unspecified",
+          "native": {
+            "name": "sev",
+            "value": 1.6,
+            "confidence": 0.7
+          }
+        },
+        "page": {
+          "value": "yes",
+          "confidence": 0.8,
+          "confidenceSource": "urim_derived",
+          "confidenceFormula": "typesafe_normalized",
+          "native": {
+            "name": "page",
+            "value": 0.9,
+            "confidence": null
+          }
+        }
+      },
+      "envelope": {
+        "envelope": "urim/1",
+        "contract": {
+          "id": "severity@1.0.0",
+          "hash": "sha256:5972c57e54f898c4750ecfbe4592b602098521c826b9a04c3d1b41a50a7a9846"
+        },
+        "tier": {
+          "id": "openai/gpt-6-luna@0.0.0",
+          "provider": "openai",
+          "model": "gpt-6-luna",
+          "version": "0.0.0",
+          "camp": "decisions",
+          "questionTypes": [
+            "noul",
+            "choice",
+            "score"
+          ],
+          "role": "primary"
+        },
+        "answers": {
+          "sev": {
+            "value": "high",
+            "confidence": 0.7,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "sev",
+              "value": 1.6,
+              "confidence": 0.7
+            }
+          },
+          "page": {
+            "value": "yes",
+            "confidence": 0.8,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.9,
+              "confidence": null
+            }
+          }
+        },
+        "thresholds": {},
+        "fallback": null,
+        "attempts": [
+          {
+            "tier": "openai/gpt-6-luna@0.0.0",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "usage": {
+          "inputTokens": 800,
+          "outputTokens": 0,
+          "cost": null
+        },
+        "requestIds": {},
+        "at": "2026-10-28T21:00:00.000Z"
+      },
+      "fallback": null,
+      "thresholds": {}
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "ok",
+        "contract": {
+          "id": "severity@1.0.0",
+          "hash": "sha256:5972c57e54f898c4750ecfbe4592b602098521c826b9a04c3d1b41a50a7a9846"
+        },
+        "envelope": {
+          "envelope": "urim/1",
+          "contract": {
+            "id": "severity@1.0.0",
+            "hash": "sha256:5972c57e54f898c4750ecfbe4592b602098521c826b9a04c3d1b41a50a7a9846"
+          },
+          "tier": {
+            "id": "openai/gpt-6-luna@0.0.0",
+            "provider": "openai",
+            "model": "gpt-6-luna",
+            "version": "0.0.0",
+            "camp": "decisions",
+            "questionTypes": [
+              "noul",
+              "choice",
+              "score"
+            ],
+            "role": "primary"
+          },
+          "answers": {
+            "sev": {
+              "value": "high",
+              "confidence": 0.7,
+              "confidenceSource": "native",
+              "confidenceFormula": "vendor_unspecified",
+              "native": {
+                "name": "sev",
+                "value": 1.6,
+                "confidence": 0.7
+              }
+            },
+            "page": {
+              "value": "yes",
+              "confidence": 0.8,
+              "confidenceSource": "urim_derived",
+              "confidenceFormula": "typesafe_normalized",
+              "native": {
+                "name": "page",
+                "value": 0.9,
+                "confidence": null
+              }
+            }
+          },
+          "thresholds": {},
+          "fallback": null,
+          "attempts": [
+            {
+              "tier": "openai/gpt-6-luna@0.0.0",
+              "outcome": "ok",
+              "latencyMs": 0
+            }
+          ],
+          "usage": {
+            "inputTokens": 800,
+            "outputTokens": 0,
+            "cost": null
+          },
+          "requestIds": {},
+          "at": "2026-10-28T21:00:00.000Z"
+        },
+        "attempts": [
+          {
+            "tier": "openai/gpt-6-luna@0.0.0",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": null
+      }
+    ]
+  },
+  {
+    "name": "severity rate_limited abstains",
+    "def": "severity",
+    "script": {
+      "openai/gpt-6-luna@0.0.0": [
+        {
+          "fail": "rate_limited"
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "lock": null,
+    "calls": [
+      "openai/gpt-6-luna@0.0.0"
+    ],
+    "expected": {
+      "ok": false,
+      "error": {
+        "type": "rate_limited",
+        "tier": "openai/gpt-6-luna@0.0.0"
+      },
+      "attempts": [
+        {
+          "tier": "openai/gpt-6-luna@0.0.0",
+          "outcome": "rate_limited",
+          "latencyMs": 0
+        }
+      ]
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "abstain",
+        "contract": {
+          "id": "severity@1.0.0",
+          "hash": "sha256:5972c57e54f898c4750ecfbe4592b602098521c826b9a04c3d1b41a50a7a9846"
+        },
+        "envelope": null,
+        "attempts": [
+          {
+            "tier": "openai/gpt-6-luna@0.0.0",
+            "outcome": "rate_limited",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": {
+          "type": "rate_limited",
+          "message": "scripted rate_limited",
+          "tier": "openai/gpt-6-luna@0.0.0"
+        }
+      }
+    ]
+  },
+  {
+    "name": "deadline fires under a frozen clock",
+    "def": "triage",
+    "script": {
+      "typesafe/jev@1.14.0": [
+        {
+          "hang": true
+        }
+      ],
+      "cloudflare/clef-flash@x.y.z": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "opts": {
+      "deadlineMs": 5
+    },
+    "lock": null,
+    "calls": [
+      "typesafe/jev@1.14.0"
+    ],
+    "expected": {
+      "ok": false,
+      "error": {
+        "type": "all_tiers_failed",
+        "tier": null
+      },
+      "attempts": [
+        {
+          "tier": "typesafe/jev@1.14.0",
+          "outcome": "timeout",
+          "latencyMs": 0
+        },
+        {
+          "tier": "cloudflare/clef-flash@x.y.z",
+          "outcome": "timeout",
+          "latencyMs": 0
+        }
+      ]
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "abstain",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": null,
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "timeout",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "timeout",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": {
+          "type": "all_tiers_failed",
+          "message": "every tier failed or was skipped for incident-triage@2.0.0",
+          "tier": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "client deadline applies under a frozen clock",
+    "def": "triage",
+    "script": {
+      "typesafe/jev@1.14.0": [
+        {
+          "hang": true
+        }
+      ],
+      "cloudflare/clef-flash@x.y.z": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "deps": {
+      "deadlineMs": 5
+    },
+    "lock": null,
+    "calls": [
+      "typesafe/jev@1.14.0"
+    ],
+    "expected": {
+      "ok": false,
+      "error": {
+        "type": "all_tiers_failed",
+        "tier": null
+      },
+      "attempts": [
+        {
+          "tier": "typesafe/jev@1.14.0",
+          "outcome": "timeout",
+          "latencyMs": 0
+        },
+        {
+          "tier": "cloudflare/clef-flash@x.y.z",
+          "outcome": "timeout",
+          "latencyMs": 0
+        }
+      ]
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "abstain",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": null,
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "timeout",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "timeout",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": {
+          "type": "all_tiers_failed",
+          "message": "every tier failed or was skipped for incident-triage@2.0.0",
+          "tier": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "per-call deadline overrides the client default",
+    "def": "triage",
+    "script": {
+      "typesafe/jev@1.14.0": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "deps": {
+      "deadlineMs": 1000
+    },
+    "opts": {
+      "deadlineMs": 0
+    },
+    "lock": null,
+    "calls": [],
+    "expected": {
+      "ok": false,
+      "error": {
+        "type": "all_tiers_failed",
+        "tier": null
+      },
+      "attempts": [
+        {
+          "tier": "typesafe/jev@1.14.0",
+          "outcome": "timeout",
+          "latencyMs": 0
+        },
+        {
+          "tier": "cloudflare/clef-flash@x.y.z",
+          "outcome": "timeout",
+          "latencyMs": 0
+        }
+      ]
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "abstain",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": null,
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "timeout",
+            "latencyMs": 0
+          },
+          {
+            "tier": "cloudflare/clef-flash@x.y.z",
+            "outcome": "timeout",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": {
+          "type": "all_tiers_failed",
+          "message": "every tier failed or was skipped for incident-triage@2.0.0",
+          "tier": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "prod with lock uses locked cut",
+    "def": "triage",
+    "script": {
+      "typesafe/jev@1.14.0": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              },
+              "team": {
+                "type": "choice",
+                "choice": "data",
+                "confidence": 0.9,
+                "probabilities": {
+                  "billing": 0.02,
+                  "platform": 0.03,
+                  "identity": 0.02,
+                  "data": 0.93
+                }
+              }
+            },
+            "usage": {
+              "input_tokens": 1200,
+              "output_tokens": 3
+            }
+          }
+        }
+      ]
+    },
+    "input": {
+      "report": "x"
+    },
+    "deps": {
+      "mode": "prod",
+      "lock": true
+    },
+    "lock": {
+      "lock": 1,
+      "contract": {
+        "id": "incident-triage@2.0.0",
+        "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+      },
+      "cuts": {
+        "auto_route": {
+          "typesafe/jev@1.14.0": 0.85,
+          "cloudflare/clef-flash@x.y.z": 0.95
+        }
+      }
+    },
+    "calls": [
+      "typesafe/jev@1.14.0"
+    ],
+    "expected": {
+      "ok": true,
+      "value": {
+        "page": {
+          "value": "yes",
+          "confidence": 0.9,
+          "confidenceSource": "urim_derived",
+          "confidenceFormula": "typesafe_normalized",
+          "native": {
+            "name": "page",
+            "value": 0.95,
+            "confidence": null
+          }
+        },
+        "team": {
+          "value": "data",
+          "confidence": 0.9,
+          "confidenceSource": "native",
+          "confidenceFormula": "vendor_unspecified",
+          "native": {
+            "name": "team",
+            "value": "data",
+            "confidence": 0.9
+          }
+        }
+      },
+      "envelope": {
+        "envelope": "urim/1",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "tier": {
+          "id": "typesafe/jev@1.14.0",
+          "provider": "typesafe",
+          "model": "jev",
+          "version": "1.14.0",
+          "camp": "systemone",
+          "questionTypes": [
+            "noul",
+            "choice",
+            "score"
+          ],
+          "role": "primary"
+        },
+        "answers": {
+          "page": {
+            "value": "yes",
+            "confidence": 0.9,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.95,
+              "confidence": null
+            }
+          },
+          "team": {
+            "value": "data",
+            "confidence": 0.9,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "team",
+              "value": "data",
+              "confidence": 0.9
+            }
+          }
+        },
+        "thresholds": {
+          "page_oncall": {
+            "value": 0.8,
+            "source": "default",
+            "passes": true,
+            "confidence": 0.9
+          },
+          "auto_route": {
+            "value": 0.85,
+            "source": "lock",
+            "passes": true,
+            "confidence": 0.9
+          }
+        },
+        "fallback": null,
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "usage": {
+          "inputTokens": 1200,
+          "outputTokens": 3,
+          "cost": null
+        },
+        "requestIds": {},
+        "at": "2026-10-28T21:00:00.000Z"
+      },
+      "fallback": null,
+      "thresholds": {
+        "page_oncall": {
+          "value": 0.8,
+          "source": "default",
+          "passes": true,
+          "confidence": 0.9
+        },
+        "auto_route": {
+          "value": 0.85,
+          "source": "lock",
+          "passes": true,
+          "confidence": 0.9
+        }
+      }
+    },
+    "settled": [
+      {
+        "settled": "urim/1",
+        "outcome": "ok",
+        "contract": {
+          "id": "incident-triage@2.0.0",
+          "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+        },
+        "envelope": {
+          "envelope": "urim/1",
+          "contract": {
+            "id": "incident-triage@2.0.0",
+            "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+          },
+          "tier": {
+            "id": "typesafe/jev@1.14.0",
+            "provider": "typesafe",
+            "model": "jev",
+            "version": "1.14.0",
+            "camp": "systemone",
+            "questionTypes": [
+              "noul",
+              "choice",
+              "score"
+            ],
+            "role": "primary"
+          },
+          "answers": {
+            "page": {
+              "value": "yes",
+              "confidence": 0.9,
+              "confidenceSource": "urim_derived",
+              "confidenceFormula": "typesafe_normalized",
+              "native": {
+                "name": "page",
+                "value": 0.95,
+                "confidence": null
+              }
+            },
+            "team": {
+              "value": "data",
+              "confidence": 0.9,
+              "confidenceSource": "native",
+              "confidenceFormula": "vendor_unspecified",
+              "native": {
+                "name": "team",
+                "value": "data",
+                "confidence": 0.9
+              }
+            }
+          },
+          "thresholds": {
+            "page_oncall": {
+              "value": 0.8,
+              "source": "default",
+              "passes": true,
+              "confidence": 0.9
+            },
+            "auto_route": {
+              "value": 0.85,
+              "source": "lock",
+              "passes": true,
+              "confidence": 0.9
+            }
+          },
+          "fallback": null,
+          "attempts": [
+            {
+              "tier": "typesafe/jev@1.14.0",
+              "outcome": "ok",
+              "latencyMs": 0
+            }
+          ],
+          "usage": {
+            "inputTokens": 1200,
+            "outputTokens": 3,
+            "cost": null
+          },
+          "requestIds": {},
+          "at": "2026-10-28T21:00:00.000Z"
+        },
+        "attempts": [
+          {
+            "tier": "typesafe/jev@1.14.0",
+            "outcome": "ok",
+            "latencyMs": 0
+          }
+        ],
+        "at": "2026-10-28T21:00:00.000Z",
+        "error": null
+      }
+    ]
+  }
+]

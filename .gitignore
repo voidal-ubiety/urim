@@ -1,15 +1,15 @@
 node_modules/
-packages/js/dist/
-target/
-packages/python/dist/
 __pycache__/
 *.egg-info/
 .pytest_cache/
 .venv/
 *.tgz
-packages/js/coverage/
 .coverage
 .coverage.*
 htmlcov/
 coverage.xml
 build/
+
+# Internal notes live in the private repo.
+drafts/
+research/

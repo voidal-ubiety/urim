@@ -1,0 +1,1998 @@
+{
+  "math": {
+    "fitCutoff": [
+      {
+        "name": "hand",
+        "xs": [
+          {
+            "confidence": 0.9,
+            "correct": true
+          },
+          {
+            "confidence": 0.8,
+            "correct": true
+          },
+          {
+            "confidence": 0.7,
+            "correct": false
+          },
+          {
+            "confidence": 0.6,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          }
+        ],
+        "objective": {},
+        "expected": {
+          "cutoff": null,
+          "met": true,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "hand",
+        "xs": [
+          {
+            "confidence": 0.9,
+            "correct": true
+          },
+          {
+            "confidence": 0.8,
+            "correct": true
+          },
+          {
+            "confidence": 0.7,
+            "correct": false
+          },
+          {
+            "confidence": 0.6,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          }
+        ],
+        "objective": {
+          "minPrecision": 0.75
+        },
+        "expected": {
+          "cutoff": 0.6,
+          "met": true,
+          "precision": 0.75,
+          "escalation": 0.2
+        }
+      },
+      {
+        "name": "hand",
+        "xs": [
+          {
+            "confidence": 0.9,
+            "correct": true
+          },
+          {
+            "confidence": 0.8,
+            "correct": true
+          },
+          {
+            "confidence": 0.7,
+            "correct": false
+          },
+          {
+            "confidence": 0.6,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          }
+        ],
+        "objective": {
+          "escalationRate": 0.4
+        },
+        "expected": {
+          "cutoff": 0.7,
+          "met": true,
+          "precision": 0.6666666666666666,
+          "escalation": 0.4
+        }
+      },
+      {
+        "name": "hand",
+        "xs": [
+          {
+            "confidence": 0.9,
+            "correct": true
+          },
+          {
+            "confidence": 0.8,
+            "correct": true
+          },
+          {
+            "confidence": 0.7,
+            "correct": false
+          },
+          {
+            "confidence": 0.6,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          }
+        ],
+        "objective": {
+          "minPrecision": 0.6,
+          "escalationRate": 0.5
+        },
+        "expected": {
+          "cutoff": 0.5,
+          "met": true,
+          "precision": 0.6,
+          "escalation": 0
+        }
+      },
+      {
+        "name": "hand",
+        "xs": [
+          {
+            "confidence": 0.9,
+            "correct": true
+          },
+          {
+            "confidence": 0.8,
+            "correct": true
+          },
+          {
+            "confidence": 0.7,
+            "correct": false
+          },
+          {
+            "confidence": 0.6,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          }
+        ],
+        "objective": {
+          "minPrecision": 0.9,
+          "escalationRate": 0.1
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "hand",
+        "xs": [
+          {
+            "confidence": 0.9,
+            "correct": true
+          },
+          {
+            "confidence": 0.8,
+            "correct": true
+          },
+          {
+            "confidence": 0.7,
+            "correct": false
+          },
+          {
+            "confidence": 0.6,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          }
+        ],
+        "objective": {
+          "minPrecision": 1.01
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "hand",
+        "xs": [
+          {
+            "confidence": 0.9,
+            "correct": true
+          },
+          {
+            "confidence": 0.8,
+            "correct": true
+          },
+          {
+            "confidence": 0.7,
+            "correct": false
+          },
+          {
+            "confidence": 0.6,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          }
+        ],
+        "objective": {
+          "escalationRate": 0
+        },
+        "expected": {
+          "cutoff": 0.5,
+          "met": true,
+          "precision": 0.6,
+          "escalation": 0
+        }
+      },
+      {
+        "name": "with nulls and ties",
+        "xs": [
+          {
+            "confidence": null,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          },
+          {
+            "confidence": 0.25,
+            "correct": true
+          },
+          {
+            "confidence": 1,
+            "correct": true
+          },
+          {
+            "confidence": null,
+            "correct": false
+          },
+          {
+            "confidence": 0.75,
+            "correct": false
+          }
+        ],
+        "objective": {},
+        "expected": {
+          "cutoff": null,
+          "met": true,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "with nulls and ties",
+        "xs": [
+          {
+            "confidence": null,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          },
+          {
+            "confidence": 0.25,
+            "correct": true
+          },
+          {
+            "confidence": 1,
+            "correct": true
+          },
+          {
+            "confidence": null,
+            "correct": false
+          },
+          {
+            "confidence": 0.75,
+            "correct": false
+          }
+        ],
+        "objective": {
+          "minPrecision": 0.75
+        },
+        "expected": {
+          "cutoff": 1,
+          "met": true,
+          "precision": 1,
+          "escalation": 0.8571428571428571
+        }
+      },
+      {
+        "name": "with nulls and ties",
+        "xs": [
+          {
+            "confidence": null,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          },
+          {
+            "confidence": 0.25,
+            "correct": true
+          },
+          {
+            "confidence": 1,
+            "correct": true
+          },
+          {
+            "confidence": null,
+            "correct": false
+          },
+          {
+            "confidence": 0.75,
+            "correct": false
+          }
+        ],
+        "objective": {
+          "escalationRate": 0.4
+        },
+        "expected": {
+          "cutoff": 0.25,
+          "met": true,
+          "precision": 0.6,
+          "escalation": 0.2857142857142857
+        }
+      },
+      {
+        "name": "with nulls and ties",
+        "xs": [
+          {
+            "confidence": null,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          },
+          {
+            "confidence": 0.25,
+            "correct": true
+          },
+          {
+            "confidence": 1,
+            "correct": true
+          },
+          {
+            "confidence": null,
+            "correct": false
+          },
+          {
+            "confidence": 0.75,
+            "correct": false
+          }
+        ],
+        "objective": {
+          "minPrecision": 0.6,
+          "escalationRate": 0.5
+        },
+        "expected": {
+          "cutoff": 0.25,
+          "met": true,
+          "precision": 0.6,
+          "escalation": 0.2857142857142857
+        }
+      },
+      {
+        "name": "with nulls and ties",
+        "xs": [
+          {
+            "confidence": null,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          },
+          {
+            "confidence": 0.25,
+            "correct": true
+          },
+          {
+            "confidence": 1,
+            "correct": true
+          },
+          {
+            "confidence": null,
+            "correct": false
+          },
+          {
+            "confidence": 0.75,
+            "correct": false
+          }
+        ],
+        "objective": {
+          "minPrecision": 0.9,
+          "escalationRate": 0.1
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "with nulls and ties",
+        "xs": [
+          {
+            "confidence": null,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          },
+          {
+            "confidence": 0.25,
+            "correct": true
+          },
+          {
+            "confidence": 1,
+            "correct": true
+          },
+          {
+            "confidence": null,
+            "correct": false
+          },
+          {
+            "confidence": 0.75,
+            "correct": false
+          }
+        ],
+        "objective": {
+          "minPrecision": 1.01
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "with nulls and ties",
+        "xs": [
+          {
+            "confidence": null,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          },
+          {
+            "confidence": 0.25,
+            "correct": true
+          },
+          {
+            "confidence": 1,
+            "correct": true
+          },
+          {
+            "confidence": null,
+            "correct": false
+          },
+          {
+            "confidence": 0.75,
+            "correct": false
+          }
+        ],
+        "objective": {
+          "escalationRate": 0
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "all correct",
+        "xs": [
+          {
+            "confidence": 0.1,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": true
+          },
+          {
+            "confidence": 0.2,
+            "correct": true
+          }
+        ],
+        "objective": {},
+        "expected": {
+          "cutoff": null,
+          "met": true,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "all correct",
+        "xs": [
+          {
+            "confidence": 0.1,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": true
+          },
+          {
+            "confidence": 0.2,
+            "correct": true
+          }
+        ],
+        "objective": {
+          "minPrecision": 0.75
+        },
+        "expected": {
+          "cutoff": 0.1,
+          "met": true,
+          "precision": 1,
+          "escalation": 0
+        }
+      },
+      {
+        "name": "all correct",
+        "xs": [
+          {
+            "confidence": 0.1,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": true
+          },
+          {
+            "confidence": 0.2,
+            "correct": true
+          }
+        ],
+        "objective": {
+          "escalationRate": 0.4
+        },
+        "expected": {
+          "cutoff": 0.2,
+          "met": true,
+          "precision": 1,
+          "escalation": 0.3333333333333333
+        }
+      },
+      {
+        "name": "all correct",
+        "xs": [
+          {
+            "confidence": 0.1,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": true
+          },
+          {
+            "confidence": 0.2,
+            "correct": true
+          }
+        ],
+        "objective": {
+          "minPrecision": 0.6,
+          "escalationRate": 0.5
+        },
+        "expected": {
+          "cutoff": 0.1,
+          "met": true,
+          "precision": 1,
+          "escalation": 0
+        }
+      },
+      {
+        "name": "all correct",
+        "xs": [
+          {
+            "confidence": 0.1,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": true
+          },
+          {
+            "confidence": 0.2,
+            "correct": true
+          }
+        ],
+        "objective": {
+          "minPrecision": 0.9,
+          "escalationRate": 0.1
+        },
+        "expected": {
+          "cutoff": 0.1,
+          "met": true,
+          "precision": 1,
+          "escalation": 0
+        }
+      },
+      {
+        "name": "all correct",
+        "xs": [
+          {
+            "confidence": 0.1,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": true
+          },
+          {
+            "confidence": 0.2,
+            "correct": true
+          }
+        ],
+        "objective": {
+          "minPrecision": 1.01
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "all correct",
+        "xs": [
+          {
+            "confidence": 0.1,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": true
+          },
+          {
+            "confidence": 0.2,
+            "correct": true
+          }
+        ],
+        "objective": {
+          "escalationRate": 0
+        },
+        "expected": {
+          "cutoff": 0.1,
+          "met": true,
+          "precision": 1,
+          "escalation": 0
+        }
+      },
+      {
+        "name": "empty",
+        "xs": [],
+        "objective": {},
+        "expected": {
+          "cutoff": null,
+          "met": true,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "empty",
+        "xs": [],
+        "objective": {
+          "minPrecision": 0.75
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "empty",
+        "xs": [],
+        "objective": {
+          "escalationRate": 0.4
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "empty",
+        "xs": [],
+        "objective": {
+          "minPrecision": 0.6,
+          "escalationRate": 0.5
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "empty",
+        "xs": [],
+        "objective": {
+          "minPrecision": 0.9,
+          "escalationRate": 0.1
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "empty",
+        "xs": [],
+        "objective": {
+          "minPrecision": 1.01
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "empty",
+        "xs": [],
+        "objective": {
+          "escalationRate": 0
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "float noise",
+        "xs": [
+          {
+            "confidence": 0.30000000000000004,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": false
+          },
+          {
+            "confidence": 0.7000000000000001,
+            "correct": true
+          },
+          {
+            "confidence": 0.3333333333333333,
+            "correct": true
+          }
+        ],
+        "objective": {},
+        "expected": {
+          "cutoff": null,
+          "met": true,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "float noise",
+        "xs": [
+          {
+            "confidence": 0.30000000000000004,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": false
+          },
+          {
+            "confidence": 0.7000000000000001,
+            "correct": true
+          },
+          {
+            "confidence": 0.3333333333333333,
+            "correct": true
+          }
+        ],
+        "objective": {
+          "minPrecision": 0.75
+        },
+        "expected": {
+          "cutoff": 0.3,
+          "met": true,
+          "precision": 0.75,
+          "escalation": 0
+        }
+      },
+      {
+        "name": "float noise",
+        "xs": [
+          {
+            "confidence": 0.30000000000000004,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": false
+          },
+          {
+            "confidence": 0.7000000000000001,
+            "correct": true
+          },
+          {
+            "confidence": 0.3333333333333333,
+            "correct": true
+          }
+        ],
+        "objective": {
+          "escalationRate": 0.4
+        },
+        "expected": {
+          "cutoff": 0.30000000000000004,
+          "met": true,
+          "precision": 1,
+          "escalation": 0.25
+        }
+      },
+      {
+        "name": "float noise",
+        "xs": [
+          {
+            "confidence": 0.30000000000000004,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": false
+          },
+          {
+            "confidence": 0.7000000000000001,
+            "correct": true
+          },
+          {
+            "confidence": 0.3333333333333333,
+            "correct": true
+          }
+        ],
+        "objective": {
+          "minPrecision": 0.6,
+          "escalationRate": 0.5
+        },
+        "expected": {
+          "cutoff": 0.3,
+          "met": true,
+          "precision": 0.75,
+          "escalation": 0
+        }
+      },
+      {
+        "name": "float noise",
+        "xs": [
+          {
+            "confidence": 0.30000000000000004,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": false
+          },
+          {
+            "confidence": 0.7000000000000001,
+            "correct": true
+          },
+          {
+            "confidence": 0.3333333333333333,
+            "correct": true
+          }
+        ],
+        "objective": {
+          "minPrecision": 0.9,
+          "escalationRate": 0.1
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "float noise",
+        "xs": [
+          {
+            "confidence": 0.30000000000000004,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": false
+          },
+          {
+            "confidence": 0.7000000000000001,
+            "correct": true
+          },
+          {
+            "confidence": 0.3333333333333333,
+            "correct": true
+          }
+        ],
+        "objective": {
+          "minPrecision": 1.01
+        },
+        "expected": {
+          "cutoff": null,
+          "met": false,
+          "precision": null,
+          "escalation": null
+        }
+      },
+      {
+        "name": "float noise",
+        "xs": [
+          {
+            "confidence": 0.30000000000000004,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": false
+          },
+          {
+            "confidence": 0.7000000000000001,
+            "correct": true
+          },
+          {
+            "confidence": 0.3333333333333333,
+            "correct": true
+          }
+        ],
+        "objective": {
+          "escalationRate": 0
+        },
+        "expected": {
+          "cutoff": 0.3,
+          "met": true,
+          "precision": 0.75,
+          "escalation": 0
+        }
+      }
+    ],
+    "stats": [
+      {
+        "name": "hand",
+        "xs": [
+          {
+            "confidence": 0.9,
+            "correct": true
+          },
+          {
+            "confidence": 0.8,
+            "correct": true
+          },
+          {
+            "confidence": 0.7,
+            "correct": false
+          },
+          {
+            "confidence": 0.6,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          }
+        ],
+        "accuracy": 0.6,
+        "brier": 0.19,
+        "precisionAt": [
+          0.6,
+          0.6,
+          1,
+          null
+        ],
+        "escalationAt": [
+          0,
+          0,
+          0.6,
+          1
+        ]
+      },
+      {
+        "name": "with nulls and ties",
+        "xs": [
+          {
+            "confidence": null,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": true
+          },
+          {
+            "confidence": 0.5,
+            "correct": false
+          },
+          {
+            "confidence": 0.25,
+            "correct": true
+          },
+          {
+            "confidence": 1,
+            "correct": true
+          },
+          {
+            "confidence": null,
+            "correct": false
+          },
+          {
+            "confidence": 0.75,
+            "correct": false
+          }
+        ],
+        "accuracy": 0.5714285714285714,
+        "brier": 0.325,
+        "precisionAt": [
+          0.6,
+          0.5,
+          1,
+          1
+        ],
+        "escalationAt": [
+          0.2857142857142857,
+          0.42857142857142855,
+          0.8571428571428571,
+          0.8571428571428571
+        ]
+      },
+      {
+        "name": "all correct",
+        "xs": [
+          {
+            "confidence": 0.1,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": true
+          },
+          {
+            "confidence": 0.2,
+            "correct": true
+          }
+        ],
+        "accuracy": 1,
+        "brier": 0.6466666666666667,
+        "precisionAt": [
+          1,
+          null,
+          null,
+          null
+        ],
+        "escalationAt": [
+          0,
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "name": "empty",
+        "xs": [],
+        "accuracy": 0,
+        "brier": null,
+        "precisionAt": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "escalationAt": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "name": "float noise",
+        "xs": [
+          {
+            "confidence": 0.30000000000000004,
+            "correct": true
+          },
+          {
+            "confidence": 0.3,
+            "correct": false
+          },
+          {
+            "confidence": 0.7000000000000001,
+            "correct": true
+          },
+          {
+            "confidence": 0.3333333333333333,
+            "correct": true
+          }
+        ],
+        "accuracy": 0.75,
+        "brier": 0.27861111111111114,
+        "precisionAt": [
+          0.75,
+          1,
+          null,
+          null
+        ],
+        "escalationAt": [
+          0,
+          0.75,
+          1,
+          1
+        ]
+      }
+    ],
+    "flipRate": [
+      {
+        "runs": [
+          [
+            "a",
+            "b"
+          ],
+          [
+            "a",
+            "c"
+          ]
+        ],
+        "expected": 0.5
+      },
+      {
+        "runs": [
+          [
+            "x"
+          ],
+          [
+            "x"
+          ],
+          [
+            "y"
+          ]
+        ],
+        "expected": 1
+      },
+      {
+        "runs": [],
+        "expected": 0
+      },
+      {
+        "runs": [
+          [],
+          []
+        ],
+        "expected": 0
+      },
+      {
+        "runs": [
+          [
+            "a",
+            "a",
+            "a"
+          ]
+        ],
+        "expected": 0
+      }
+    ],
+    "stdev": [
+      {
+        "xs": [],
+        "expected": 0
+      },
+      {
+        "xs": [
+          1
+        ],
+        "expected": 0
+      },
+      {
+        "xs": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "expected": 1.118033988749895
+      },
+      {
+        "xs": [
+          0.1,
+          0.2,
+          0.7
+        ],
+        "expected": 0.262466929133727
+      }
+    ],
+    "percentile": [
+      {
+        "xs": [],
+        "p": 50,
+        "expected": null
+      },
+      {
+        "xs": [
+          5
+        ],
+        "p": 95,
+        "expected": 5
+      },
+      {
+        "xs": [
+          3,
+          1,
+          2
+        ],
+        "p": 50,
+        "expected": 2
+      },
+      {
+        "xs": [
+          10,
+          20,
+          30,
+          40,
+          50,
+          60,
+          70,
+          80,
+          90,
+          100
+        ],
+        "p": 95,
+        "expected": 100
+      },
+      {
+        "xs": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "p": 50,
+        "expected": 2
+      },
+      {
+        "xs": [
+          4,
+          1,
+          3,
+          2
+        ],
+        "p": 0,
+        "expected": 1
+      },
+      {
+        "xs": [
+          1,
+          2
+        ],
+        "p": 100,
+        "expected": 2
+      }
+    ]
+  },
+  "run": {
+    "cases": [
+      {
+        "input": {
+          "report": "r1"
+        },
+        "labels": {
+          "page": "yes"
+        }
+      },
+      {
+        "input": {
+          "report": "r2"
+        },
+        "labels": {
+          "page": "yes"
+        }
+      },
+      {
+        "input": {
+          "report": "r3"
+        },
+        "labels": {
+          "page": "no"
+        }
+      },
+      {
+        "input": {
+          "report": "r4"
+        },
+        "labels": {
+          "page": "yes"
+        }
+      },
+      {
+        "input": {
+          "report": "r5"
+        },
+        "labels": {
+          "page": "no"
+        }
+      }
+    ],
+    "script": {
+      "_notice": "EXAMPLE fake replies for tests, not vendor data. Bodies use the systemone noul shape {type,noul:P(yes)} (https://docs.typesafe.ai/api/system-one); P(yes) chosen so the derived confidence |2p-1| equals the slice-3 values.",
+      "typesafe/jev@1.14.0": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              }
+            }
+          }
+        },
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.9
+              }
+            }
+          }
+        },
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.85
+              }
+            }
+          }
+        },
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.8
+              }
+            }
+          }
+        },
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.75
+              }
+            }
+          }
+        }
+      ],
+      "cloudflare/clef-flash@x.y.z": [
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.975
+              }
+            }
+          }
+        },
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.95
+              }
+            }
+          }
+        },
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.075
+              }
+            }
+          }
+        },
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.9
+              }
+            }
+          }
+        },
+        {
+          "body": {
+            "answers": {
+              "page": {
+                "type": "noul",
+                "noul": 0.125
+              }
+            }
+          }
+        }
+      ]
+    },
+    "runs": [
+      {
+        "name": "ok repeat 1",
+        "def": "gate",
+        "repeat": 1,
+        "yes": true,
+        "prices": {
+          "id": "fixture-prices",
+          "asOf": "2026-10-28",
+          "url": "https://example.invalid/PLACEHOLDER",
+          "entries": {
+            "typesafe/jev@1.14.0": {
+              "perCall": 0.004,
+              "currency": "USD"
+            },
+            "cloudflare/clef-flash@x.y.z": {
+              "perCall": 0.001,
+              "currency": "USD"
+            }
+          }
+        },
+        "expected": {
+          "status": "ok",
+          "lock": {
+            "lock": 1,
+            "contract": {
+              "id": "fit-gate@1.0.0",
+              "hash": "sha256:3caab805f92b2a7ba0bc00584b4c073b593da0f39d3b9a19927021a63dc83710"
+            },
+            "tiers": [
+              {
+                "id": "typesafe/jev@1.14.0",
+                "descriptorHash": null
+              },
+              {
+                "id": "cloudflare/clef-flash@x.y.z",
+                "descriptorHash": null
+              }
+            ],
+            "cuts": {
+              "gate": {
+                "typesafe/jev@1.14.0": 0.6,
+                "cloudflare/clef-flash@x.y.z": 0.75
+              }
+            },
+            "eval": {
+              "setHash": "sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173",
+              "n": 5,
+              "repeat": 1,
+              "at": "2026-10-28T21:00:00.000Z",
+              "objectivesMet": true
+            }
+          },
+          "report": {
+            "contract": "fit-gate@1.0.0",
+            "n": 5,
+            "repeat": 1,
+            "tiers": {
+              "typesafe/jev@1.14.0": {
+                "questions": {
+                  "page": {
+                    "accuracy": 0.6,
+                    "brier": 0.19,
+                    "flipRate": 0
+                  }
+                },
+                "cutoffs": {
+                  "gate": {
+                    "cutoff": 0.6,
+                    "met": true,
+                    "precision": 0.75,
+                    "escalation": 0.2
+                  }
+                },
+                "accuracyStdev": 0,
+                "latencyMs": {
+                  "p50": 0,
+                  "p95": 0
+                },
+                "cost": {
+                  "amount": 0.02,
+                  "currency": "USD"
+                },
+                "failures": 0
+              },
+              "cloudflare/clef-flash@x.y.z": {
+                "questions": {
+                  "page": {
+                    "accuracy": 1,
+                    "brier": 0.027499999999999997,
+                    "flipRate": 0
+                  }
+                },
+                "cutoffs": {
+                  "gate": {
+                    "cutoff": 0.75,
+                    "met": true,
+                    "precision": 1,
+                    "escalation": 0
+                  }
+                },
+                "accuracyStdev": 0,
+                "latencyMs": {
+                  "p50": 0,
+                  "p95": 0
+                },
+                "cost": {
+                  "amount": 0.005,
+                  "currency": "USD"
+                },
+                "failures": 0
+              }
+            }
+          },
+          "estimate": {
+            "perTier": {
+              "typesafe/jev@1.14.0": 0.02,
+              "cloudflare/clef-flash@x.y.z": 0.005
+            },
+            "total": 0.025,
+            "currency": "USD",
+            "unknown": []
+          },
+          "setHash": "sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173"
+        },
+        "lockText": "{\n  \"contract\": {\n    \"hash\": \"sha256:3caab805f92b2a7ba0bc00584b4c073b593da0f39d3b9a19927021a63dc83710\",\n    \"id\": \"fit-gate@1.0.0\"\n  },\n  \"cuts\": {\n    \"gate\": {\n      \"cloudflare/clef-flash@x.y.z\": 0.75,\n      \"typesafe/jev@1.14.0\": 0.6\n    }\n  },\n  \"eval\": {\n    \"at\": \"2026-10-28T21:00:00.000Z\",\n    \"n\": 5,\n    \"objectivesMet\": true,\n    \"repeat\": 1,\n    \"setHash\": \"sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173\"\n  },\n  \"lock\": 1,\n  \"tiers\": [\n    {\n      \"descriptorHash\": null,\n      \"id\": \"typesafe/jev@1.14.0\"\n    },\n    {\n      \"descriptorHash\": null,\n      \"id\": \"cloudflare/clef-flash@x.y.z\"\n    }\n  ]\n}\n"
+      },
+      {
+        "name": "ok repeat 2",
+        "def": "gate",
+        "repeat": 2,
+        "yes": true,
+        "prices": {
+          "id": "fixture-prices",
+          "asOf": "2026-10-28",
+          "url": "https://example.invalid/PLACEHOLDER",
+          "entries": {
+            "typesafe/jev@1.14.0": {
+              "perCall": 0.004,
+              "currency": "USD"
+            },
+            "cloudflare/clef-flash@x.y.z": {
+              "perCall": 0.001,
+              "currency": "USD"
+            }
+          }
+        },
+        "expected": {
+          "status": "ok",
+          "lock": {
+            "lock": 1,
+            "contract": {
+              "id": "fit-gate@1.0.0",
+              "hash": "sha256:3caab805f92b2a7ba0bc00584b4c073b593da0f39d3b9a19927021a63dc83710"
+            },
+            "tiers": [
+              {
+                "id": "typesafe/jev@1.14.0",
+                "descriptorHash": null
+              },
+              {
+                "id": "cloudflare/clef-flash@x.y.z",
+                "descriptorHash": null
+              }
+            ],
+            "cuts": {
+              "gate": {
+                "typesafe/jev@1.14.0": 0.6,
+                "cloudflare/clef-flash@x.y.z": 0.75
+              }
+            },
+            "eval": {
+              "setHash": "sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173",
+              "n": 5,
+              "repeat": 2,
+              "at": "2026-10-28T21:00:00.000Z",
+              "objectivesMet": true
+            }
+          },
+          "report": {
+            "contract": "fit-gate@1.0.0",
+            "n": 5,
+            "repeat": 2,
+            "tiers": {
+              "typesafe/jev@1.14.0": {
+                "questions": {
+                  "page": {
+                    "accuracy": 0.6,
+                    "brier": 0.19,
+                    "flipRate": 0
+                  }
+                },
+                "cutoffs": {
+                  "gate": {
+                    "cutoff": 0.6,
+                    "met": true,
+                    "precision": 0.75,
+                    "escalation": 0.2
+                  }
+                },
+                "accuracyStdev": 0,
+                "latencyMs": {
+                  "p50": 0,
+                  "p95": 0
+                },
+                "cost": {
+                  "amount": 0.04,
+                  "currency": "USD"
+                },
+                "failures": 0
+              },
+              "cloudflare/clef-flash@x.y.z": {
+                "questions": {
+                  "page": {
+                    "accuracy": 1,
+                    "brier": 0.027499999999999997,
+                    "flipRate": 0
+                  }
+                },
+                "cutoffs": {
+                  "gate": {
+                    "cutoff": 0.75,
+                    "met": true,
+                    "precision": 1,
+                    "escalation": 0
+                  }
+                },
+                "accuracyStdev": 0,
+                "latencyMs": {
+                  "p50": 0,
+                  "p95": 0
+                },
+                "cost": {
+                  "amount": 0.01,
+                  "currency": "USD"
+                },
+                "failures": 0
+              }
+            }
+          },
+          "estimate": {
+            "perTier": {
+              "typesafe/jev@1.14.0": 0.04,
+              "cloudflare/clef-flash@x.y.z": 0.01
+            },
+            "total": 0.05,
+            "currency": "USD",
+            "unknown": []
+          },
+          "setHash": "sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173"
+        },
+        "lockText": "{\n  \"contract\": {\n    \"hash\": \"sha256:3caab805f92b2a7ba0bc00584b4c073b593da0f39d3b9a19927021a63dc83710\",\n    \"id\": \"fit-gate@1.0.0\"\n  },\n  \"cuts\": {\n    \"gate\": {\n      \"cloudflare/clef-flash@x.y.z\": 0.75,\n      \"typesafe/jev@1.14.0\": 0.6\n    }\n  },\n  \"eval\": {\n    \"at\": \"2026-10-28T21:00:00.000Z\",\n    \"n\": 5,\n    \"objectivesMet\": true,\n    \"repeat\": 2,\n    \"setHash\": \"sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173\"\n  },\n  \"lock\": 1,\n  \"tiers\": [\n    {\n      \"descriptorHash\": null,\n      \"id\": \"typesafe/jev@1.14.0\"\n    },\n    {\n      \"descriptorHash\": null,\n      \"id\": \"cloudflare/clef-flash@x.y.z\"\n    }\n  ]\n}\n"
+      },
+      {
+        "name": "needs confirmation",
+        "def": "gate",
+        "repeat": 1,
+        "yes": false,
+        "prices": {
+          "id": "fixture-prices",
+          "asOf": "2026-10-28",
+          "url": "https://example.invalid/PLACEHOLDER",
+          "entries": {
+            "typesafe/jev@1.14.0": {
+              "perCall": 0.004,
+              "currency": "USD"
+            },
+            "cloudflare/clef-flash@x.y.z": {
+              "perCall": 0.001,
+              "currency": "USD"
+            }
+          }
+        },
+        "expected": {
+          "status": "needs_confirmation",
+          "estimate": {
+            "perTier": {
+              "typesafe/jev@1.14.0": 0.02,
+              "cloudflare/clef-flash@x.y.z": 0.005
+            },
+            "total": 0.025,
+            "currency": "USD",
+            "unknown": []
+          }
+        },
+        "lockText": null
+      },
+      {
+        "name": "unmet",
+        "def": "strict",
+        "repeat": 1,
+        "yes": true,
+        "prices": {
+          "id": "fixture-prices",
+          "asOf": "2026-10-28",
+          "url": "https://example.invalid/PLACEHOLDER",
+          "entries": {
+            "typesafe/jev@1.14.0": {
+              "perCall": 0.004,
+              "currency": "USD"
+            },
+            "cloudflare/clef-flash@x.y.z": {
+              "perCall": 0.001,
+              "currency": "USD"
+            }
+          }
+        },
+        "expected": {
+          "status": "objectives_unmet",
+          "unmet": [
+            "gate@typesafe/jev@1.14.0",
+            "gate@cloudflare/clef-flash@x.y.z"
+          ],
+          "report": {
+            "contract": "fit-gate@1.0.0",
+            "n": 5,
+            "repeat": 1,
+            "tiers": {
+              "typesafe/jev@1.14.0": {
+                "questions": {
+                  "page": {
+                    "accuracy": 0.6,
+                    "brier": 0.19,
+                    "flipRate": 0
+                  }
+                },
+                "cutoffs": {
+                  "gate": {
+                    "cutoff": null,
+                    "met": false,
+                    "precision": null,
+                    "escalation": null
+                  }
+                },
+                "accuracyStdev": 0,
+                "latencyMs": {
+                  "p50": 0,
+                  "p95": 0
+                },
+                "cost": {
+                  "amount": 0.02,
+                  "currency": "USD"
+                },
+                "failures": 0
+              },
+              "cloudflare/clef-flash@x.y.z": {
+                "questions": {
+                  "page": {
+                    "accuracy": 1,
+                    "brier": 0.027499999999999997,
+                    "flipRate": 0
+                  }
+                },
+                "cutoffs": {
+                  "gate": {
+                    "cutoff": null,
+                    "met": false,
+                    "precision": null,
+                    "escalation": null
+                  }
+                },
+                "accuracyStdev": 0,
+                "latencyMs": {
+                  "p50": 0,
+                  "p95": 0
+                },
+                "cost": {
+                  "amount": 0.005,
+                  "currency": "USD"
+                },
+                "failures": 0
+              }
+            }
+          },
+          "estimate": {
+            "perTier": {
+              "typesafe/jev@1.14.0": 0.02,
+              "cloudflare/clef-flash@x.y.z": 0.005
+            },
+            "total": 0.025,
+            "currency": "USD",
+            "unknown": []
+          },
+          "setHash": "sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173"
+        },
+        "lockText": null
+      },
+      {
+        "name": "unknown price",
+        "def": "gate",
+        "repeat": 1,
+        "yes": true,
+        "prices": {
+          "id": "fixture-prices",
+          "asOf": "2026-10-28",
+          "url": "https://example.invalid/PLACEHOLDER",
+          "entries": {}
+        },
+        "expected": {
+          "status": "ok",
+          "lock": {
+            "lock": 1,
+            "contract": {
+              "id": "fit-gate@1.0.0",
+              "hash": "sha256:3caab805f92b2a7ba0bc00584b4c073b593da0f39d3b9a19927021a63dc83710"
+            },
+            "tiers": [
+              {
+                "id": "typesafe/jev@1.14.0",
+                "descriptorHash": null
+              },
+              {
+                "id": "cloudflare/clef-flash@x.y.z",
+                "descriptorHash": null
+              }
+            ],
+            "cuts": {
+              "gate": {
+                "typesafe/jev@1.14.0": 0.6,
+                "cloudflare/clef-flash@x.y.z": 0.75
+              }
+            },
+            "eval": {
+              "setHash": "sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173",
+              "n": 5,
+              "repeat": 1,
+              "at": "2026-10-28T21:00:00.000Z",
+              "objectivesMet": true
+            }
+          },
+          "report": {
+            "contract": "fit-gate@1.0.0",
+            "n": 5,
+            "repeat": 1,
+            "tiers": {
+              "typesafe/jev@1.14.0": {
+                "questions": {
+                  "page": {
+                    "accuracy": 0.6,
+                    "brier": 0.19,
+                    "flipRate": 0
+                  }
+                },
+                "cutoffs": {
+                  "gate": {
+                    "cutoff": 0.6,
+                    "met": true,
+                    "precision": 0.75,
+                    "escalation": 0.2
+                  }
+                },
+                "accuracyStdev": 0,
+                "latencyMs": {
+                  "p50": 0,
+                  "p95": 0
+                },
+                "cost": null,
+                "failures": 0
+              },
+              "cloudflare/clef-flash@x.y.z": {
+                "questions": {
+                  "page": {
+                    "accuracy": 1,
+                    "brier": 0.027499999999999997,
+                    "flipRate": 0
+                  }
+                },
+                "cutoffs": {
+                  "gate": {
+                    "cutoff": 0.75,
+                    "met": true,
+                    "precision": 1,
+                    "escalation": 0
+                  }
+                },
+                "accuracyStdev": 0,
+                "latencyMs": {
+                  "p50": 0,
+                  "p95": 0
+                },
+                "cost": null,
+                "failures": 0
+              }
+            }
+          },
+          "estimate": {
+            "perTier": {},
+            "total": null,
+            "currency": null,
+            "unknown": [
+              "typesafe/jev@1.14.0",
+              "cloudflare/clef-flash@x.y.z"
+            ]
+          },
+          "setHash": "sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173"
+        },
+        "lockText": "{\n  \"contract\": {\n    \"hash\": \"sha256:3caab805f92b2a7ba0bc00584b4c073b593da0f39d3b9a19927021a63dc83710\",\n    \"id\": \"fit-gate@1.0.0\"\n  },\n  \"cuts\": {\n    \"gate\": {\n      \"cloudflare/clef-flash@x.y.z\": 0.75,\n      \"typesafe/jev@1.14.0\": 0.6\n    }\n  },\n  \"eval\": {\n    \"at\": \"2026-10-28T21:00:00.000Z\",\n    \"n\": 5,\n    \"objectivesMet\": true,\n    \"repeat\": 1,\n    \"setHash\": \"sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173\"\n  },\n  \"lock\": 1,\n  \"tiers\": [\n    {\n      \"descriptorHash\": null,\n      \"id\": \"typesafe/jev@1.14.0\"\n    },\n    {\n      \"descriptorHash\": null,\n      \"id\": \"cloudflare/clef-flash@x.y.z\"\n    }\n  ]\n}\n"
+      }
+    ],
+    "estimate": {
+      "perTier": {
+        "typesafe/jev@1.14.0": 0.04,
+        "cloudflare/clef-flash@x.y.z": 0.01
+      },
+      "total": 0.05,
+      "currency": "USD",
+      "unknown": []
+    }
+  }
+}

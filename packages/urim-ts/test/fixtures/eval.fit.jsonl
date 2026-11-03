@@ -1,0 +1,5 @@
+{"input":{"report":"r1"},"labels":{"page":"yes"}}
+{"input":{"report":"r2"},"labels":{"page":"yes"}}
+{"input":{"report":"r3"},"labels":{"page":"no"}}
+{"input":{"report":"r4"},"labels":{"page":"yes"}}
+{"input":{"report":"r5"},"labels":{"page":"no"}}

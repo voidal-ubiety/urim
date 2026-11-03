@@ -1,0 +1,707 @@
+{
+  "contracts": {
+    "triage": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244",
+    "severity": "sha256:5972c57e54f898c4750ecfbe4592b602098521c826b9a04c3d1b41a50a7a9846"
+  },
+  "encode": [
+    {
+      "def": "triage",
+      "tier": "JEV",
+      "input": {
+        "report": "db primary unreachable — since 02:00 ✓"
+      },
+      "url": "https://api.typesafe.ai/v1/systemone",
+      "path": "/v1/systemone",
+      "body": {
+        "model": "jev-1.14.0",
+        "state": {
+          "report": "db primary unreachable — since 02:00 ✓"
+        },
+        "questions": {
+          "page": {
+            "type": "noul",
+            "instructions": "Should someone be paged right now?",
+            "criteria": {
+              "true": "Active impact",
+              "false": "No impact"
+            }
+          },
+          "team": {
+            "type": "choice",
+            "instructions": "Which team owns this incident?",
+            "criteria": {
+              "billing": "b",
+              "platform": "p",
+              "identity": "i",
+              "data": "d"
+            }
+          }
+        }
+      },
+      "estimatedInputTokens": 372
+    },
+    {
+      "def": "triage",
+      "tier": "OPENAI",
+      "input": {
+        "report": "db primary unreachable — since 02:00 ✓"
+      },
+      "url": "https://api.openai.com/v1/decisions",
+      "path": "/v1/decisions",
+      "body": {
+        "model": "gpt-6-luna",
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_json",
+                "data": {
+                  "report": "db primary unreachable — since 02:00 ✓"
+                }
+              }
+            ]
+          }
+        ],
+        "questions": [
+          {
+            "type": "predicate",
+            "name": "page",
+            "instructions": "Should someone be paged right now?"
+          },
+          {
+            "type": "choice",
+            "name": "team",
+            "instructions": "Which team owns this incident?",
+            "choices": [
+              {
+                "value": "billing",
+                "description": "b"
+              },
+              {
+                "value": "platform",
+                "description": "p"
+              },
+              {
+                "value": "identity",
+                "description": "i"
+              },
+              {
+                "value": "data",
+                "description": "d"
+              }
+            ]
+          }
+        ]
+      },
+      "estimatedInputTokens": 489
+    },
+    {
+      "def": "severity",
+      "tier": "JEV",
+      "input": {
+        "report": "db primary unreachable — since 02:00 ✓"
+      },
+      "url": "https://api.typesafe.ai/v1/systemone",
+      "path": "/v1/systemone",
+      "body": {
+        "model": "jev-1.14.0",
+        "state": {
+          "report": "db primary unreachable — since 02:00 ✓"
+        },
+        "questions": {
+          "sev": {
+            "type": "score",
+            "instructions": "How severe?",
+            "criteria": [
+              "l",
+              "m",
+              "h"
+            ]
+          },
+          "page": {
+            "type": "noul",
+            "instructions": "Page?",
+            "criteria": {
+              "true": "y",
+              "false": "n"
+            }
+          }
+        }
+      },
+      "estimatedInputTokens": 259
+    },
+    {
+      "def": "severity",
+      "tier": "OPENAI",
+      "input": {
+        "report": "db primary unreachable — since 02:00 ✓"
+      },
+      "url": "https://api.openai.com/v1/decisions",
+      "path": "/v1/decisions",
+      "body": {
+        "model": "gpt-6-luna",
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_json",
+                "data": {
+                  "report": "db primary unreachable — since 02:00 ✓"
+                }
+              }
+            ]
+          }
+        ],
+        "questions": [
+          {
+            "type": "score",
+            "name": "sev",
+            "instructions": "How severe?",
+            "levels": [
+              {
+                "label": "low",
+                "description": "l"
+              },
+              {
+                "label": "mid",
+                "description": "m"
+              },
+              {
+                "label": "high",
+                "description": "h"
+              }
+            ]
+          },
+          {
+            "type": "predicate",
+            "name": "page",
+            "instructions": "Page?"
+          }
+        ]
+      },
+      "estimatedInputTokens": 390
+    }
+  ],
+  "decode": [
+    {
+      "name": "systemone triage ok",
+      "def": "triage",
+      "tier": "JEV",
+      "body": {
+        "answers": {
+          "page": {
+            "type": "noul",
+            "noul": 0.95
+          },
+          "team": {
+            "type": "choice",
+            "choice": "data",
+            "confidence": 0.9,
+            "probabilities": {
+              "billing": 0.02,
+              "platform": 0.03,
+              "identity": 0.02,
+              "data": 0.93
+            }
+          }
+        },
+        "usage": {
+          "input_tokens": 1200,
+          "output_tokens": 3
+        }
+      },
+      "expected": {
+        "ok": true,
+        "answers": {
+          "page": {
+            "value": "yes",
+            "confidence": 0.9,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.95,
+              "confidence": null
+            }
+          },
+          "team": {
+            "value": "data",
+            "confidence": 0.9,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "team",
+              "value": "data",
+              "confidence": 0.9
+            }
+          }
+        },
+        "usage": {
+          "inputTokens": 1200,
+          "outputTokens": 3
+        },
+        "model": null
+      }
+    },
+    {
+      "name": "systemone tie 0.5",
+      "def": "triage",
+      "tier": "JEV",
+      "body": {
+        "answers": {
+          "page": {
+            "type": "noul",
+            "noul": 0.5
+          },
+          "team": {
+            "type": "choice",
+            "choice": "data",
+            "confidence": 0.4,
+            "probabilities": {
+              "data": 0.9
+            }
+          }
+        },
+        "usage": {
+          "input_tokens": 1200,
+          "output_tokens": 3
+        }
+      },
+      "expected": {
+        "ok": true,
+        "answers": {
+          "page": {
+            "value": "yes",
+            "confidence": 0,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.5,
+              "confidence": null
+            }
+          },
+          "team": {
+            "value": "data",
+            "confidence": 0.4,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "team",
+              "value": "data",
+              "confidence": 0.4
+            }
+          }
+        },
+        "usage": {
+          "inputTokens": 1200,
+          "outputTokens": 3
+        },
+        "model": null
+      }
+    },
+    {
+      "name": "systemone label outside",
+      "def": "triage",
+      "tier": "JEV",
+      "body": {
+        "answers": {
+          "page": {
+            "type": "noul",
+            "noul": 0.2
+          },
+          "team": {
+            "type": "choice",
+            "choice": "nope",
+            "confidence": 0.4,
+            "probabilities": {
+              "data": 0.9
+            }
+          }
+        },
+        "usage": {
+          "input_tokens": 1200,
+          "output_tokens": 3
+        }
+      },
+      "expected": {
+        "ok": false,
+        "type": "nonconformant_response",
+        "requestId": null,
+        "retryAfterMs": null
+      }
+    },
+    {
+      "name": "systemone stray model",
+      "def": "triage",
+      "tier": "JEV",
+      "body": {
+        "model": "jev-9",
+        "answers": {
+          "page": {
+            "type": "noul",
+            "noul": 0.95
+          },
+          "team": {
+            "type": "choice",
+            "choice": "data",
+            "confidence": 0.9,
+            "probabilities": {
+              "billing": 0.02,
+              "platform": 0.03,
+              "identity": 0.02,
+              "data": 0.93
+            }
+          }
+        },
+        "usage": {
+          "input_tokens": 1200,
+          "output_tokens": 3
+        }
+      },
+      "expected": {
+        "ok": false,
+        "type": "lock_violation",
+        "requestId": null,
+        "retryAfterMs": null
+      }
+    },
+    {
+      "name": "systemone score",
+      "def": "severity",
+      "tier": "JEV",
+      "body": {
+        "answers": {
+          "sev": {
+            "type": "score",
+            "score": 1.6,
+            "confidence": 0.55,
+            "legend": {
+              "0": "low",
+              "1": "mid",
+              "2": "high"
+            },
+            "probabilities": {
+              "0": 0.1,
+              "1": 0.2,
+              "2": 0.7
+            }
+          },
+          "page": {
+            "type": "noul",
+            "noul": 0.05
+          }
+        },
+        "usage": {
+          "input_tokens": 1200,
+          "output_tokens": 3
+        }
+      },
+      "expected": {
+        "ok": true,
+        "answers": {
+          "sev": {
+            "value": "high",
+            "confidence": 0.55,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "sev",
+              "value": 1.6,
+              "confidence": 0.55
+            }
+          },
+          "page": {
+            "value": "no",
+            "confidence": 0.9,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.05,
+              "confidence": null
+            }
+          }
+        },
+        "usage": {
+          "inputTokens": 1200,
+          "outputTokens": 3
+        },
+        "model": null
+      }
+    },
+    {
+      "name": "typesafe 529",
+      "def": "triage",
+      "tier": "JEV",
+      "status": 529,
+      "body": {
+        "error": {
+          "message": "overloaded"
+        }
+      },
+      "expected": {
+        "ok": false,
+        "type": "provider_unavailable",
+        "requestId": null,
+        "retryAfterMs": null
+      }
+    },
+    {
+      "name": "decisions ok",
+      "def": "severity",
+      "tier": "OPENAI",
+      "headers": {
+        "X-Request-Id": "req_1"
+      },
+      "body": {
+        "model": "gpt-6-luna",
+        "answers": [
+          {
+            "type": "score",
+            "name": "sev",
+            "score": 2,
+            "confidence": 0.7,
+            "probabilities": [
+              {
+                "value": 0,
+                "label": "low",
+                "probability": 0.1
+              },
+              {
+                "value": 1,
+                "label": "mid",
+                "probability": 0.2
+              },
+              {
+                "value": 2,
+                "label": "high",
+                "probability": 0.7
+              }
+            ]
+          },
+          {
+            "type": "predicate",
+            "name": "page",
+            "probability": 0.8
+          }
+        ],
+        "usage": {
+          "input_tokens": 800,
+          "output_tokens": 0,
+          "total_tokens": 800
+        }
+      },
+      "expected": {
+        "ok": true,
+        "answers": {
+          "sev": {
+            "value": "high",
+            "confidence": 0.7,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "sev",
+              "value": 2,
+              "confidence": 0.7
+            }
+          },
+          "page": {
+            "value": "yes",
+            "confidence": 0.6,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.8,
+              "confidence": null
+            }
+          }
+        },
+        "usage": {
+          "inputTokens": 800,
+          "outputTokens": 0
+        },
+        "model": "gpt-6-luna"
+      }
+    },
+    {
+      "name": "decisions null names",
+      "def": "severity",
+      "tier": "OPENAI",
+      "body": {
+        "model": "gpt-6-luna",
+        "answers": [
+          {
+            "type": "score",
+            "name": null,
+            "score": 2,
+            "confidence": 0.7,
+            "probabilities": [
+              {
+                "value": 0,
+                "label": "low",
+                "probability": 0.1
+              },
+              {
+                "value": 1,
+                "label": "mid",
+                "probability": 0.2
+              },
+              {
+                "value": 2,
+                "label": "high",
+                "probability": 0.7
+              }
+            ]
+          },
+          {
+            "type": "predicate",
+            "name": null,
+            "probability": 0.3
+          }
+        ],
+        "usage": {
+          "input_tokens": 800,
+          "output_tokens": 0,
+          "total_tokens": 800
+        }
+      },
+      "expected": {
+        "ok": true,
+        "answers": {
+          "sev": {
+            "value": "high",
+            "confidence": 0.7,
+            "confidenceSource": "native",
+            "confidenceFormula": "vendor_unspecified",
+            "native": {
+              "name": "sev",
+              "value": 2,
+              "confidence": 0.7
+            }
+          },
+          "page": {
+            "value": "no",
+            "confidence": 0.4,
+            "confidenceSource": "urim_derived",
+            "confidenceFormula": "typesafe_normalized",
+            "native": {
+              "name": "page",
+              "value": 0.3,
+              "confidence": null
+            }
+          }
+        },
+        "usage": {
+          "inputTokens": 800,
+          "outputTokens": 0
+        },
+        "model": "gpt-6-luna"
+      }
+    },
+    {
+      "name": "decisions refusal",
+      "def": "severity",
+      "tier": "OPENAI",
+      "body": {
+        "model": "gpt-6-luna",
+        "answers": [
+          {
+            "type": "refusal",
+            "name": "sev"
+          },
+          {
+            "type": "predicate",
+            "name": "page",
+            "probability": 0.8
+          }
+        ],
+        "usage": {
+          "input_tokens": 800,
+          "output_tokens": 0,
+          "total_tokens": 800
+        }
+      },
+      "expected": {
+        "ok": false,
+        "type": "refused",
+        "requestId": null,
+        "retryAfterMs": null
+      }
+    },
+    {
+      "name": "decisions boolean choice",
+      "def": "severity",
+      "tier": "OPENAI",
+      "body": {
+        "model": "gpt-6-luna",
+        "answers": [
+          {
+            "type": "choice",
+            "name": "sev",
+            "choice": true,
+            "confidence": 0.9,
+            "probabilities": []
+          },
+          {
+            "type": "predicate",
+            "name": "page",
+            "probability": 0.8
+          }
+        ],
+        "usage": {
+          "input_tokens": 800,
+          "output_tokens": 0,
+          "total_tokens": 800
+        }
+      },
+      "expected": {
+        "ok": false,
+        "type": "nonconformant_response",
+        "requestId": null,
+        "retryAfterMs": null
+      }
+    },
+    {
+      "name": "openai 429 quota",
+      "def": "severity",
+      "tier": "OPENAI",
+      "status": 429,
+      "headers": {
+        "retry-after": "7",
+        "x-request-id": "req_q"
+      },
+      "body": {
+        "error": {
+          "code": "credit_balance_exhausted"
+        }
+      },
+      "expected": {
+        "ok": false,
+        "type": "quota_exceeded",
+        "requestId": "req_q",
+        "retryAfterMs": 7000
+      }
+    },
+    {
+      "name": "openai 429 rate",
+      "def": "severity",
+      "tier": "OPENAI",
+      "status": 429,
+      "body": {
+        "error": {
+          "code": "rate_limit_exceeded"
+        }
+      },
+      "expected": {
+        "ok": false,
+        "type": "rate_limited",
+        "requestId": null,
+        "retryAfterMs": null
+      }
+    }
+  ]
+}

@@ -1,24 +1,30 @@
 # Changelog
 
-Release notes for the `urim` packages (npm, PyPI, crates.io, JSR). They all share one version (`scripts/check-project`). The protocol's own history is in [`spec/CHANGELOG.md`](spec/CHANGELOG.md).
+Release notes for the `urim` packages: `urim` on npm (TypeScript, `packages/urim-ts`) and `urim` on PyPI (Python, `packages/urim-py`). Both share one version.
 
-## Unreleased (0.0.1)
+## 0.0.1 (Unreleased)
 
-Nothing has been published yet.
+Nothing has been published yet. This is the first release of the v1 client; the v0.2 `urim check` tool was never published and is not part of it.
 
-### Protocol
-- `urim check` validates `urim: "0.2"` contracts and `hoshen: 2` lockfiles against SPEC v0.2.0-draft. That covers the version gate (C-100), the closed schemas generated from `schema/urim-0.2.json` (C-095, C-096), contract rules (C-097), the lockfile seal (C-098) and lockfile rules (C-099).
-- The version key is `urim` only. `hoshen: 1` was never released and is rejected (C-093, C-094).
-- `spec/` is a byte-for-byte copy of decision-contract-spec. `scripts/sync-spec` checks it against the hashes in `spec/SOURCE.json`.
+### Added
+- `defineDecision` in code: tiers, input schema (Zod in TypeScript, optional peer; pydantic v2 in Python, optional extra), questions (`noul`, `choice`, `score`), failover rules and named thresholds.
+- `urim emit`: canonical JSON of each decision plus its hash.
+- `urim fit`: per-tier cutoffs from labelled cases into `urim.lock`; stops at a cost estimate unless `--yes` is passed.
+- `urim providers`: generates the frozen provider constants from a registry file.
+- `urim.lock`, required only in prod mode, where the decision hash must match.
+- Tiered fallback with a pre-call budget skip (input estimated from the UTF-8 byte length of the request body).
+- `confidenceSource` on every answer: `native`, `urim_derived` or `null`.
+- `confidenceFormula` on every answer: `typesafe_normalized` (Urim's |2p − 1| for yes/no, TypeSafe's documented formula), `vendor_unspecified` (the vendor's own number) or `null`. Optional for readers, so older urim/1 envelopes still read.
+- The definition's `confidence` now names those formulas per question type, `{ noul: "typesafe_normalized", choice: "vendor_unspecified", score: "vendor_unspecified" }`, replacing `"top_probability"`, which did not describe what Urim computes. Urim sets it; `defineDecision` no longer needs it.
+- **Contract hashes changed.** The `confidence` member is hashed, so every contract hash differs from pre-release builds (the triage example went from `sha256:202296be…` to `sha256:c5987490…`). Re-run `urim emit` and `urim fit` for any lock written before 0.0.1.
+- Descriptor flag `confidenceUnavailableSentinel` (Python `confidence_unavailable_sentinel`): for a provider that sends `confidence: 0` with empty `probabilities` to mean "unavailable", those answers decode as confidence `null`, so cuts escalate them and `fit` does not count them as a real 0. No shipped descriptor sets it.
+- `deadlineMs` (Python `deadline_ms`) is a hard stop: once its timer fires, the deadline counts as spent even if the measured clock still reads a little under it. The current tier records `timeout`, and every later tier records `timeout` without a call. Before this fix a timer that fired early could let the next tier run. A timeout error reported by an adapter does not spend the deadline. The budget skip is still cost-only, and there is no deadline skip.
+- `createClient({ deadlineMs })` (Python `create_client(deadline_ms=...)`): a client-wide default total deadline, unset by default. It must be a finite number > 0, otherwise creation fails with `invalid_definition`. A per-call `deadlineMs` overrides it, and `null` (Python `None`) opts out for that call. `explain()` includes the effective `deadlineMs` when there is one. Per-tier time limits are deferred to v1.x.
+- Typed errors: one `UrimError` with a closed set of types.
+- Two opt-in HTTP adapters, `typesafeJev` and `openaiDecisions` (`urim/adapters` in TypeScript). Tested against mocked HTTP only; no live provider call has been made.
+- Descriptors (wire format, URL, auth) for eight providers.
+- `urim --help`, `urim -h`, `urim help` and `urim <command> --help` print usage to stdout and exit 0. A usage error still prints usage to stderr and exits 1.
 
-### Behavior across the three ports
-- The JS, Python and Rust CLIs produce byte-identical output for every invocation in `fixtures/` (`verify.sh` parity step).
-- Known divergence D-015 (CONTRACT.md): the Python port rejects a plain scalar containing `?` inside a flow collection (`{a: b?}`), which SPEC §4 says must be accepted. The fixture pins this; it is not fixed yet. Workaround: use quotes or block style.
-
-### Tooling and hardening
-- The hostile-input suite (`scripts/hostile.py`) runs under time and memory bounds and never executes input. A strace sandbox check shows no network, child processes or file writes.
-- A runtime dependency allowlist (`scripts/check-deps`). Node `>=22`.
-- `scripts/audit-legal`, the legal and naming gate, with rules L1, L2, L4, L5-Rust, L5-Py, M1, M3, M5, C1, C3, C4, T1, T4 and T5. The rest report SKIP in a normal run and FAIL with `--release`, so a release can't pass until every rule is built. With `--release`, L5-Py also can't be skipped: `--offline` FAILs it, and a runtime env that can't be built (no PyPI) exits 2. The marks register is in `docs/legal/marks.yaml`.
-- The README's command-line reference is generated from SPEC §7.4. Only `--version`/`-V`, `--help`/`-h` and `urim check` exist; every other command and flag is marked Planned and exits 2.
-- Project URLs come from one value in `config/project.json`. The repository is `voidal-ubiety/urim` on GitHub and the homepage is https://urim.sh. CODEOWNERS is generated from `config/people.yaml`.
-- DCO sign-off is required (ADR 0003, `scripts/check-dco` in `verify.sh --release`).
+### Known limits
+- No measured accuracy, latency or cost numbers yet.
+- `urim fit` runs against a fake provider file (`--fake`), not a live provider.

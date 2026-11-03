@@ -1,2 +1,0 @@
-# C-086: a << key is refused (formerly C-033, where it was a literal key)
-<<: { hoshen: 2, urim: "0.1" }

@@ -1,0 +1,12 @@
+{
+  "notice": "EXAMPLE DATA ONLY. Not vendor facts. Versions, camps and question types are placeholders for tests.",
+  "example": true,
+  "providers": [
+    { "provider": "typesafe", "namespace": "TypeSafe", "camp": "systemone",
+      "models": [{ "model": "jev", "version": "1.14.0", "questionTypes": ["noul", "choice", "score"] }] },
+    { "provider": "cloudflare", "namespace": "Cloudflare", "camp": "systemone",
+      "models": [{ "model": "clef-flash", "version": "x.y.z", "questionTypes": ["noul", "choice"] }] },
+    { "provider": "openai", "namespace": "OpenAI", "camp": "decisions",
+      "models": [{ "model": "gpt-6-luna", "version": "0.0.0", "questionTypes": ["noul", "choice", "score"] }] }
+  ]
+}

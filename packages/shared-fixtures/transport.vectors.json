@@ -1,0 +1,528 @@
+{
+  "constructible": [
+    {
+      "provider": "typesafe",
+      "ok": true,
+      "message": null
+    },
+    {
+      "provider": "openai",
+      "ok": true,
+      "message": null
+    },
+    {
+      "provider": "microsoft",
+      "ok": false,
+      "message": "microsoft: descriptor needs URL/auth options this slice does not support"
+    },
+    {
+      "provider": "cloudflare",
+      "ok": false,
+      "message": "cloudflare: descriptor needs URL/auth options this slice does not support"
+    },
+    {
+      "provider": "liquid",
+      "ok": true,
+      "message": null
+    },
+    {
+      "provider": "perplexity",
+      "ok": true,
+      "message": null
+    },
+    {
+      "provider": "fastino",
+      "ok": true,
+      "message": null
+    },
+    {
+      "provider": "inception",
+      "ok": true,
+      "message": null
+    }
+  ],
+  "cases": [
+    {
+      "name": "200 json",
+      "credential": "k",
+      "fault": {
+        "kind": "reply",
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Request-Id": "rq-1"
+        },
+        "bodyText": "{\"answers\":{\"page\":{\"type\":\"noul\",\"noul\":0.95},\"team\":{\"type\":\"choice\",\"choice\":\"data\",\"confidence\":0.9,\"probabilities\":{\"billing\":0.02,\"platform\":0.03,\"identity\":0.02,\"data\":0.93}}},\"usage\":{\"input_tokens\":1200,\"output_tokens\":3}}"
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "reply": {
+            "status": 200,
+            "headers": {
+              "content-type": "application/json",
+              "x-request-id": "rq-1"
+            },
+            "body": {
+              "answers": {
+                "page": {
+                  "type": "noul",
+                  "noul": 0.95
+                },
+                "team": {
+                  "type": "choice",
+                  "choice": "data",
+                  "confidence": 0.9,
+                  "probabilities": {
+                    "billing": 0.02,
+                    "platform": 0.03,
+                    "identity": 0.02,
+                    "data": 0.93
+                  }
+                }
+              },
+              "usage": {
+                "input_tokens": 1200,
+                "output_tokens": 3
+              }
+            }
+          }
+        },
+        "decide": {
+          "ok": true,
+          "error": null,
+          "attempts": [
+            "ok"
+          ]
+        },
+        "fetchCalls": 1
+      }
+    },
+    {
+      "name": "non-json body",
+      "credential": "k",
+      "fault": {
+        "kind": "reply",
+        "status": 200,
+        "headers": {
+          "content-type": "text/plain"
+        },
+        "bodyText": "oops"
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "reply": {
+            "status": 200,
+            "headers": {
+              "content-type": "text/plain"
+            },
+            "body": "oops"
+          }
+        },
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "nonconformant_response",
+            "message": "response has no answers map",
+            "tier": "typesafe/jev@1.14.0"
+          },
+          "attempts": [
+            "nonconformant_response"
+          ]
+        },
+        "fetchCalls": 1
+      }
+    },
+    {
+      "name": "empty body",
+      "credential": "k",
+      "fault": {
+        "kind": "reply",
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "bodyText": ""
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "reply": {
+            "status": 200,
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": ""
+          }
+        },
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "nonconformant_response",
+            "message": "response has no answers map",
+            "tier": "typesafe/jev@1.14.0"
+          },
+          "attempts": [
+            "nonconformant_response"
+          ]
+        },
+        "fetchCalls": 1
+      }
+    },
+    {
+      "name": "401",
+      "credential": "k",
+      "fault": {
+        "kind": "reply",
+        "status": 401,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "bodyText": "{\"error\":{}}"
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "reply": {
+            "status": 401,
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "error": {}
+            }
+          }
+        },
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "auth",
+            "message": "HTTP 401 from typesafe/jev@1.14.0",
+            "tier": "typesafe/jev@1.14.0"
+          },
+          "attempts": [
+            "auth"
+          ]
+        },
+        "fetchCalls": 1
+      }
+    },
+    {
+      "name": "429",
+      "credential": "k",
+      "fault": {
+        "kind": "reply",
+        "status": 429,
+        "headers": {
+          "content-type": "application/json",
+          "Retry-After": "3"
+        },
+        "bodyText": "{\"error\":{}}"
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "reply": {
+            "status": 429,
+            "headers": {
+              "content-type": "application/json",
+              "retry-after": "3"
+            },
+            "body": {
+              "error": {}
+            }
+          }
+        },
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "invalid_definition",
+            "message": "no adapter for provider cloudflare",
+            "tier": "cloudflare/clef-flash@x.y.z"
+          },
+          "attempts": [
+            "rate_limited"
+          ]
+        },
+        "fetchCalls": 1
+      }
+    },
+    {
+      "name": "500",
+      "credential": "k",
+      "fault": {
+        "kind": "reply",
+        "status": 500,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "bodyText": "{\"error\":{}}"
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "reply": {
+            "status": 500,
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": {
+              "error": {}
+            }
+          }
+        },
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "invalid_definition",
+            "message": "no adapter for provider cloudflare",
+            "tier": "cloudflare/clef-flash@x.y.z"
+          },
+          "attempts": [
+            "provider_unavailable"
+          ]
+        },
+        "fetchCalls": 1
+      }
+    },
+    {
+      "name": "503 non-json",
+      "credential": "k",
+      "fault": {
+        "kind": "reply",
+        "status": 503,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "bodyText": "<html>down</html>"
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "reply": {
+            "status": 503,
+            "headers": {
+              "content-type": "application/json"
+            },
+            "body": "<html>down</html>"
+          }
+        },
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "invalid_definition",
+            "message": "no adapter for provider cloudflare",
+            "tier": "cloudflare/clef-flash@x.y.z"
+          },
+          "attempts": [
+            "provider_unavailable"
+          ]
+        },
+        "fetchCalls": 1
+      }
+    },
+    {
+      "name": "connect refused",
+      "credential": "k",
+      "fault": {
+        "kind": "throw",
+        "fault": "connect"
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "error": {
+            "threw": true
+          }
+        },
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "internal",
+            "message": "adapter threw for typesafe/jev@1.14.0",
+            "tier": "typesafe/jev@1.14.0"
+          },
+          "attempts": [
+            "internal"
+          ]
+        },
+        "fetchCalls": 1
+      }
+    },
+    {
+      "name": "dns failure",
+      "credential": "k",
+      "fault": {
+        "kind": "throw",
+        "fault": "dns"
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "error": {
+            "threw": true
+          }
+        },
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "internal",
+            "message": "adapter threw for typesafe/jev@1.14.0",
+            "tier": "typesafe/jev@1.14.0"
+          },
+          "attempts": [
+            "internal"
+          ]
+        },
+        "fetchCalls": 1
+      }
+    },
+    {
+      "name": "tls failure",
+      "credential": "k",
+      "fault": {
+        "kind": "throw",
+        "fault": "tls"
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "error": {
+            "threw": true
+          }
+        },
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "internal",
+            "message": "adapter threw for typesafe/jev@1.14.0",
+            "tier": "typesafe/jev@1.14.0"
+          },
+          "attempts": [
+            "internal"
+          ]
+        },
+        "fetchCalls": 1
+      }
+    },
+    {
+      "name": "body read failure",
+      "credential": "k",
+      "fault": {
+        "kind": "body_read"
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "error": {
+            "threw": true
+          }
+        },
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "internal",
+            "message": "adapter threw for typesafe/jev@1.14.0",
+            "tier": "typesafe/jev@1.14.0"
+          },
+          "attempts": [
+            "internal"
+          ]
+        },
+        "fetchCalls": 1
+      }
+    },
+    {
+      "name": "deadline while hanging",
+      "credential": "k",
+      "fault": {
+        "kind": "hang"
+      },
+      "deadlineMs": 30,
+      "expected": {
+        "adapter": null,
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "invalid_definition",
+            "message": "no adapter for provider cloudflare",
+            "tier": "cloudflare/clef-flash@x.y.z"
+          },
+          "attempts": [
+            "timeout"
+          ]
+        },
+        "fetchCalls": 1
+      }
+    },
+    {
+      "name": "missing credential",
+      "credential": null,
+      "fault": {
+        "kind": "reply",
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "bodyText": "{}"
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "error": {
+            "type": "auth",
+            "message": "missing credential: set TYPESAFE_API_KEY",
+            "tier": "typesafe/jev@1.14.0"
+          }
+        },
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "auth",
+            "message": "missing credential: set TYPESAFE_API_KEY",
+            "tier": "typesafe/jev@1.14.0"
+          },
+          "attempts": [
+            "auth"
+          ]
+        },
+        "fetchCalls": 0
+      }
+    },
+    {
+      "name": "empty credential",
+      "credential": "",
+      "fault": {
+        "kind": "reply",
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "bodyText": "{}"
+      },
+      "deadlineMs": null,
+      "expected": {
+        "adapter": {
+          "error": {
+            "type": "auth",
+            "message": "missing credential: set TYPESAFE_API_KEY",
+            "tier": "typesafe/jev@1.14.0"
+          }
+        },
+        "decide": {
+          "ok": false,
+          "error": {
+            "type": "auth",
+            "message": "missing credential: set TYPESAFE_API_KEY",
+            "tier": "typesafe/jev@1.14.0"
+          },
+          "attempts": [
+            "auth"
+          ]
+        },
+        "fetchCalls": 0
+      }
+    }
+  ]
+}
