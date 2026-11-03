@@ -125,7 +125,7 @@
           "error": {
             "type": "nonconformant_response",
             "message": "response has no answers map",
-            "tier": "typesafe/jev@1.14.0"
+            "tier": "fake-systemone/jev@1.14.0"
           },
           "attempts": [
             "nonconformant_response"
@@ -161,7 +161,7 @@
           "error": {
             "type": "nonconformant_response",
             "message": "response has no answers map",
-            "tier": "typesafe/jev@1.14.0"
+            "tier": "fake-systemone/jev@1.14.0"
           },
           "attempts": [
             "nonconformant_response"
@@ -198,8 +198,8 @@
           "ok": false,
           "error": {
             "type": "auth",
-            "message": "HTTP 401 from typesafe/jev@1.14.0",
-            "tier": "typesafe/jev@1.14.0"
+            "message": "HTTP 401 from fake-systemone/jev@1.14.0",
+            "tier": "fake-systemone/jev@1.14.0"
           },
           "attempts": [
             "auth"
@@ -340,8 +340,8 @@
           "ok": false,
           "error": {
             "type": "internal",
-            "message": "adapter threw for typesafe/jev@1.14.0",
-            "tier": "typesafe/jev@1.14.0"
+            "message": "adapter threw for fake-systemone/jev@1.14.0",
+            "tier": "fake-systemone/jev@1.14.0"
           },
           "attempts": [
             "internal"
@@ -368,8 +368,8 @@
           "ok": false,
           "error": {
             "type": "internal",
-            "message": "adapter threw for typesafe/jev@1.14.0",
-            "tier": "typesafe/jev@1.14.0"
+            "message": "adapter threw for fake-systemone/jev@1.14.0",
+            "tier": "fake-systemone/jev@1.14.0"
           },
           "attempts": [
             "internal"
@@ -396,8 +396,8 @@
           "ok": false,
           "error": {
             "type": "internal",
-            "message": "adapter threw for typesafe/jev@1.14.0",
-            "tier": "typesafe/jev@1.14.0"
+            "message": "adapter threw for fake-systemone/jev@1.14.0",
+            "tier": "fake-systemone/jev@1.14.0"
           },
           "attempts": [
             "internal"
@@ -423,8 +423,8 @@
           "ok": false,
           "error": {
             "type": "internal",
-            "message": "adapter threw for typesafe/jev@1.14.0",
-            "tier": "typesafe/jev@1.14.0"
+            "message": "adapter threw for fake-systemone/jev@1.14.0",
+            "tier": "fake-systemone/jev@1.14.0"
           },
           "attempts": [
             "internal"
@@ -472,16 +472,16 @@
         "adapter": {
           "error": {
             "type": "auth",
-            "message": "missing credential: set TYPESAFE_API_KEY",
-            "tier": "typesafe/jev@1.14.0"
+            "message": "missing credential: set FAKE_SYSTEMONE_API_KEY",
+            "tier": "fake-systemone/jev@1.14.0"
           }
         },
         "decide": {
           "ok": false,
           "error": {
             "type": "auth",
-            "message": "missing credential: set TYPESAFE_API_KEY",
-            "tier": "typesafe/jev@1.14.0"
+            "message": "missing credential: set FAKE_SYSTEMONE_API_KEY",
+            "tier": "fake-systemone/jev@1.14.0"
           },
           "attempts": [
             "auth"
@@ -506,16 +506,16 @@
         "adapter": {
           "error": {
             "type": "auth",
-            "message": "missing credential: set TYPESAFE_API_KEY",
-            "tier": "typesafe/jev@1.14.0"
+            "message": "missing credential: set FAKE_SYSTEMONE_API_KEY",
+            "tier": "fake-systemone/jev@1.14.0"
           }
         },
         "decide": {
           "ok": false,
           "error": {
             "type": "auth",
-            "message": "missing credential: set TYPESAFE_API_KEY",
-            "tier": "typesafe/jev@1.14.0"
+            "message": "missing credential: set FAKE_SYSTEMONE_API_KEY",
+            "tier": "fake-systemone/jev@1.14.0"
           },
           "attempts": [
             "auth"

@@ -39,10 +39,10 @@ test("emit again with no change prints unchanged and no diff", async () => {
 test("emit prints a diff when output changes", async () => {
   const m = memIo({}, { "d.ts": { triage } });
   await main(["emit", "d.ts", "--out", "o"], m.io);
-  m.files["o/incident-triage_2.0.0.contract.json"] = m.files["o/incident-triage_2.0.0.contract.json"]!.replace("\"typesafe_normalized\"", "\"top_probability\"");
+  m.files["o/incident-triage_2.0.0.contract.json"] = m.files["o/incident-triage_2.0.0.contract.json"]!.replace("\"systemone_normalized\"", "\"top_probability\"");
   m.out.length = 0;
   await main(["emit", "d.ts", "--out", "o"], m.io);
-  assert.ok(m.out.some((l) => l.includes('"noul": "top_probability"') && l.startsWith('-')) && m.out.some((l) => l.includes('"noul": "typesafe_normalized"') && l.startsWith('+')), m.out.join('\n'));
+  assert.ok(m.out.some((l) => l.includes('"noul": "top_probability"') && l.startsWith('-')) && m.out.some((l) => l.includes('"noul": "systemone_normalized"') && l.startsWith('+')), m.out.join('\n'));
 });
 test("emit with no definitions in a module fails", async () => {
   const m = memIo({}, { "d.ts": { x: 1 } });
@@ -51,7 +51,7 @@ test("emit with no definitions in a module fails", async () => {
 
 const fitFiles = () => ({ "cases.jsonl": fx("eval.fit.jsonl"), "fake.json": fx("fake.fit.json"),
   "prices.json": JSON.stringify({ id: "p", asOf: "2026-10-28", url: "https://example.invalid/PLACEHOLDER",
-    entries: { "typesafe/jev@1.14.0": { perCall: 0.004, currency: "USD" } } }) });
+    entries: { "fake-systemone/jev@1.14.0": { perCall: 0.004, currency: "USD" } } }) });
 const fitArgs = ["fit", "f.ts", "--cases", "cases.jsonl", "--fake", "fake.json", "--prices", "prices.json", "--lock", "urim.lock.json"];
 
 test("fit without --yes shows the estimate, exits 2, writes nothing", async () => {

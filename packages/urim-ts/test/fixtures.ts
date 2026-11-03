@@ -1,8 +1,9 @@
-// Test fixtures. Tier model ids follow public vendor docs (checked 2026-10-28 EDT); prices here are PLACEHOLDERS.
+// Test fixtures. JEV uses the test-only fake-systemone provider. Tier model ids follow public vendor docs (checked 2026-10-28 EDT); prices here are PLACEHOLDERS.
 import { tier, defineDecision, noul, choice, score, threshold } from "../src/index.ts";
+import { FAKE_PROVIDER } from "./fake-systemone.ts";
 import type { PriceTable, SchemaAdapter } from "../src/index.ts";
 
-export const JEV = tier({ provider: "typesafe", model: "jev", version: "1.14.0", camp: "systemone",
+export const JEV = tier({ provider: FAKE_PROVIDER, model: "jev", version: "1.14.0", camp: "systemone",
   questionTypes: ["noul", "choice", "score"] });                       // PLACEHOLDER version
 export const CLEF = tier({ provider: "cloudflare", model: "clef-flash", version: "x.y.z", camp: "systemone",
   questionTypes: ["noul", "choice"] });                                // TODO(vendor-fact): camp, version, types

@@ -24,7 +24,7 @@ def _s1(team_conf, team_probs):
 
 
 def test_definition_confidence_names_the_formula_per_question_type():
-    want = {"noul": "typesafe_normalized", "choice": "vendor_unspecified", "score": "vendor_unspecified"}
+    want = {"noul": "systemone_normalized", "choice": "vendor_unspecified", "score": "vendor_unspecified"}
     assert dict(TRIAGE.confidence) == want == dict(CONFIDENCE_RULE)
     assert emit(TRIAGE).document["confidence"] == want
 
@@ -33,14 +33,14 @@ def test_answers_carry_confidence_formula():
     r = decode_reply(TRIAGE, JEV, _reply(_s1(0.6, {"data": 0.8, "billing": 0.2})))
     assert r.ok
     assert r.answers["page"].confidence == 0.9
-    assert r.answers["page"].confidence_formula == "typesafe_normalized"
+    assert r.answers["page"].confidence_formula == "systemone_normalized"
     assert r.answers["team"].confidence_formula == "vendor_unspecified"
     o = decode_reply(
         SEVERITY,
         OPENAI,
         _reply({"model": "gpt-6-luna", "answers": [{"type": "predicate", "name": "page", "probability": 0.8}]}),
     )
-    assert not o.ok or o.answers["page"].confidence_formula == "typesafe_normalized"
+    assert not o.ok or o.answers["page"].confidence_formula == "systemone_normalized"
 
 
 def test_null_confidence_has_null_formula():
@@ -74,7 +74,7 @@ def test_fit_flags_sentinel_answers_as_escalated():
 
 def test_envelope_confidence_formula_is_optional_and_closed():
     golden = load(TS / "test/golden/envelope.v1.example.json")
-    assert golden["answers"]["page"]["confidenceFormula"] == "typesafe_normalized"
+    assert golden["answers"]["page"]["confidenceFormula"] == "systemone_normalized"
     strip = {k: {kk: vv for kk, vv in v.items() if kk != "confidenceFormula"} for k, v in golden["answers"].items()}
     assert read_envelope({**golden, "answers": strip})[0]
     bad = {**golden["answers"], "page": {**golden["answers"]["page"], "confidenceFormula": "top_probability"}}

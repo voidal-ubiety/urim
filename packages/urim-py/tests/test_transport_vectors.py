@@ -7,6 +7,7 @@ import asyncio
 
 import pytest
 from conftest import JEV, SHARED, TRIAGE, load
+from fake_systemone import FAKE_ENV, FAKE_SYSTEMONE
 
 httpx = pytest.importorskip("httpx")
 
@@ -58,7 +59,7 @@ def test_constructible(row):
 @pytest.mark.parametrize("case", V["cases"], ids=[c["name"] for c in V["cases"]])
 def test_transport_case(case):
     exp, fault, cred = case["expected"], case["fault"], case["credential"]
-    adapter = http_adapter(DESCRIPTORS["typesafe"])
+    adapter = http_adapter(FAKE_SYSTEMONE)
 
     async def go():
         if exp["adapter"] is not None:
@@ -72,7 +73,7 @@ def test_transport_case(case):
                     got = {"error": err_json(e)}
             assert got == exp["adapter"]
         calls = []
-        env = {} if cred is None else {"TYPESAFE_API_KEY": cred}
+        env = {} if cred is None else {FAKE_ENV: cred}
         async with client_for(fault, calls) as http:
             c = create_client(adapters=[adapter], env=env, http=http, now=lambda: 1793221200000)
             r = await c.decide(TRIAGE, {"report": "x"}, deadline_ms=case["deadlineMs"])

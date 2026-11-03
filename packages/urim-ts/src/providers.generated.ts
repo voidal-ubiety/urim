@@ -2,8 +2,8 @@
 // EXAMPLE DATA ONLY. Not vendor facts. Versions, camps and question types are placeholders for tests.
 import { tier } from "./define.ts";
 
-export const TypeSafe = Object.freeze({
-  Jev_1_14_0: tier({ provider: "typesafe", model: "jev", version: "1.14.0", camp: "systemone", questionTypes: ["noul","choice","score"] }),
+export const FakeSystemOne = Object.freeze({
+  Jev_1_14_0: tier({ provider: "fake-systemone", model: "jev", version: "1.14.0", camp: "systemone", questionTypes: ["noul","choice","score"] }),
 });
 
 export const Cloudflare = Object.freeze({

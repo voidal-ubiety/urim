@@ -34,7 +34,7 @@ export type Definition<I = unknown, Q extends Questions = Questions, Th extends 
   readonly tiers: readonly Tier[];
   readonly input: SchemaAdapter<I>;
   readonly questions: Q;
-  /** The formula behind `confidence`, per question type (hashed). Yes/no: Urim derives TypeSafe's normalized
+  /** The formula behind `confidence`, per question type (hashed). Yes/no: Urim derives the normalized
    *  (p_max − 1/n)/(1 − 1/n), n = 2, i.e. |2p − 1|. Choice/score: the vendor's number, formula not specified to Urim. */
   readonly confidence: ConfidenceRule;
   readonly failover: { readonly on: readonly ErrorType[] };
@@ -75,11 +75,11 @@ export type WireReply = {
 };
 
 export type ConfidenceSource = "native" | "urim_derived";
-/** typesafe_normalized: |2p − 1| from a yes/no probability (https://docs.typesafe.ai/confidence.md).
+/** systemone_normalized: |2p − 1| from a yes/no probability, the systemone request format's normalized formula.
  *  vendor_unspecified: the vendor's own number; Urim does not know or assert its formula. */
-export type ConfidenceFormula = "typesafe_normalized" | "vendor_unspecified";
-export type ConfidenceRule = { readonly noul: "typesafe_normalized"; readonly choice: "vendor_unspecified"; readonly score: "vendor_unspecified" };
-export const CONFIDENCE_RULE: ConfidenceRule = Object.freeze({ noul: "typesafe_normalized", choice: "vendor_unspecified", score: "vendor_unspecified" });
+export type ConfidenceFormula = "systemone_normalized" | "vendor_unspecified";
+export type ConfidenceRule = { readonly noul: "systemone_normalized"; readonly choice: "vendor_unspecified"; readonly score: "vendor_unspecified" };
+export const CONFIDENCE_RULE: ConfidenceRule = Object.freeze({ noul: "systemone_normalized", choice: "vendor_unspecified", score: "vendor_unspecified" });
 export type Answer<L extends string = string> = {
   readonly value: L;
   readonly confidence: number | null;

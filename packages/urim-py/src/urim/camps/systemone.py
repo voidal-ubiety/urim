@@ -1,5 +1,5 @@
-"""C: the systemone body (TypeSafe reference; also Microsoft, Cloudflare, Liquid, Perplexity, Fastino, Inception).
-Source: https://docs.typesafe.ai/api/system-one (checked 2026-10-28 EDT)."""
+"""C: the systemone body (spoken by every descriptor whose camp is systemone).
+Body shape per the systemone descriptors' vendor sources (checked 2026-10-28 EDT)."""
 
 from __future__ import annotations
 

@@ -8,7 +8,7 @@ from .boundary import json_name
 from .errors import Issue
 
 _SOURCES = (None, "native", "urim_derived")
-_FORMULAS = (None, "typesafe_normalized", "vendor_unspecified")
+_FORMULAS = (None, "systemone_normalized", "vendor_unspecified")
 
 
 def _num_or_none(v: Any) -> bool:
@@ -52,7 +52,7 @@ def read_envelope(v: Any) -> tuple[bool, list[Issue]]:
         ),
         "each answer needs {value, confidence: number|null, native}"
         " and an optional confidence source: native|urim_derived|null"
-        " and an optional confidence formula: typesafe_normalized|vendor_unspecified|null",
+        " and an optional confidence formula: systemone_normalized|vendor_unspecified|null",
     )
     need("thresholds", isinstance(v.get("thresholds"), dict), "must be an object")
     need("fallback", v.get("fallback") is None or isinstance(v.get("fallback"), dict), "must be null or an object")

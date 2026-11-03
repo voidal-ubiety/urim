@@ -1,7 +1,7 @@
 {
   "contracts": {
-    "triage": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244",
-    "severity": "sha256:5972c57e54f898c4750ecfbe4592b602098521c826b9a04c3d1b41a50a7a9846"
+    "triage": "sha256:7abe2a445d7493ade750a65d13f4c2f29470280a9bb2dbcee3384841b26ec33c",
+    "severity": "sha256:1961ef5140bbc74220eece8891aeecab85e77ba1af2c1ddc62f91e796ba51beb"
   },
   "encode": [
     {
@@ -10,7 +10,7 @@
       "input": {
         "report": "db primary unreachable — since 02:00 ✓"
       },
-      "url": "https://api.typesafe.ai/v1/systemone",
+      "url": "https://systemone.example.test/v1/systemone",
       "path": "/v1/systemone",
       "body": {
         "model": "jev-1.14.0",
@@ -102,7 +102,7 @@
       "input": {
         "report": "db primary unreachable — since 02:00 ✓"
       },
-      "url": "https://api.typesafe.ai/v1/systemone",
+      "url": "https://systemone.example.test/v1/systemone",
       "path": "/v1/systemone",
       "body": {
         "model": "jev-1.14.0",
@@ -219,7 +219,7 @@
             "value": "yes",
             "confidence": 0.9,
             "confidenceSource": "urim_derived",
-            "confidenceFormula": "typesafe_normalized",
+            "confidenceFormula": "systemone_normalized",
             "native": {
               "name": "page",
               "value": 0.95,
@@ -276,7 +276,7 @@
             "value": "yes",
             "confidence": 0,
             "confidenceSource": "urim_derived",
-            "confidenceFormula": "typesafe_normalized",
+            "confidenceFormula": "systemone_normalized",
             "native": {
               "name": "page",
               "value": 0.5,
@@ -417,7 +417,7 @@
             "value": "no",
             "confidence": 0.9,
             "confidenceSource": "urim_derived",
-            "confidenceFormula": "typesafe_normalized",
+            "confidenceFormula": "systemone_normalized",
             "native": {
               "name": "page",
               "value": 0.05,
@@ -433,7 +433,7 @@
       }
     },
     {
-      "name": "typesafe 529",
+      "name": "fake-systemone 529",
       "def": "triage",
       "tier": "JEV",
       "status": 529,
@@ -512,7 +512,7 @@
             "value": "yes",
             "confidence": 0.6,
             "confidenceSource": "urim_derived",
-            "confidenceFormula": "typesafe_normalized",
+            "confidenceFormula": "systemone_normalized",
             "native": {
               "name": "page",
               "value": 0.8,
@@ -587,7 +587,7 @@
             "value": "no",
             "confidence": 0.4,
             "confidenceSource": "urim_derived",
-            "confidenceFormula": "typesafe_normalized",
+            "confidenceFormula": "systemone_normalized",
             "native": {
               "name": "page",
               "value": 0.3,

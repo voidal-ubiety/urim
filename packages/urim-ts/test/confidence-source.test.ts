@@ -19,7 +19,7 @@ test("OpenAI predicate confidence is urim_derived; OpenAI score confidence is na
   assert.equal(r.answers["page"]?.native.confidence, null);
   assert.equal(r.answers["sev"]?.confidenceSource, "native");
 });
-test("systemone noul is urim_derived (TypeSafe formula, computed client-side); choice is native", () => {
+test("systemone noul is urim_derived (normalized formula, computed client-side); choice is native", () => {
   const r = decodeReply(triage, JEV, reply(s1Body({ page: s1Noul(0.95), team: s1Choice("data", 0.6, { data: 0.8, billing: 0.2 }) })));
   assert.ok(r.ok);
   if (!r.ok) return;

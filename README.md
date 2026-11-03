@@ -4,7 +4,7 @@
 
 Decision models take application state plus typed questions (yes/no, choice, score) and return typed answers with probabilities. Vendors expose them through incompatible request bodies and different confidence definitions. Urim keeps the provider's values as they are and derives portable fields next to them.
 
-> **Status: pre-alpha, 0.0.1, not published.** Two ports: TypeScript (npm `urim`) and Python (PyPI `urim`). Two provider adapters exist, `typesafeJev` and `openaiDecisions`. Both are tested against mocked HTTP only. **No live provider call has been made yet**, so there are no measured accuracy, latency or cost numbers. Six more providers have descriptors (wire format, URL, auth) but no adapter.
+> **Status: pre-alpha, 0.0.1, not published.** Two ports: TypeScript (npm `urim`) and Python (PyPI `urim`). Two provider adapters exist, one for the `systemone` request format and one for the `decisions` request format (`openaiDecisions`). Both are tested against mocked HTTP only. **No live provider call has been made yet**, so there are no measured accuracy, latency or cost numbers. Six more providers have descriptors (wire format, URL, auth) but no adapter.
 
 ## What v1 has
 
@@ -15,7 +15,7 @@ Decision models take application state plus typed questions (yes/no, choice, sco
 - **`urim.lock`** is optional in development and required in prod mode, where the decision's hash must match the lock.
 - **Tiered fallback with a budget skip.** Tiers are tried in order on the error types the decision lists. Before a call, a tier whose estimated input cost would exceed the budget is skipped; the estimate uses the UTF-8 byte length of the request body.
 - **`confidenceSource`** on every answer: `"native"` (the vendor's own value), `"urim_derived"` (computed client-side) or `null`.
-- **`confidenceFormula`** on every answer: `"typesafe_normalized"` (Urim's |2p − 1| for yes/no, TypeSafe's documented formula), `"vendor_unspecified"` (the vendor's number; Urim does not assert its formula) or `null`.
+- **`confidenceFormula`** on every answer: `"systemone_normalized"` (Urim's |2p − 1| for yes/no, the `systemone` request format's normalized formula), `"vendor_unspecified"` (the vendor's number; Urim does not assert its formula) or `null`.
 - **Typed errors.** One `UrimError` with a closed set of `type`s (`auth`, `timeout`, `rate_limited`, `budget`, `all_tiers_failed`, `lock_violation`, …).
 
 Not in v1: YAML authoring, streaming, hedging or fan-out, a circuit breaker, a built-in OpenTelemetry profile, caching, and runtime registry fetches.
@@ -33,13 +33,13 @@ Network adapters are opt-in through a subpath, so the core never touches the net
 
 ```ts
 import { createClient } from "urim";
-import { typesafeJev, openaiDecisions } from "urim/adapters";
-const client = createClient({ adapters: [typesafeJev(), openaiDecisions()], env: process.env });
+import { openaiDecisions } from "urim/adapters";
+const client = createClient({ adapters: [openaiDecisions()], env: process.env });
 ```
 
 Pass `deadlineMs` (Python `deadline_ms`) to `createClient` to set a default total deadline across all tiers; it must be a finite number > 0. A call's own `deadlineMs` overrides it, and `deadlineMs: null` (Python `deadline_ms=None`) turns it off for that call. There is no default, so by default nothing times out. Once the deadline is spent, the remaining tiers record `timeout` without being called.
 
-Credentials are read from the named environment variable (`TYPESAFE_API_KEY`, `OPENAI_API_KEY`) at send time and never logged.
+Credentials are read from the named environment variable named by each provider's descriptor (for example `OPENAI_API_KEY`) at send time and never logged.
 
 ## Command line
 
@@ -60,17 +60,9 @@ packages/shared-fixtures cross-port vectors both test suites assert against
 packages/check.sh        the one gate: tests, lint and types for both ports
 ```
 
-Older material from the v0.2 `urim check` era (`spec/`, `fixtures/`, `scripts/`, `CONTRACT.md`) is kept for history and is not part of v1.
-
 ## A note on the name
 
 The Urim and Thummim appear in Exodus 28:30, carried in the breastpiece (the *hoshen*) of the high priest. They carry religious significance in Jewish, Christian, and Latter-day Saint traditions. This project borrows only the idea of asking a question and receiving a verdict, and uses the names with respect. No religious claim or affiliation is intended.
-
-## Credits
-
-- **Jev Harness:** built by David Thomason on TypeSafe's Jev; the motivating reference application.
-
-Jev is a product of TypeSafe. Other vendor and product names belong to their owners. Mentioning them implies no endorsement.
 
 ## Links
 
@@ -79,7 +71,7 @@ Jev is a product of TypeSafe. Other vendor and product names belong to their own
 
 ## Contributing and security
 
-- [CONTRIBUTING.md](CONTRIBUTING.md): setup, how a change is made, and sign-off (DCO).
+- [CONTRIBUTING.md](CONTRIBUTING.md): setup and how a change is made.
 - [SECURITY.md](SECURITY.md): how to report a vulnerability.
 
 ## License

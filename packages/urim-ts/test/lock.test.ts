@@ -6,8 +6,8 @@ import type { Lock } from "../src/index.ts";
 const H = `sha256:${"a".repeat(64)}`;
 const full: Lock = {
   lock: 1, contract: { id: "c@1.0.0", hash: H },
-  tiers: [{ id: "typesafe/jev@1.14.0", descriptorHash: null }],
-  cuts: { gate: { "typesafe/jev@1.14.0": 0.6 } },
+  tiers: [{ id: "fake-systemone/jev@1.14.0", descriptorHash: null }],
+  cuts: { gate: { "fake-systemone/jev@1.14.0": 0.6 } },
   eval: { setHash: H, n: 5, repeat: 2, at: "2026-10-28T21:00:00.000Z", objectivesMet: true },
 };
 

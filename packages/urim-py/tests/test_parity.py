@@ -2,6 +2,7 @@
 
 import pytest
 from conftest import DEFS, JEV, PRICES, SHARED, TIERS, TRIAGE, TS, load
+from fake_systemone import FAKE_PROVIDER
 
 from urim import (
     DESCRIPTORS,
@@ -90,4 +91,5 @@ def test_envelope_matches_ts_golden():
 def test_descriptor_table_rows_match_ts_source():
     src = (TS / "src/descriptors.ts").read_text("utf-8")
     for provider, desc in DESCRIPTORS.items():
-        assert desc.url in src, provider
+        if provider != FAKE_PROVIDER:  # test-only descriptor, not in the shipped table
+            assert desc.url in src, provider

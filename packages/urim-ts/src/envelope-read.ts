@@ -17,8 +17,8 @@ export const readEnvelope = (v: unknown): EnvelopeRead => {
   need("answers", isObj(a) && Object.values(a).every((x) => isObj(x) && typeof x["value"] === "string"
     && (x["confidence"] === null || typeof x["confidence"] === "number") && isObj(x["native"])
     && (x["confidenceSource"] === undefined || x["confidenceSource"] === null || x["confidenceSource"] === "native" || x["confidenceSource"] === "urim_derived")
-    && (x["confidenceFormula"] === undefined || x["confidenceFormula"] === null || x["confidenceFormula"] === "typesafe_normalized" || x["confidenceFormula"] === "vendor_unspecified")),
-    "each answer needs {value, confidence: number|null, native} an optional confidenceSource: native|urim_derived|null and an optional confidenceFormula: typesafe_normalized|vendor_unspecified|null");
+    && (x["confidenceFormula"] === undefined || x["confidenceFormula"] === null || x["confidenceFormula"] === "systemone_normalized" || x["confidenceFormula"] === "vendor_unspecified")),
+    "each answer needs {value, confidence: number|null, native} an optional confidenceSource: native|urim_derived|null and an optional confidenceFormula: systemone_normalized|vendor_unspecified|null");
   need("thresholds", isObj(v["thresholds"]), "must be an object");
   need("fallback", v["fallback"] === null || isObj(v["fallback"]), "must be null or an object");
   need("attempts", Array.isArray(v["attempts"]), "must be an array");

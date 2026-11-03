@@ -33,7 +33,7 @@ const decodeOne = (name: string, a: Record<string, unknown>, sentinel: boolean):
     case "predicate": {
       const p = num(a["probability"]);
       if (p === null) return undefined;
-      // Confidence: TypeSafe's binary formula applied client-side (OpenAI returns none for predicates).
+      // Confidence: the normalized binary formula applied client-side (OpenAI returns none for predicates).
       return { name, label: binaryLabel(p), confidence: binaryConfidence(p), nativeValue: p, nativeConfidence: null, confidenceSource: "urim_derived" };
     }
     case "choice": // a boolean choice never equals a string label, so it falls out as nonconformant

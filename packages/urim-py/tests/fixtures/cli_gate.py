@@ -5,7 +5,11 @@ from urim import Issue, Objective, define_decision, json_schema_adapter, noul, t
 __all__ = ["gate"]
 
 _JEV = tier(
-    provider="typesafe", model="jev", version="1.14.0", camp="systemone", question_types=["noul", "choice", "score"]
+    provider="fake-systemone",
+    model="jev",
+    version="1.14.0",
+    camp="systemone",
+    question_types=["noul", "choice", "score"],
 )
 _CLEF = tier(
     provider="cloudflare", model="clef-flash", version="x.y.z", camp="systemone", question_types=["noul", "choice"]

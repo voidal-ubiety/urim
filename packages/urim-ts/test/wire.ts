@@ -2,15 +2,15 @@
 // The research file records field shapes, not verbatim example payloads, so these bodies are
 // RECONSTRUCTED from the documented field lists (values are ours). Each cites its source URL.
 
-/** systemone noul answer: P(yes) only, no confidence. https://docs.typesafe.ai/api/system-one */
+/** systemone noul answer: P(yes) only, no confidence. */
 export const s1Noul = (p: number) => ({ type: "noul", noul: p });
-/** systemone choice answer. https://docs.typesafe.ai/api/system-one */
+/** systemone choice answer. */
 export const s1Choice = (choice: string, confidence: number, probabilities: Record<string, number>) =>
   ({ type: "choice", choice, confidence, probabilities });
-/** systemone score answer: expected index + legend + probabilities keyed "0".."n-1". https://docs.typesafe.ai/api/system-one */
+/** systemone score answer: expected index + legend + probabilities keyed "0".."n-1". */
 export const s1Score = (score: number, confidence: number, probabilities: Record<string, number>, legend: Record<string, string>) =>
   ({ type: "score", score, confidence, legend, probabilities });
-/** systemone response. https://docs.typesafe.ai/api/system-one */
+/** systemone response. */
 export const s1Body = (answers: Record<string, unknown>, model?: string) =>
   ({ ...(model === undefined ? {} : { model }), answers, usage: { input_tokens: 1200, output_tokens: 3 } });
 
