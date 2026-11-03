@@ -26,7 +26,7 @@ Also ported (slice 6):
 - `urim.testing` (`fake_provider`)
 - lock parse/serialize (`parse_lock`, `serialize_lock`)
 - fit math and `run_fit`
-- httpx adapters in `urim.adapters` (`typesafe_jev`, `openai_decisions`; `pip install urim[httpx]`)
+- httpx adapters in `urim.adapters` (one per request format, `systemone` and `decisions` (`openai_decisions`); `pip install urim[httpx]`)
 
 Casing: the Python API is snake_case. All JSON is camelCase. The mapping lives only in `urim/boundary.py`.
 Credentials are read from the `env` you pass (no default), at send time.

@@ -1,5 +1,5 @@
-// C: the systemone body (TypeSafe reference; also Microsoft, Cloudflare, Liquid, Perplexity, Fastino, Inception).
-// Source: https://docs.typesafe.ai/api/system-one (checked 2026-10-28 EDT).
+// C: the systemone body (spoken by every descriptor whose camp is systemone).
+// Body shape per the systemone descriptors' vendor sources (checked 2026-10-28 EDT).
 import type { Definition, Question, Tier } from "../types.ts";
 import { argmax, binaryConfidence, binaryLabel, isRecord, nonconformant, num, scoreLabels, toAnswers,
   type Decoded, type DecodeOptions, type RawAnswer, vendorConfidence } from "./shared.ts";

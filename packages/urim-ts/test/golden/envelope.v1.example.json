@@ -2,11 +2,11 @@
   "envelope": "urim/1",
   "contract": {
     "id": "incident-triage@2.0.0",
-    "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+    "hash": "sha256:7abe2a445d7493ade750a65d13f4c2f29470280a9bb2dbcee3384841b26ec33c"
   },
   "tier": {
-    "id": "typesafe/jev@1.14.0",
-    "provider": "typesafe",
+    "id": "fake-systemone/jev@1.14.0",
+    "provider": "fake-systemone",
     "model": "jev",
     "version": "1.14.0",
     "camp": "systemone",
@@ -22,7 +22,7 @@
       "value": "yes",
       "confidence": 0.9,
       "confidenceSource": "urim_derived",
-      "confidenceFormula": "typesafe_normalized",
+      "confidenceFormula": "systemone_normalized",
       "native": {
         "name": "page",
         "value": 0.95,
@@ -58,7 +58,7 @@
   "fallback": null,
   "attempts": [
     {
-      "tier": "typesafe/jev@1.14.0",
+      "tier": "fake-systemone/jev@1.14.0",
       "outcome": "ok",
       "latencyMs": 0
     }

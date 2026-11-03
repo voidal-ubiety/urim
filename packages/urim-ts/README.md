@@ -13,7 +13,6 @@ The wire format is chosen by request **body**, not URL path (`src/descriptors.ts
 
 | Provider | Body camp | URL | Auth env |
 |---|---|---|---|
-| TypeSafe Jev | systemone | `https://api.typesafe.ai/v1/systemone` | `TYPESAFE_API_KEY` (Bearer) |
 | OpenAI | decisions | `https://api.openai.com/v1/decisions` | `OPENAI_API_KEY` (Bearer) |
 | Perplexity | systemone | `https://api.perplexity.ai/v1/decisions` | `PERPLEXITY_API_KEY` |
 | Inception | systemone | `https://api.inceptionlabs.ai/v1/decisions` | `INCEPTION_API_KEY` |
@@ -23,19 +22,19 @@ The wire format is chosen by request **body**, not URL path (`src/descriptors.ts
 | Fastino | systemone | `https://api.fastino.ai/v1/systemone` | `FASTINO_API_KEY` (`X-API-Key`) |
 
 ## Real adapters (opt-in)
-Only TypeSafe and OpenAI ship adapters, and only via the subpath import:
+Two adapters ship, one per request format (`systemone` and `decisions`), and only via the subpath import:
 
 ```ts
 import { createClient } from "urim";
-import { typesafeJev, openaiDecisions } from "urim/adapters";
-const client = createClient({ adapters: [typesafeJev(), openaiDecisions()], env: process.env });
+import { openaiDecisions } from "urim/adapters";
+const client = createClient({ adapters: [openaiDecisions()], env: process.env });
 ```
 
 The credential is read from the named env var at send time and never logged. A missing key fails as `auth`
 before any request. Tests use a mocked `fetch`; no live call has been made from this package.
 
 ## Confidence
-- systemone noul and decisions predicate: TypeSafe's documented formula `(p_max − 1/n)/(1 − 1/n)`, n = 2, computed client-side.
+- systemone noul and decisions predicate: the normalized formula `(p_max − 1/n)/(1 − 1/n)`, n = 2, computed client-side.
 - choice/score: the vendor's own `confidence`, passed through. OpenAI's formula is undocumented.
 - Every answer says which: `confidenceSource: "native" | "urim_derived" | null`.
 

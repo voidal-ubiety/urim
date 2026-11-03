@@ -40,7 +40,7 @@ test("openai errors carry x-request-id", () => {
   const r = decodeReply(severity, OPENAI, fail(429, oaiErr("credit_balance_exhausted"), { "x-request-id": "req_abc" }));
   assert.ok(!r.ok); assert.equal(r.error.type, "quota_exceeded"); assert.equal(r.error.requestId, "req_abc");
 });
-test("typesafe has no documented request-id header, so none is read", () => {
+test("a systemone descriptor with no request-id header reads none", () => {
   const r = decodeReply(triage, JEV, fail(529, {}, { "x-request-id": "ignored" }));
   assert.ok(!r.ok); assert.equal(r.error.requestId, undefined);
 });

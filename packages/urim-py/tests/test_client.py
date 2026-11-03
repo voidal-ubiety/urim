@@ -61,7 +61,7 @@ def test_prod_missing_adapter_is_startup_invalid_definition_naming_providers():
     with pytest.raises(UrimError) as e:
         create_client(adapters=[], mode="prod", decisions=[TRIAGE], locks=[good_lock()])
     assert e.value.type == "invalid_definition"
-    assert "cloudflare" in e.value.message and "typesafe" in e.value.message
+    assert "cloudflare" in e.value.message and "fake-systemone" in e.value.message
 
 
 def test_prod_unregistered_decision_abstains_with_lock_violation():

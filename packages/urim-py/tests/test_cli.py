@@ -63,7 +63,7 @@ def test_providers_to_a_py_file_writes_a_python_module(tmp_path):
     assert main(["providers", "--registry", "registry.json", "--out", "gen/providers.py"], io) == 0
     ns: dict = {}
     exec(compile(io.files["gen/providers.py"], "providers.py", "exec"), ns)
-    assert ns["TypeSafe"].Jev_1_14_0.id == "typesafe/jev@1.14.0"
+    assert ns["FakeSystemOne"].Jev_1_14_0.id == "fake-systemone/jev@1.14.0"
     assert ns["OpenAI"].Gpt6Luna_0_0_0.camp == "decisions"
 
 

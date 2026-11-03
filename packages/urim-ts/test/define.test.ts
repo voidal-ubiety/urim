@@ -6,7 +6,7 @@ import { JEV, CLEF, triage, inputSchema } from "./fixtures.ts";
 const base = { contract: "x@1.0.0", input: inputSchema,
   failover: { on: [] }, thresholds: {} };
 
-test("tier id is provider/model@version", () => assert.equal(JEV.id, "typesafe/jev@1.14.0"));
+test("tier id is provider/model@version", () => assert.equal(JEV.id, "fake-systemone/jev@1.14.0"));
 test("tier rejects a non-exact version", () =>
   assert.throws(() => tier({ provider: "p", model: "m", version: "^1.0", camp: "systemone", questionTypes: ["noul"] }),
     (e: unknown) => e instanceof UrimError && e.type === "invalid_definition"));

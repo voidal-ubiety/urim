@@ -4,7 +4,7 @@
   "url": "see each entry's source",
   "note": "USD per 1M input tokens; output not charged by any listed vendor. Checked 2026-10-28 EDT. Keys are tier ids; '*' rows document vendors with no public price.",
   "entries": {
-    "typesafe/jev@1.14.0": { "perMInputTokens": 0.042, "perMOutputTokens": 0, "currency": "USD", "source": "https://docs.typesafe.ai/models" },
+    "fake-systemone/jev@1.14.0": { "perMInputTokens": 0.042, "perMOutputTokens": 0, "currency": "USD", "source": "https://example.invalid/PLACEHOLDER", "note": "test-only fake provider; PLACEHOLDER price" },
     "openai/gpt-6-luna@0.0.0": { "perMInputTokens": 0.10, "perMOutputTokens": 0, "currency": "USD", "source": "https://developers.openai.com/api/docs/guides/decisions", "note": "uncached input; cache and regional multipliers not modelled" },
     "fastino/GLiDE@1": { "perMInputTokens": 0.04, "perMOutputTokens": 0, "currency": "USD", "source": "https://docs.fastino.ai/concepts/glide.md" },
     "inception/mercury-decide@launch": { "perMInputTokens": 0.02, "perMOutputTokens": 0, "currency": "USD", "source": "https://docs.inceptionlabs.ai/get-started/models.md", "note": "launch price (50% off); regular 0.04" },

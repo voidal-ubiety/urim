@@ -77,7 +77,7 @@ def binary_label(p: float) -> str:
 
 
 def binary_confidence(p: float) -> float:
-    """TypeSafe's documented (p_max - 1/n)/(1 - 1/n), n = 2, i.e. |2p - 1|. https://docs.typesafe.ai/confidence.md
+    """The normalized confidence (p_max - 1/n)/(1 - 1/n), n = 2, i.e. |2p - 1|, computed client-side.
     Rounded to 12 dp exactly as urim-ts does (Math.round(x * 1e12) / 1e12; half rounds up)."""
     x = ((max(p, 1 - p) - 0.5) / 0.5) * 1e12
     return math.floor(x + 0.5) / 1e12
@@ -113,7 +113,7 @@ def to_answers(d: Definition, tier: Tier, raws: Mapping[str, RawAnswer], body: M
             None if conf is None else raw.confidence_source,
             confidence_formula=None
             if conf is None
-            else ("typesafe_normalized" if raw.confidence_source == "urim_derived" else "vendor_unspecified"),
+            else ("systemone_normalized" if raw.confidence_source == "urim_derived" else "vendor_unspecified"),
             native={"name": raw.name, "value": raw.native_value, "confidence": raw.native_confidence},
         )
     model = body.get("model")

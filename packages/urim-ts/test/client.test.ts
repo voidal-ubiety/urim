@@ -230,7 +230,7 @@ test("onHookError receives the settled record", async () => {
 // --- fix 2: prod startup fails when a tier's provider has no adapter ---
 test("prod: registered tier with no adapter is a startup invalid_definition", () =>
   assert.throws(() => createClient({ adapters: [], mode: "prod", decisions: [triage], locks: [goodLock()] }),
-    (e: unknown) => isType("invalid_definition")(e) && /cloudflare/.test((e as Error).message) && /typesafe/.test((e as Error).message)));
+    (e: unknown) => isType("invalid_definition")(e) && /cloudflare/.test((e as Error).message) && /fake-systemone/.test((e as Error).message)));
 test("prod: a wildcard (test) adapter satisfies the check", () =>
   assert.doesNotThrow(() => createClient({ adapters: [fakeProvider({})], mode: "prod", decisions: [triage], locks: [goodLock()] })));
 test("dev: missing adapter is still decide-time invalid_definition", async () => {

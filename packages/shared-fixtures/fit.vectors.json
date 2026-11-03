@@ -1380,8 +1380,8 @@
       }
     ],
     "script": {
-      "_notice": "EXAMPLE fake replies for tests, not vendor data. Bodies use the systemone noul shape {type,noul:P(yes)} (https://docs.typesafe.ai/api/system-one); P(yes) chosen so the derived confidence |2p-1| equals the slice-3 values.",
-      "typesafe/jev@1.14.0": [
+      "_notice": "EXAMPLE fake replies for tests, not vendor data. Bodies use the systemone noul shape {type,noul:P(yes)}; P(yes) chosen so the derived confidence |2p-1| equals the slice-3 values.",
+      "fake-systemone/jev@1.14.0": [
         {
           "body": {
             "answers": {
@@ -1497,7 +1497,7 @@
           "asOf": "2026-10-28",
           "url": "https://example.invalid/PLACEHOLDER",
           "entries": {
-            "typesafe/jev@1.14.0": {
+            "fake-systemone/jev@1.14.0": {
               "perCall": 0.004,
               "currency": "USD"
             },
@@ -1513,11 +1513,11 @@
             "lock": 1,
             "contract": {
               "id": "fit-gate@1.0.0",
-              "hash": "sha256:3caab805f92b2a7ba0bc00584b4c073b593da0f39d3b9a19927021a63dc83710"
+              "hash": "sha256:8ca1945546e12cb5207731ca1004f1ba80ad18d548327428cbf3386acfbb5216"
             },
             "tiers": [
               {
-                "id": "typesafe/jev@1.14.0",
+                "id": "fake-systemone/jev@1.14.0",
                 "descriptorHash": null
               },
               {
@@ -1527,7 +1527,7 @@
             ],
             "cuts": {
               "gate": {
-                "typesafe/jev@1.14.0": 0.6,
+                "fake-systemone/jev@1.14.0": 0.6,
                 "cloudflare/clef-flash@x.y.z": 0.75
               }
             },
@@ -1544,7 +1544,7 @@
             "n": 5,
             "repeat": 1,
             "tiers": {
-              "typesafe/jev@1.14.0": {
+              "fake-systemone/jev@1.14.0": {
                 "questions": {
                   "page": {
                     "accuracy": 0.6,
@@ -1602,7 +1602,7 @@
           },
           "estimate": {
             "perTier": {
-              "typesafe/jev@1.14.0": 0.02,
+              "fake-systemone/jev@1.14.0": 0.02,
               "cloudflare/clef-flash@x.y.z": 0.005
             },
             "total": 0.025,
@@ -1611,7 +1611,7 @@
           },
           "setHash": "sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173"
         },
-        "lockText": "{\n  \"contract\": {\n    \"hash\": \"sha256:3caab805f92b2a7ba0bc00584b4c073b593da0f39d3b9a19927021a63dc83710\",\n    \"id\": \"fit-gate@1.0.0\"\n  },\n  \"cuts\": {\n    \"gate\": {\n      \"cloudflare/clef-flash@x.y.z\": 0.75,\n      \"typesafe/jev@1.14.0\": 0.6\n    }\n  },\n  \"eval\": {\n    \"at\": \"2026-10-28T21:00:00.000Z\",\n    \"n\": 5,\n    \"objectivesMet\": true,\n    \"repeat\": 1,\n    \"setHash\": \"sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173\"\n  },\n  \"lock\": 1,\n  \"tiers\": [\n    {\n      \"descriptorHash\": null,\n      \"id\": \"typesafe/jev@1.14.0\"\n    },\n    {\n      \"descriptorHash\": null,\n      \"id\": \"cloudflare/clef-flash@x.y.z\"\n    }\n  ]\n}\n"
+        "lockText": "{\n  \"contract\": {\n    \"hash\": \"sha256:8ca1945546e12cb5207731ca1004f1ba80ad18d548327428cbf3386acfbb5216\",\n    \"id\": \"fit-gate@1.0.0\"\n  },\n  \"cuts\": {\n    \"gate\": {\n      \"cloudflare/clef-flash@x.y.z\": 0.75,\n      \"fake-systemone/jev@1.14.0\": 0.6\n    }\n  },\n  \"eval\": {\n    \"at\": \"2026-10-28T21:00:00.000Z\",\n    \"n\": 5,\n    \"objectivesMet\": true,\n    \"repeat\": 1,\n    \"setHash\": \"sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173\"\n  },\n  \"lock\": 1,\n  \"tiers\": [\n    {\n      \"descriptorHash\": null,\n      \"id\": \"fake-systemone/jev@1.14.0\"\n    },\n    {\n      \"descriptorHash\": null,\n      \"id\": \"cloudflare/clef-flash@x.y.z\"\n    }\n  ]\n}\n"
       },
       {
         "name": "ok repeat 2",
@@ -1623,7 +1623,7 @@
           "asOf": "2026-10-28",
           "url": "https://example.invalid/PLACEHOLDER",
           "entries": {
-            "typesafe/jev@1.14.0": {
+            "fake-systemone/jev@1.14.0": {
               "perCall": 0.004,
               "currency": "USD"
             },
@@ -1639,11 +1639,11 @@
             "lock": 1,
             "contract": {
               "id": "fit-gate@1.0.0",
-              "hash": "sha256:3caab805f92b2a7ba0bc00584b4c073b593da0f39d3b9a19927021a63dc83710"
+              "hash": "sha256:8ca1945546e12cb5207731ca1004f1ba80ad18d548327428cbf3386acfbb5216"
             },
             "tiers": [
               {
-                "id": "typesafe/jev@1.14.0",
+                "id": "fake-systemone/jev@1.14.0",
                 "descriptorHash": null
               },
               {
@@ -1653,7 +1653,7 @@
             ],
             "cuts": {
               "gate": {
-                "typesafe/jev@1.14.0": 0.6,
+                "fake-systemone/jev@1.14.0": 0.6,
                 "cloudflare/clef-flash@x.y.z": 0.75
               }
             },
@@ -1670,7 +1670,7 @@
             "n": 5,
             "repeat": 2,
             "tiers": {
-              "typesafe/jev@1.14.0": {
+              "fake-systemone/jev@1.14.0": {
                 "questions": {
                   "page": {
                     "accuracy": 0.6,
@@ -1728,7 +1728,7 @@
           },
           "estimate": {
             "perTier": {
-              "typesafe/jev@1.14.0": 0.04,
+              "fake-systemone/jev@1.14.0": 0.04,
               "cloudflare/clef-flash@x.y.z": 0.01
             },
             "total": 0.05,
@@ -1737,7 +1737,7 @@
           },
           "setHash": "sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173"
         },
-        "lockText": "{\n  \"contract\": {\n    \"hash\": \"sha256:3caab805f92b2a7ba0bc00584b4c073b593da0f39d3b9a19927021a63dc83710\",\n    \"id\": \"fit-gate@1.0.0\"\n  },\n  \"cuts\": {\n    \"gate\": {\n      \"cloudflare/clef-flash@x.y.z\": 0.75,\n      \"typesafe/jev@1.14.0\": 0.6\n    }\n  },\n  \"eval\": {\n    \"at\": \"2026-10-28T21:00:00.000Z\",\n    \"n\": 5,\n    \"objectivesMet\": true,\n    \"repeat\": 2,\n    \"setHash\": \"sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173\"\n  },\n  \"lock\": 1,\n  \"tiers\": [\n    {\n      \"descriptorHash\": null,\n      \"id\": \"typesafe/jev@1.14.0\"\n    },\n    {\n      \"descriptorHash\": null,\n      \"id\": \"cloudflare/clef-flash@x.y.z\"\n    }\n  ]\n}\n"
+        "lockText": "{\n  \"contract\": {\n    \"hash\": \"sha256:8ca1945546e12cb5207731ca1004f1ba80ad18d548327428cbf3386acfbb5216\",\n    \"id\": \"fit-gate@1.0.0\"\n  },\n  \"cuts\": {\n    \"gate\": {\n      \"cloudflare/clef-flash@x.y.z\": 0.75,\n      \"fake-systemone/jev@1.14.0\": 0.6\n    }\n  },\n  \"eval\": {\n    \"at\": \"2026-10-28T21:00:00.000Z\",\n    \"n\": 5,\n    \"objectivesMet\": true,\n    \"repeat\": 2,\n    \"setHash\": \"sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173\"\n  },\n  \"lock\": 1,\n  \"tiers\": [\n    {\n      \"descriptorHash\": null,\n      \"id\": \"fake-systemone/jev@1.14.0\"\n    },\n    {\n      \"descriptorHash\": null,\n      \"id\": \"cloudflare/clef-flash@x.y.z\"\n    }\n  ]\n}\n"
       },
       {
         "name": "needs confirmation",
@@ -1749,7 +1749,7 @@
           "asOf": "2026-10-28",
           "url": "https://example.invalid/PLACEHOLDER",
           "entries": {
-            "typesafe/jev@1.14.0": {
+            "fake-systemone/jev@1.14.0": {
               "perCall": 0.004,
               "currency": "USD"
             },
@@ -1763,7 +1763,7 @@
           "status": "needs_confirmation",
           "estimate": {
             "perTier": {
-              "typesafe/jev@1.14.0": 0.02,
+              "fake-systemone/jev@1.14.0": 0.02,
               "cloudflare/clef-flash@x.y.z": 0.005
             },
             "total": 0.025,
@@ -1783,7 +1783,7 @@
           "asOf": "2026-10-28",
           "url": "https://example.invalid/PLACEHOLDER",
           "entries": {
-            "typesafe/jev@1.14.0": {
+            "fake-systemone/jev@1.14.0": {
               "perCall": 0.004,
               "currency": "USD"
             },
@@ -1796,7 +1796,7 @@
         "expected": {
           "status": "objectives_unmet",
           "unmet": [
-            "gate@typesafe/jev@1.14.0",
+            "gate@fake-systemone/jev@1.14.0",
             "gate@cloudflare/clef-flash@x.y.z"
           ],
           "report": {
@@ -1804,7 +1804,7 @@
             "n": 5,
             "repeat": 1,
             "tiers": {
-              "typesafe/jev@1.14.0": {
+              "fake-systemone/jev@1.14.0": {
                 "questions": {
                   "page": {
                     "accuracy": 0.6,
@@ -1862,7 +1862,7 @@
           },
           "estimate": {
             "perTier": {
-              "typesafe/jev@1.14.0": 0.02,
+              "fake-systemone/jev@1.14.0": 0.02,
               "cloudflare/clef-flash@x.y.z": 0.005
             },
             "total": 0.025,
@@ -1890,11 +1890,11 @@
             "lock": 1,
             "contract": {
               "id": "fit-gate@1.0.0",
-              "hash": "sha256:3caab805f92b2a7ba0bc00584b4c073b593da0f39d3b9a19927021a63dc83710"
+              "hash": "sha256:8ca1945546e12cb5207731ca1004f1ba80ad18d548327428cbf3386acfbb5216"
             },
             "tiers": [
               {
-                "id": "typesafe/jev@1.14.0",
+                "id": "fake-systemone/jev@1.14.0",
                 "descriptorHash": null
               },
               {
@@ -1904,7 +1904,7 @@
             ],
             "cuts": {
               "gate": {
-                "typesafe/jev@1.14.0": 0.6,
+                "fake-systemone/jev@1.14.0": 0.6,
                 "cloudflare/clef-flash@x.y.z": 0.75
               }
             },
@@ -1921,7 +1921,7 @@
             "n": 5,
             "repeat": 1,
             "tiers": {
-              "typesafe/jev@1.14.0": {
+              "fake-systemone/jev@1.14.0": {
                 "questions": {
                   "page": {
                     "accuracy": 0.6,
@@ -1976,18 +1976,18 @@
             "total": null,
             "currency": null,
             "unknown": [
-              "typesafe/jev@1.14.0",
+              "fake-systemone/jev@1.14.0",
               "cloudflare/clef-flash@x.y.z"
             ]
           },
           "setHash": "sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173"
         },
-        "lockText": "{\n  \"contract\": {\n    \"hash\": \"sha256:3caab805f92b2a7ba0bc00584b4c073b593da0f39d3b9a19927021a63dc83710\",\n    \"id\": \"fit-gate@1.0.0\"\n  },\n  \"cuts\": {\n    \"gate\": {\n      \"cloudflare/clef-flash@x.y.z\": 0.75,\n      \"typesafe/jev@1.14.0\": 0.6\n    }\n  },\n  \"eval\": {\n    \"at\": \"2026-10-28T21:00:00.000Z\",\n    \"n\": 5,\n    \"objectivesMet\": true,\n    \"repeat\": 1,\n    \"setHash\": \"sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173\"\n  },\n  \"lock\": 1,\n  \"tiers\": [\n    {\n      \"descriptorHash\": null,\n      \"id\": \"typesafe/jev@1.14.0\"\n    },\n    {\n      \"descriptorHash\": null,\n      \"id\": \"cloudflare/clef-flash@x.y.z\"\n    }\n  ]\n}\n"
+        "lockText": "{\n  \"contract\": {\n    \"hash\": \"sha256:8ca1945546e12cb5207731ca1004f1ba80ad18d548327428cbf3386acfbb5216\",\n    \"id\": \"fit-gate@1.0.0\"\n  },\n  \"cuts\": {\n    \"gate\": {\n      \"cloudflare/clef-flash@x.y.z\": 0.75,\n      \"fake-systemone/jev@1.14.0\": 0.6\n    }\n  },\n  \"eval\": {\n    \"at\": \"2026-10-28T21:00:00.000Z\",\n    \"n\": 5,\n    \"objectivesMet\": true,\n    \"repeat\": 1,\n    \"setHash\": \"sha256:a204b2b5edcf7275052ad5f65fa41f3d66ed2b84cc984d6bef724b8d679c1173\"\n  },\n  \"lock\": 1,\n  \"tiers\": [\n    {\n      \"descriptorHash\": null,\n      \"id\": \"fake-systemone/jev@1.14.0\"\n    },\n    {\n      \"descriptorHash\": null,\n      \"id\": \"cloudflare/clef-flash@x.y.z\"\n    }\n  ]\n}\n"
       }
     ],
     "estimate": {
       "perTier": {
-        "typesafe/jev@1.14.0": 0.04,
+        "fake-systemone/jev@1.14.0": 0.04,
         "cloudflare/clef-flash@x.y.z": 0.01
       },
       "total": 0.05,

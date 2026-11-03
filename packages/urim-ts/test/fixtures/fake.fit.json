@@ -1,6 +1,6 @@
 {
- "_notice": "EXAMPLE fake replies for tests, not vendor data. Bodies use the systemone noul shape {type,noul:P(yes)} (https://docs.typesafe.ai/api/system-one); P(yes) chosen so the derived confidence |2p-1| equals the slice-3 values.",
- "typesafe/jev@1.14.0": [
+ "_notice": "EXAMPLE fake replies for tests, not vendor data. Bodies use the systemone noul shape {type,noul:P(yes)}; P(yes) chosen so the derived confidence |2p-1| equals the slice-3 values.",
+ "fake-systemone/jev@1.14.0": [
   {
    "body": {
     "answers": {

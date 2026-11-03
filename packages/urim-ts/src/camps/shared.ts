@@ -37,8 +37,8 @@ export const nonconformant = (tier: Tier, message: string): { ok: false; error: 
 /** P(yes) -> label. A tie (0.5) reads "yes"; its confidence is 0, so no threshold can pass on it. */
 export const binaryLabel = (p: number): "yes" | "no" => (p >= 0.5 ? "yes" : "no");
 
-/** TypeSafe's documented confidence (p_max − 1/n)/(1 − 1/n) with n = 2, i.e. |2p − 1|.
- *  https://docs.typesafe.ai/confidence.md — computed client-side; the vendor does not return it. */
+/** The normalized confidence (p_max − 1/n)/(1 − 1/n) with n = 2, i.e. |2p − 1|.
+ *  Computed client-side; the systemone reply does not return it. */
 export const binaryConfidence = (p: number): number =>
   Math.round(((Math.max(p, 1 - p) - 0.5) / 0.5) * 1e12) / 1e12; // 12-dp rounding removes float noise (0.95 -> 0.9, not 0.8999...)
 
@@ -65,7 +65,7 @@ export const toAnswers = (def: Definition, tier: Tier, raws: ReadonlyMap<string,
     }
     const confidence = unit(raw.confidence);
     answers[name] = { value: raw.label, confidence, confidenceSource: confidence === null ? null : raw.confidenceSource,
-      confidenceFormula: confidence === null ? null : raw.confidenceSource === "urim_derived" ? "typesafe_normalized" : "vendor_unspecified",
+      confidenceFormula: confidence === null ? null : raw.confidenceSource === "urim_derived" ? "systemone_normalized" : "vendor_unspecified",
       native: { name: raw.name, value: raw.nativeValue, confidence: raw.nativeConfidence ?? null } };
   }
   const model = typeof body["model"] === "string" ? body["model"] : null;

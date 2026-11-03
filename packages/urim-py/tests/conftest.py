@@ -9,6 +9,8 @@ sys.path.insert(0, str(ROOT / "src"))
 SHARED = ROOT.parent / "shared-fixtures"
 TS = ROOT.parent / "urim-ts"
 
+from fake_systemone import FAKE_PROVIDER  # noqa: E402
+
 from urim import Objective, choice, define_decision, json_schema_adapter, noul, score, threshold, tier  # noqa: E402
 from urim.errors import Issue  # noqa: E402
 
@@ -18,7 +20,7 @@ def load(path: pathlib.Path):
 
 
 JEV = tier(
-    provider="typesafe", model="jev", version="1.14.0", camp="systemone", question_types=["noul", "choice", "score"]
+    provider=FAKE_PROVIDER, model="jev", version="1.14.0", camp="systemone", question_types=["noul", "choice", "score"]
 )
 CLEF = tier(
     provider="cloudflare", model="clef-flash", version="x.y.z", camp="systemone", question_types=["noul", "choice"]

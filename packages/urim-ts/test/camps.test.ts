@@ -8,7 +8,7 @@ const input = { report: "db down" };
 const reply = (body: unknown, headers: Record<string, string> = {}) => ({ status: 200, headers, body, latencyMs: 5 });
 const sevLevels = [{ value: 0, label: "low", probability: 0.1 }, { value: 1, label: "mid", probability: 0.2 }, { value: 2, label: "high", probability: 0.7 }];
 
-// ---- systemone encode (https://docs.typesafe.ai/api/system-one) ----
+// ---- systemone encode ----
 test("systemone encode: versioned wire model, instructions, noul true/false criteria, choice map", () => {
   const req = encodeRequest(triage, JEV, input);
   assert.deepEqual(req.body, {
@@ -49,7 +49,7 @@ test("fastino: sends fastino/GLiDE", () => {
 });
 
 // ---- systemone decode ----
-test("systemone noul: label from P(yes), confidence by TypeSafe formula (p_max-1/2)/(1/2)", () => {
+test("systemone noul: label from P(yes), confidence by the normalized formula (p_max-1/2)/(1/2)", () => {
   const r = decodeReply(triage, JEV, reply(triageOk()));
   assert.ok(r.ok);
   assert.equal(r.answers["page"]?.value, "yes");
@@ -87,7 +87,7 @@ test("non-object body is nonconformant", () => assert.ok(!decodeReply(triage, JE
 
 // ---- model aliases (descriptor data) ----
 test("jev-latest answered by jev-1.14.0 is not a lock violation", () => {
-  const latest = tier({ provider: "typesafe", model: "jev-latest", version: "1.14.0", camp: "systemone", questionTypes: ["noul", "choice"] });
+  const latest = tier({ provider: "fake-systemone", model: "jev-latest", version: "1.14.0", camp: "systemone", questionTypes: ["noul", "choice"] });
   assert.ok(decodeReply(triage, latest, reply(triageOk(0.9, "data", "jev-1.14.0"))).ok);
 });
 test("fastino answering 'glide' is not a lock violation", () => {

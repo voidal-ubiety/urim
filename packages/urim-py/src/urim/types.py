@@ -18,12 +18,12 @@ from .errors import Issue
 Camp = Literal["systemone", "decisions"]
 QuestionType = Literal["noul", "choice", "score"]
 ConfidenceSource = Literal["native", "urim_derived"]
-# typesafe_normalized: |2p - 1| from a yes/no probability (https://docs.typesafe.ai/confidence.md).
+# systemone_normalized: |2p - 1| from a yes/no probability, the systemone request format's normalized formula.
 # vendor_unspecified: the vendor's own number; Urim does not know or assert its formula.
-ConfidenceFormula = Literal["typesafe_normalized", "vendor_unspecified"]
+ConfidenceFormula = Literal["systemone_normalized", "vendor_unspecified"]
 #: The formula behind `confidence`, per question type (hashed into the contract). Mirrors urim-ts CONFIDENCE_RULE.
 CONFIDENCE_RULE: Final[Mapping[str, ConfidenceFormula]] = MappingProxyType(
-    {"noul": "typesafe_normalized", "choice": "vendor_unspecified", "score": "vendor_unspecified"}
+    {"noul": "systemone_normalized", "choice": "vendor_unspecified", "score": "vendor_unspecified"}
 )
 CostSource = Literal["per_call", "estimated_pre_call"]
 

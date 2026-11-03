@@ -8,6 +8,7 @@ import { estimateFitCost, parseCases, runFit } from "../src/fit.ts";
 import { main, type CliIo } from "../src/cli.ts";
 import { httpAdapter } from "../src/adapters/index.ts";
 import { DESCRIPTORS } from "../src/descriptors.ts";
+import { FAKE_SYSTEMONE } from "./fake-systemone.ts";
 import { gate } from "./fixtures/fit.decision.ts";
 import { prices, severity, triage, CLEF, JEV, OPENAI } from "./fixtures.ts";
 import { dBody, dChoice, dPredicate, dRefusal, dScore, s1Body, s1Choice, s1Noul, s1Score, triageOk } from "./wire.ts";
@@ -27,7 +28,7 @@ const cases: { name: string; def: "triage" | "severity"; tier: "JEV" | "OPENAI";
   { name: "systemone label outside", def: "triage", tier: "JEV", body: s1Body({ page: s1Noul(0.2), team: s1Choice("nope", 0.4, { data: 0.9 }) }) },
   { name: "systemone stray model", def: "triage", tier: "JEV", body: triageOk(0.9, "data", "jev-9") },
   { name: "systemone score", def: "severity", tier: "JEV", body: s1Body({ sev: s1Score(1.6, 0.55, { "0": 0.1, "1": 0.2, "2": 0.7 }, { "0": "low", "1": "mid", "2": "high" }), page: s1Noul(0.05) }) },
-  { name: "typesafe 529", def: "triage", tier: "JEV", status: 529, body: { error: { message: "overloaded" } } },
+  { name: "fake-systemone 529", def: "triage", tier: "JEV", status: 529, body: { error: { message: "overloaded" } } },
   { name: "decisions ok", def: "severity", tier: "OPENAI", headers: { "X-Request-Id": "req_1" }, body: dBody([dScore("sev", 2, 0.7, sevProbs), dPredicate("page", 0.8)]) },
   { name: "decisions null names", def: "severity", tier: "OPENAI", body: dBody([dScore(null, 2, 0.7, sevProbs), dPredicate(null, 0.3)]) },
   { name: "decisions refusal", def: "severity", tier: "OPENAI", body: dBody([dRefusal("sev"), dPredicate("page", 0.8)]) },
@@ -56,8 +57,8 @@ export const codecVectors = () => ({
 const H = `sha256:${"a".repeat(64)}`;
 const fullLock = {
   lock: 1, contract: { id: "c@1.0.0", hash: H },
-  tiers: [{ id: "typesafe/jev@1.14.0", descriptorHash: null }, { id: "cloudflare/clef-flash@x.y.z", descriptorHash: H }],
-  cuts: { gate: { "typesafe/jev@1.14.0": 0.6 }, "b_é": { "z": 0, "a": 1 } },
+  tiers: [{ id: "fake-systemone/jev@1.14.0", descriptorHash: null }, { id: "cloudflare/clef-flash@x.y.z", descriptorHash: H }],
+  cuts: { gate: { "fake-systemone/jev@1.14.0": 0.6 }, "b_é": { "z": 0, "a": 1 } },
   eval: { setHash: H, n: 5, repeat: 2, at: "2026-10-28T21:00:00.000Z", objectivesMet: true },
 };
 const lockInputs: [string, unknown][] = [
@@ -256,23 +257,23 @@ const faultFetch = (f: Fault, calls: { n: number }): typeof fetch => (async (_ur
 }) as typeof fetch;
 const errJson = (e: unknown) => e instanceof UrimError ? { type: e.type, message: e.message, tier: e.tier ?? null } : { threw: true };
 export const transportVectors = async () => {
-  const constructible = Object.values(DESCRIPTORS).map((d) => {
+  const constructible = Object.values(DESCRIPTORS).filter((d) => d !== FAKE_SYSTEMONE).map((d) => {
     try { httpAdapter(d); return { provider: d.provider, ok: true, message: null }; } catch (e) { return { provider: d.provider, ok: false, message: (e as Error).message }; }
   });
   const req = encodeRequest(triage, JEV, { report: "x" });
   const out = [];
   for (const c of transportCases) {
-    const env = c.credential === null ? {} : { TYPESAFE_API_KEY: c.credential };
+    const env = c.credential === null ? {} : { FAKE_SYSTEMONE_API_KEY: c.credential };
     let adapter: unknown = null;
     if (c.fault.kind !== "hang") {
       const calls = { n: 0 };
       try {
-        const r = await httpAdapter(DESCRIPTORS["typesafe"]!).send(req, { fetch: faultFetch(c.fault, calls), credential: c.credential ?? "", signal: new AbortController().signal });
+        const r = await httpAdapter(FAKE_SYSTEMONE).send(req, { fetch: faultFetch(c.fault, calls), credential: c.credential ?? "", signal: new AbortController().signal });
         adapter = { reply: { status: r.status, headers: r.headers, body: r.body } };
       } catch (e) { adapter = { error: errJson(e) }; }
     }
     const calls = { n: 0 };
-    const r = await createClient({ adapters: [httpAdapter(DESCRIPTORS["typesafe"]!)], env, fetch: faultFetch(c.fault, calls), now: fixedNow })
+    const r = await createClient({ adapters: [httpAdapter(FAKE_SYSTEMONE)], env, fetch: faultFetch(c.fault, calls), now: fixedNow })
       .decide(triage, { report: "x" }, c.deadlineMs === undefined ? {} : { deadlineMs: c.deadlineMs });
     const decide = r.ok ? { ok: true, error: null, attempts: r.envelope.attempts.map((a) => a.outcome) }
       : { ok: false, error: errJson(r.error), attempts: r.attempts.map((a) => a.outcome) };
