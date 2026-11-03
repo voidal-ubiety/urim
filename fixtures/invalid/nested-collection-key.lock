@@ -1,5 +1,0 @@
-# C-023: collection keys are rejected at any depth
-hoshen: 2
-urim: "0.1"
-a:
-  - { [1]: 2 }

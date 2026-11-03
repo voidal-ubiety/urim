@@ -1,71 +1,39 @@
-# Local only: this repo has no remote yet (nothing is pushed). Actions are pinned by commit
-# SHA (tag in the comment; refresh with Dependabot). The workflow token has no permissions.
+# Actions are pinned by commit SHA (tag in the comment; refresh with Dependabot). The workflow token can only read repo contents (needed to check out the private repo).
 name: ci
 on:
   push:
     branches: [main]
   pull_request:
-permissions: {}
+permissions:
+  contents: read
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  verify:
-    name: verify (node ${{ matrix.node }})
+  check:
+    # packages/check.sh is the one gate: pytest under Python 3.11 and 3.13, ruff, mypy --strict,
+    # the node test suite and tsc. No network calls to providers; adapters are tested with mocks.
+    name: check (node 24, python 3.11 + 3.13)
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        # Keep in step with packages/js/package.json "engines": every supported LTS line
-        # from the floor up. Node 18 and 20 are end of life (nodejs.org, 2025-04-30, 2026-04-30).
-        node: ["22", "24"]
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          fetch-depth: 0 # check-dco and audit-legal M3 read the history
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: ${{ matrix.node }}
+          node-version: "24" # engines: node >=23.6 (type stripping)
       - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           version: "0.13.5"
-      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable branch
-        with:
-          toolchain: stable
-          components: clippy, rustfmt, llvm-tools-preview
-      - uses: dtolnay/rust-toolchain@2c76c034f9e32a5d6e2c104dc4df23a22476db04 # nightly branch
-        with:
-          toolchain: nightly
-          components: llvm-tools-preview
-      - uses: dtolnay/rust-toolchain@cfcaf53ba4c621917ec7f78a66bff7a8848ddad4 # 1.85.0 branch (MSRV)
-        with:
-          toolchain: 1.85.0
-      - run: rustup default stable
-      - uses: taiki-e/install-action@5488ac5a951645ce95062214902ac4b6bc1a1037 # v2.87.32
-        with:
-          tool: cargo-llvm-cov@0.9.1,cargo-deny@0.20.2,cargo-audit@0.22.2
+      - name: python venvs (3.11, 3.13)
+        run: |
+          for v in 3.11 3.13; do
+            uv venv --python "$v" "$RUNNER_TEMP/py$v"
+            uv pip install --python "$RUNNER_TEMP/py$v/bin/python" -e "packages/urim-py[dev,pydantic,httpx]" ruff mypy
+          done
       - name: npm ci (no install scripts)
-        working-directory: packages/js
+        working-directory: packages/urim-ts
         run: npm ci --ignore-scripts --no-audit --no-fund
-      # check-deps reads the Rust closure with `cargo metadata --locked --offline`, which needs
-      # the locked crates in the local cache; a fresh runner has none. --locked fetches exactly
-      # Cargo.lock (checksums verified) and fails if the lockfile would change.
-      - name: cargo fetch (locked)
-        run: cargo fetch --locked --manifest-path packages/rust/Cargo.toml
-      - run: scripts/verify.sh
-
-  dco:
-    # D-32: every non-merge commit needs a Signed-off-by matching its author
-    # (CONTRIBUTING.md "Sign-off"). Fails on the pre-D-32 history until the rewrite in
-    # RELEASE-RUNBOOK §3a; that failure is expected.
-    name: dco sign-off
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-      - run: scripts/check-dco
+      - name: packages/check.sh
+        run: PYTHONS="$RUNNER_TEMP/py3.11/bin/python $RUNNER_TEMP/py3.13/bin/python" TOOLS="$RUNNER_TEMP/py3.13/bin" bash packages/check.sh

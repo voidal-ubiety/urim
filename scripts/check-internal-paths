@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Fails if any path under drafts/ or research/ is tracked. Those hold internal notes, which live in the
+# private urim-internal repo, not in this public one.   Usage: scripts/check-internal-paths [repo-dir]
+set -euo pipefail
+repo="${1:-$(cd "$(dirname "$0")/.." && pwd)}"
+tracked="$(git -C "$repo" ls-files -- drafts research)"
+if [ -n "$tracked" ]; then
+  printf 'internal paths are tracked (move them to urim-internal):\n%s\n' "$tracked" >&2
+  exit 1
+fi
+echo "no tracked paths under drafts/ or research/"

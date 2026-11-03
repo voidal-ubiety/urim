@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "NodeNext", "moduleResolution": "NodeNext",
+    "noEmit": true, "allowImportingTsExtensions": true, "erasableSyntaxOnly": true,
+    "strict": true, "skipLibCheck": true, "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true, "noImplicitReturns": true, "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true, "noUnusedLocals": true, "noUnusedParameters": true,
+    "verbatimModuleSyntax": true, "types": ["node"], "customConditions": ["source"]
+  },
+  "include": ["src", "test", "bin"]
+}

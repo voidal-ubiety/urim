@@ -1,5 +1,0 @@
-hoshen: 2
-urim: x
-a: !t c
-b: &x d
-c: *x

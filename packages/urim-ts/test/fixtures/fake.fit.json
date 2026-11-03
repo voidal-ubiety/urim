@@ -1,0 +1,107 @@
+{
+ "_notice": "EXAMPLE fake replies for tests, not vendor data. Bodies use the systemone noul shape {type,noul:P(yes)} (https://docs.typesafe.ai/api/system-one); P(yes) chosen so the derived confidence |2p-1| equals the slice-3 values.",
+ "typesafe/jev@1.14.0": [
+  {
+   "body": {
+    "answers": {
+     "page": {
+      "type": "noul",
+      "noul": 0.95
+     }
+    }
+   }
+  },
+  {
+   "body": {
+    "answers": {
+     "page": {
+      "type": "noul",
+      "noul": 0.9
+     }
+    }
+   }
+  },
+  {
+   "body": {
+    "answers": {
+     "page": {
+      "type": "noul",
+      "noul": 0.85
+     }
+    }
+   }
+  },
+  {
+   "body": {
+    "answers": {
+     "page": {
+      "type": "noul",
+      "noul": 0.8
+     }
+    }
+   }
+  },
+  {
+   "body": {
+    "answers": {
+     "page": {
+      "type": "noul",
+      "noul": 0.75
+     }
+    }
+   }
+  }
+ ],
+ "cloudflare/clef-flash@x.y.z": [
+  {
+   "body": {
+    "answers": {
+     "page": {
+      "type": "noul",
+      "noul": 0.975
+     }
+    }
+   }
+  },
+  {
+   "body": {
+    "answers": {
+     "page": {
+      "type": "noul",
+      "noul": 0.95
+     }
+    }
+   }
+  },
+  {
+   "body": {
+    "answers": {
+     "page": {
+      "type": "noul",
+      "noul": 0.075
+     }
+    }
+   }
+  },
+  {
+   "body": {
+    "answers": {
+     "page": {
+      "type": "noul",
+      "noul": 0.9
+     }
+    }
+   }
+  },
+  {
+   "body": {
+    "answers": {
+     "page": {
+      "type": "noul",
+      "noul": 0.125
+     }
+    }
+   }
+  }
+ ]
+}

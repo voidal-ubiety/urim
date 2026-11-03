@@ -1,0 +1,8 @@
+[
+  {"name": "scalars", "value": [null, true, false, 0, -0.0, 1, 1.0, -1.5, 0.1, 0.30000000000000004, 123456789012, 9007199254740991]},
+  {"name": "exponents", "value": [1e21, 1e20, 1.5e-7, 1e-6, 0.000001234, 2.5e300, -1e-7, 5e-324]},
+  {"name": "strings", "value": ["", "plain", "quote\" back\\slash", "nl\n tab\t cr\r bs\b ff\f", "\u0001\u001f\u007f", "é ü ß 日本 🎉", "\u2028\u2029"]},
+  {"name": "key order (UTF-16 units)", "value": {"b": 1, "a": 2, "B": 3, "é": 4, "\uffff": 5, "🎉": 6, "aa": 7, "": 8}},
+  {"name": "nested", "value": {"z": [{"y": {"x": [1, {"w": null}]}}], "a": {"c": 1.0, "b": [true, "t"]}}},
+  {"name": "contract-like", "value": {"urim_contract": 1, "failover": {"on": ["timeout", "budget"]}, "thresholds": {"t": {"on": "page", "default": 0.8, "objective": {"min_precision": 0.95}}}}}
+]

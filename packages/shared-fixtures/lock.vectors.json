@@ -1,0 +1,520 @@
+[
+  {
+    "name": "full",
+    "input": {
+      "lock": 1,
+      "contract": {
+        "id": "c@1.0.0",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "tiers": [
+        {
+          "id": "typesafe/jev@1.14.0",
+          "descriptorHash": null
+        },
+        {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "descriptorHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "cuts": {
+        "gate": {
+          "typesafe/jev@1.14.0": 0.6
+        },
+        "b_é": {
+          "z": 0,
+          "a": 1
+        }
+      },
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": 5,
+        "repeat": 2,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      }
+    },
+    "ok": true,
+    "lock": {
+      "lock": 1,
+      "contract": {
+        "id": "c@1.0.0",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "tiers": [
+        {
+          "id": "typesafe/jev@1.14.0",
+          "descriptorHash": null
+        },
+        {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "descriptorHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "cuts": {
+        "gate": {
+          "typesafe/jev@1.14.0": 0.6
+        },
+        "b_é": {
+          "z": 0,
+          "a": 1
+        }
+      },
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": 5,
+        "repeat": 2,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      }
+    },
+    "text": "{\n  \"contract\": {\n    \"hash\": \"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"id\": \"c@1.0.0\"\n  },\n  \"cuts\": {\n    \"b_é\": {\n      \"a\": 1,\n      \"z\": 0\n    },\n    \"gate\": {\n      \"typesafe/jev@1.14.0\": 0.6\n    }\n  },\n  \"eval\": {\n    \"at\": \"2026-10-28T21:00:00.000Z\",\n    \"n\": 5,\n    \"objectivesMet\": true,\n    \"repeat\": 2,\n    \"setHash\": \"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n  },\n  \"lock\": 1,\n  \"tiers\": [\n    {\n      \"descriptorHash\": null,\n      \"id\": \"typesafe/jev@1.14.0\"\n    },\n    {\n      \"descriptorHash\": \"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n      \"id\": \"cloudflare/clef-flash@x.y.z\"\n    }\n  ]\n}\n"
+  },
+  {
+    "name": "minimal",
+    "input": {
+      "lock": 1,
+      "contract": {
+        "id": "c",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "cuts": {}
+    },
+    "ok": true,
+    "lock": {
+      "lock": 1,
+      "contract": {
+        "id": "c",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "cuts": {}
+    },
+    "text": "{\n  \"contract\": {\n    \"hash\": \"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"id\": \"c\"\n  },\n  \"cuts\": {},\n  \"lock\": 1\n}\n"
+  },
+  {
+    "name": "unknown keys ignored",
+    "input": {
+      "lock": 1,
+      "contract": {
+        "id": "c@1.0.0",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "extra": true
+      },
+      "tiers": [
+        {
+          "id": "typesafe/jev@1.14.0",
+          "descriptorHash": null
+        },
+        {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "descriptorHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "cuts": {
+        "gate": {
+          "typesafe/jev@1.14.0": 0.6
+        },
+        "b_é": {
+          "z": 0,
+          "a": 1
+        }
+      },
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": 5,
+        "repeat": 2,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      },
+      "futureField": 1
+    },
+    "ok": true,
+    "lock": {
+      "lock": 1,
+      "contract": {
+        "id": "c@1.0.0",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "tiers": [
+        {
+          "id": "typesafe/jev@1.14.0",
+          "descriptorHash": null
+        },
+        {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "descriptorHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "cuts": {
+        "gate": {
+          "typesafe/jev@1.14.0": 0.6
+        },
+        "b_é": {
+          "z": 0,
+          "a": 1
+        }
+      },
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": 5,
+        "repeat": 2,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      }
+    },
+    "text": "{\n  \"contract\": {\n    \"hash\": \"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"id\": \"c@1.0.0\"\n  },\n  \"cuts\": {\n    \"b_é\": {\n      \"a\": 1,\n      \"z\": 0\n    },\n    \"gate\": {\n      \"typesafe/jev@1.14.0\": 0.6\n    }\n  },\n  \"eval\": {\n    \"at\": \"2026-10-28T21:00:00.000Z\",\n    \"n\": 5,\n    \"objectivesMet\": true,\n    \"repeat\": 2,\n    \"setHash\": \"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"\n  },\n  \"lock\": 1,\n  \"tiers\": [\n    {\n      \"descriptorHash\": null,\n      \"id\": \"typesafe/jev@1.14.0\"\n    },\n    {\n      \"descriptorHash\": \"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n      \"id\": \"cloudflare/clef-flash@x.y.z\"\n    }\n  ]\n}\n"
+  },
+  {
+    "name": "wrong format version",
+    "input": {
+      "lock": 2,
+      "contract": {
+        "id": "c@1.0.0",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "tiers": [
+        {
+          "id": "typesafe/jev@1.14.0",
+          "descriptorHash": null
+        },
+        {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "descriptorHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "cuts": {
+        "gate": {
+          "typesafe/jev@1.14.0": 0.6
+        },
+        "b_é": {
+          "z": 0,
+          "a": 1
+        }
+      },
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": 5,
+        "repeat": 2,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      }
+    },
+    "ok": false,
+    "issuePaths": [
+      "lock"
+    ]
+  },
+  {
+    "name": "hash without sha256 prefix",
+    "input": {
+      "lock": 1,
+      "contract": {
+        "id": "c",
+        "hash": "abc"
+      },
+      "tiers": [
+        {
+          "id": "typesafe/jev@1.14.0",
+          "descriptorHash": null
+        },
+        {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "descriptorHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "cuts": {
+        "gate": {
+          "typesafe/jev@1.14.0": 0.6
+        },
+        "b_é": {
+          "z": 0,
+          "a": 1
+        }
+      },
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": 5,
+        "repeat": 2,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      }
+    },
+    "ok": false,
+    "issuePaths": [
+      "contract"
+    ]
+  },
+  {
+    "name": "cut outside 0..1",
+    "input": {
+      "lock": 1,
+      "contract": {
+        "id": "c@1.0.0",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "tiers": [
+        {
+          "id": "typesafe/jev@1.14.0",
+          "descriptorHash": null
+        },
+        {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "descriptorHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "cuts": {
+        "gate": {
+          "t": 1.5
+        }
+      },
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": 5,
+        "repeat": 2,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      }
+    },
+    "ok": false,
+    "issuePaths": [
+      "cuts.gate.t"
+    ]
+  },
+  {
+    "name": "cut not a number",
+    "input": {
+      "lock": 1,
+      "contract": {
+        "id": "c@1.0.0",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "tiers": [
+        {
+          "id": "typesafe/jev@1.14.0",
+          "descriptorHash": null
+        },
+        {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "descriptorHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "cuts": {
+        "gate": {
+          "t": "0.5"
+        }
+      },
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": 5,
+        "repeat": 2,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      }
+    },
+    "ok": false,
+    "issuePaths": [
+      "cuts.gate.t"
+    ]
+  },
+  {
+    "name": "cuts not an object",
+    "input": {
+      "lock": 1,
+      "contract": {
+        "id": "c@1.0.0",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "tiers": [
+        {
+          "id": "typesafe/jev@1.14.0",
+          "descriptorHash": null
+        },
+        {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "descriptorHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "cuts": [],
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": 5,
+        "repeat": 2,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      }
+    },
+    "ok": false,
+    "issuePaths": [
+      "cuts"
+    ]
+  },
+  {
+    "name": "tiers not an array",
+    "input": {
+      "lock": 1,
+      "contract": {
+        "id": "c@1.0.0",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "tiers": {},
+      "cuts": {
+        "gate": {
+          "typesafe/jev@1.14.0": 0.6
+        },
+        "b_é": {
+          "z": 0,
+          "a": 1
+        }
+      },
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": 5,
+        "repeat": 2,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      }
+    },
+    "ok": false,
+    "issuePaths": [
+      "tiers"
+    ]
+  },
+  {
+    "name": "tier descriptorHash bad",
+    "input": {
+      "lock": 1,
+      "contract": {
+        "id": "c@1.0.0",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "tiers": [
+        {
+          "id": "x",
+          "descriptorHash": "nope"
+        }
+      ],
+      "cuts": {
+        "gate": {
+          "typesafe/jev@1.14.0": 0.6
+        },
+        "b_é": {
+          "z": 0,
+          "a": 1
+        }
+      },
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": 5,
+        "repeat": 2,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      }
+    },
+    "ok": false,
+    "issuePaths": [
+      "tiers"
+    ]
+  },
+  {
+    "name": "eval.n negative",
+    "input": {
+      "lock": 1,
+      "contract": {
+        "id": "c@1.0.0",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "tiers": [
+        {
+          "id": "typesafe/jev@1.14.0",
+          "descriptorHash": null
+        },
+        {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "descriptorHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "cuts": {
+        "gate": {
+          "typesafe/jev@1.14.0": 0.6
+        },
+        "b_é": {
+          "z": 0,
+          "a": 1
+        }
+      },
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": -1,
+        "repeat": 2,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      }
+    },
+    "ok": false,
+    "issuePaths": [
+      "eval"
+    ]
+  },
+  {
+    "name": "eval.repeat zero",
+    "input": {
+      "lock": 1,
+      "contract": {
+        "id": "c@1.0.0",
+        "hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "tiers": [
+        {
+          "id": "typesafe/jev@1.14.0",
+          "descriptorHash": null
+        },
+        {
+          "id": "cloudflare/clef-flash@x.y.z",
+          "descriptorHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "cuts": {
+        "gate": {
+          "typesafe/jev@1.14.0": 0.6
+        },
+        "b_é": {
+          "z": 0,
+          "a": 1
+        }
+      },
+      "eval": {
+        "setHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "n": 5,
+        "repeat": 0,
+        "at": "2026-10-28T21:00:00.000Z",
+        "objectivesMet": true
+      }
+    },
+    "ok": false,
+    "issuePaths": [
+      "eval"
+    ]
+  },
+  {
+    "name": "many problems",
+    "input": {
+      "lock": 3,
+      "contract": null,
+      "cuts": 5
+    },
+    "ok": false,
+    "issuePaths": [
+      "lock",
+      "contract",
+      "cuts"
+    ]
+  },
+  {
+    "name": "not an object",
+    "input": "lock",
+    "ok": false,
+    "issuePaths": [
+      "$"
+    ]
+  }
+]

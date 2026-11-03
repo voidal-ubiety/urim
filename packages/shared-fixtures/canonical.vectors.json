@@ -1,0 +1,32 @@
+[
+  {
+    "name": "scalars",
+    "json": "[null,true,false,0,0,1,1,-1.5,0.1,0.30000000000000004,123456789012,9007199254740991]",
+    "hash": "sha256:597912abd688e5b6101a0a3c629807fb402e50a3bfebff3f1c58f3e5f755daad"
+  },
+  {
+    "name": "exponents",
+    "json": "[1e+21,100000000000000000000,1.5e-7,0.000001,0.000001234,2.5e+300,-1e-7,5e-324]",
+    "hash": "sha256:63563a03bffe1d58fc6f06d49d9115d973d69fd9d04ea59e257524cac3547a48"
+  },
+  {
+    "name": "strings",
+    "json": "[\"\",\"plain\",\"quote\\\" back\\\\slash\",\"nl\\n tab\\t cr\\r bs\\b ff\\f\",\"\\u0001\\u001f\",\"é ü ß 日本 🎉\",\"  \"]",
+    "hash": "sha256:a7e038b3fbcb2900a21fb73661147b2b2a3b283754e64a712954bebf23fe4bd9"
+  },
+  {
+    "name": "key order (UTF-16 units)",
+    "json": "{\"\":8,\"B\":3,\"a\":2,\"aa\":7,\"b\":1,\"é\":4,\"🎉\":6,\"￿\":5}",
+    "hash": "sha256:1dee70eec621ff48f5a8eefb048bc30b1a74d726cea9522c3dd66384099db17a"
+  },
+  {
+    "name": "nested",
+    "json": "{\"a\":{\"b\":[true,\"t\"],\"c\":1},\"z\":[{\"y\":{\"x\":[1,{\"w\":null}]}}]}",
+    "hash": "sha256:e431e86f9a3c7e159ef144623b30e4aabad649d57495bef6978433e7443d9c40"
+  },
+  {
+    "name": "contract-like",
+    "json": "{\"failover\":{\"on\":[\"timeout\",\"budget\"]},\"thresholds\":{\"t\":{\"default\":0.8,\"objective\":{\"min_precision\":0.95},\"on\":\"page\"}},\"urim_contract\":1}",
+    "hash": "sha256:8586d26790b818d6d9eb9aeb548ebdc1b1f2c01b1cb5d4f5aee73b999a0ebbed"
+  }
+]

@@ -1,0 +1,82 @@
+{
+  "envelope": "urim/1",
+  "contract": {
+    "id": "incident-triage@2.0.0",
+    "hash": "sha256:c5987490bbef51a716e448cfb4e169f354f59bd50c6fdf012cc128e39d360244"
+  },
+  "tier": {
+    "id": "typesafe/jev@1.14.0",
+    "provider": "typesafe",
+    "model": "jev",
+    "version": "1.14.0",
+    "camp": "systemone",
+    "questionTypes": [
+      "noul",
+      "choice",
+      "score"
+    ],
+    "role": "primary"
+  },
+  "answers": {
+    "page": {
+      "value": "yes",
+      "confidence": 0.9,
+      "confidenceSource": "urim_derived",
+      "confidenceFormula": "typesafe_normalized",
+      "native": {
+        "name": "page",
+        "value": 0.95,
+        "confidence": null
+      }
+    },
+    "team": {
+      "value": "data",
+      "confidence": 0.9,
+      "confidenceSource": "native",
+      "confidenceFormula": "vendor_unspecified",
+      "native": {
+        "name": "team",
+        "value": "data",
+        "confidence": 0.9
+      }
+    }
+  },
+  "thresholds": {
+    "page_oncall": {
+      "value": 0.8,
+      "source": "default",
+      "passes": true,
+      "confidence": 0.9
+    },
+    "auto_route": {
+      "value": null,
+      "source": "none",
+      "passes": true,
+      "confidence": 0.9
+    }
+  },
+  "fallback": null,
+  "attempts": [
+    {
+      "tier": "typesafe/jev@1.14.0",
+      "outcome": "ok",
+      "latencyMs": 0
+    }
+  ],
+  "usage": {
+    "inputTokens": 1200,
+    "outputTokens": 3,
+    "cost": {
+      "amount": 0.004,
+      "currency": "USD",
+      "source": "estimated",
+      "priceTable": {
+        "id": "fixture-prices",
+        "asOf": "2026-10-28",
+        "url": "https://example.invalid/PLACEHOLDER"
+      }
+    }
+  },
+  "requestIds": {},
+  "at": "2026-10-28T21:00:00.000Z"
+}
