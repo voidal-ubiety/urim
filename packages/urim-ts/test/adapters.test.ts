@@ -2,7 +2,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createClient } from "../src/index.ts";
-import { httpAdapter, typesafeJev, openaiDecisions } from "../src/adapters/index.ts";
+import { httpAdapter, openaiDecisions } from "../src/adapters/index.ts";
+import { shippedAdapterNames, shippedAdapters } from "./shipped-adapters.ts";
 import { DESCRIPTORS } from "../src/descriptors.ts";
 import { FAKE_SYSTEMONE, FAKE_ENV } from "./fake-systemone.ts";
 import { triage, severity, JEV } from "./fixtures.ts";
@@ -74,10 +75,15 @@ test("a non-JSON reply body becomes nonconformant, not a crash", async () => {
 });
 test("adapters are not exported from the main entry (opt-in import only)", async () => {
   const main = await import("../src/index.ts") as Record<string, unknown>;
-  assert.equal(main["typesafeJev"], undefined); assert.equal(main["openaiDecisions"], undefined);
+  assert.ok(shippedAdapterNames.length >= 2);
+  for (const n of shippedAdapterNames) assert.equal(main[n], undefined, n);
 });
 test("adapter only serves its own provider", () => assert.equal(fakeAdapter().provider, JEV.provider));
-test("shipped systemone adapter is the HTTP adapter of its descriptor", () => {
-  const d = DESCRIPTORS["typesafe"]!; const a = typesafeJev();
-  assert.deepEqual([a.provider, a.credentialEnv], [d.provider, d.auth[0]!.env]);
+test("each shipped adapter is the HTTP adapter of its descriptor (one systemone, one decisions)", () => {
+  const camps = shippedAdapters().map((a) => {
+    const d = DESCRIPTORS[a.provider]!;
+    assert.deepEqual([a.provider, a.credentialEnv], [d.provider, d.auth[0]!.env]);
+    return d.camp;
+  });
+  assert.deepEqual([...camps].sort(), ["decisions", "systemone"]);
 });

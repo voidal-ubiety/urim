@@ -1,7 +1,9 @@
 # Local only, and NOT enabled for a first publish: each registry's first publish is a manual
 # one by David. This workflow is for later releases via trusted publishing
 # (OIDC, no long-lived tokens) once each package exists and its trusted publisher is set.
-# A new npm trusted-publisher config expires unless its first publish succeeds within 2 days.
+# A new npm trusted-publisher config expires unless its first publish succeeds within 2 days, and configs
+# created after 2026-09-03 allow only `npm stage publish` unless "npm publish" is ticked as an allowed action
+# (https://docs.npmjs.com/trusted-publishers). JSR is not in 0.0.1.
 name: publish
 on:
   push:
@@ -28,3 +30,39 @@ jobs:
           npm ci --ignore-scripts --no-audit --no-fund
           npm run build
           npm publish
+  # PyPI (drafted, OFF): runs only when David sets the repo variable PUBLISH_PYPI=true after adding a
+  # (pending) trusted publisher on pypi.org for owner voidal-ubiety, repo urim, workflow publish.yml,
+  # environment release. https://docs.pypi.org/trusted-publishers/creating-a-project-through-oidc/
+  pypi-build:
+    if: vars.PUBLISH_PYPI == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - working-directory: packages/urim-py
+        run: |
+          python -m pip install build==1.* twine==6.*
+          python -m build
+          python -m twine check --strict dist/*
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: python-dist
+          path: packages/urim-py/dist/
+  pypi:
+    needs: pypi-build
+    runs-on: ubuntu-24.04
+    environment: release
+    permissions:
+      id-token: write # PyPI trusted publishing (no API token)
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: python-dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3

@@ -9,6 +9,7 @@ __pycache__/
 htmlcov/
 coverage.xml
 build/
+dist/
 
 # Internal notes live in the private repo.
 drafts/

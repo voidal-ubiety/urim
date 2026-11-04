@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Fails if the first provider's vendor name appears (any case) in a tracked file outside provider source.
+# Only the provider descriptors and the shipped adapter entries may name it; tests and fixtures use the
+# neutral fake-systemone id. In the private repo only the publicly synced paths (.public-paths) are checked.
+#   Usage: scripts/check-provider-names [repo-dir]      (bash 3.2 safe)
+set -euo pipefail
+repo="${1:-$(cd "$(dirname "$0")/.." && pwd)}"
+pattern='type[s]afe'   # bracketed so this script does not match itself
+allow='
+packages/urim-ts/src/descriptors.ts
+packages/urim-ts/src/adapters/index.ts
+packages/urim-py/src/urim/descriptors.py
+packages/urim-py/src/urim/adapters.py
+'
+# Publicly synced prefixes, one per line (empty = every tracked file). No arrays: bash 3.2 + set -u.
+scope=""
+if [ -f "$repo/.public-paths" ]; then
+  scope="$(grep -v -e '^#' -e '^$' "$repo/.public-paths" || true)"
+fi
+in_scope() {
+  [ -n "$scope" ] || return 0
+  local p
+  while IFS= read -r p; do
+    case "$1" in "$p"|"$p"*) [ "${p%/}" != "$p" ] || [ "$1" = "$p" ] && return 0 ;; esac
+  done <<< "$scope"
+  return 1
+}
+bad=""
+while IFS= read -r f; do
+  [ -n "$f" ] || continue
+  in_scope "$f" || continue
+  case "$allow" in *"
+$f
+"*) continue ;; esac
+  [ -f "$repo/$f" ] || continue
+  if grep -Iqi -- "$pattern" "$repo/$f"; then bad="$bad$f
+"; fi
+done <<< "$(git -C "$repo" ls-files)"
+if [ -n "$bad" ]; then
+  printf 'vendor name outside provider source (use fake-systemone in tests):\n%s' "$bad" >&2
+  exit 1
+fi
+echo "vendor name only in provider source"

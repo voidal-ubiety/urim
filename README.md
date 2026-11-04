@@ -71,7 +71,8 @@ The Urim and Thummim appear in Exodus 28:30, carried in the breastpiece (the *ho
 
 ## Contributing and security
 
-- [CONTRIBUTING.md](CONTRIBUTING.md): setup and how a change is made.
+- [CONTRIBUTING.md](CONTRIBUTING.md): setup and how a change is made. From a clone, `scripts/dev setup` then
+  `scripts/dev check` installs everything (including the `httpx` extra) and runs every test offline.
 - [SECURITY.md](SECURITY.md): how to report a vulnerability.
 
 ## License

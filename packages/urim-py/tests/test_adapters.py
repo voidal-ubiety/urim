@@ -10,10 +10,27 @@ from fake_systemone import FAKE_ENV, FAKE_SYSTEMONE
 httpx = pytest.importorskip("httpx")
 
 from urim import DESCRIPTORS, UrimError  # noqa: E402
-from urim.adapters import http_adapter, openai_decisions, typesafe_jev  # noqa: E402
+from urim.adapters import http_adapter, openai_decisions  # noqa: E402
 from urim.client import create_client  # noqa: E402
 
 FAKE_KEY = "test-key-not-a-real-secret"
+
+
+def shipped_factories():
+    """The provider factories urim.adapters ships, found by enumeration so tests never spell a vendor's name."""
+    import inspect
+
+    import urim.adapters as mod
+
+    return {
+        n: f
+        for n, f in vars(mod).items()
+        if inspect.isfunction(f)
+        and f.__module__ == mod.__name__
+        and not n.startswith("_")
+        and n != "http_adapter"
+        and not inspect.signature(f).parameters
+    }
 
 
 def fake_adapter():
@@ -135,8 +152,14 @@ def test_placeholder_url_descriptor_is_rejected():
 def test_adapters_are_opt_in_and_serve_their_provider():
     import urim
 
-    assert not hasattr(urim, "typesafe_jev") and not hasattr(urim, "openai_decisions")
+    shipped = shipped_factories()
+    assert len(shipped) >= 2 and not any(hasattr(urim, n) for n in shipped)
     assert fake_adapter().provider == JEV.provider and fake_adapter().credential_env == FAKE_ENV
-    real, d = typesafe_jev(), DESCRIPTORS["typesafe"]  # shipped adapter = HTTP adapter of its descriptor
-    assert (real.provider, real.credential_env) == (d.provider, d.auth[0].env)
+    camps = []
+    for f in shipped.values():  # each shipped adapter = HTTP adapter of its descriptor
+        real = f()
+        d = DESCRIPTORS[real.provider]
+        assert (real.provider, real.credential_env) == (d.provider, d.auth[0].env)
+        camps.append(d.camp)
+    assert sorted(camps) == ["decisions", "systemone"]
     assert openai_decisions().credential_env == "OPENAI_API_KEY"

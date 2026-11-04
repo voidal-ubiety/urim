@@ -46,14 +46,27 @@ def err_json(e):
     return {"type": e.type, "message": e.message, "tier": e.tier} if isinstance(e, UrimError) else {"threw": True}
 
 
-@pytest.mark.parametrize("row", V["constructible"], ids=[r["provider"] for r in V["constructible"]])
-def test_constructible(row):
-    if row["ok"]:
-        assert http_adapter(DESCRIPTORS[row["provider"]]).provider == row["provider"]
-    else:
-        with pytest.raises(UrimError, match="^" + row["message"] + "$") as e:
-            http_adapter(DESCRIPTORS[row["provider"]])
-        assert e.value.type == "invalid_definition"
+def test_constructible_count():
+    ok = 0
+    for d in DESCRIPTORS.values():
+        if d is FAKE_SYSTEMONE:
+            continue
+        try:
+            assert http_adapter(d).provider == d.provider
+            ok += 1
+        except UrimError:
+            pass
+    assert ok == V["constructible"]["okCount"]
+
+
+FAILING = V["constructible"]["failing"]
+
+
+@pytest.mark.parametrize("row", FAILING, ids=[r["provider"] for r in FAILING])
+def test_not_constructible(row):
+    with pytest.raises(UrimError, match="^" + row["message"] + "$") as e:
+        http_adapter(DESCRIPTORS[row["provider"]])
+    assert e.value.type == "invalid_definition"
 
 
 @pytest.mark.parametrize("case", V["cases"], ids=[c["name"] for c in V["cases"]])

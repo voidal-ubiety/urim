@@ -257,9 +257,12 @@ const faultFetch = (f: Fault, calls: { n: number }): typeof fetch => (async (_ur
 }) as typeof fetch;
 const errJson = (e: unknown) => e instanceof UrimError ? { type: e.type, message: e.message, tier: e.tier ?? null } : { threw: true };
 export const transportVectors = async () => {
-  const constructible = Object.values(DESCRIPTORS).filter((d) => d !== FAKE_SYSTEMONE).map((d) => {
-    try { httpAdapter(d); return { provider: d.provider, ok: true, message: null }; } catch (e) { return { provider: d.provider, ok: false, message: (e as Error).message }; }
+  // Constructibility of the real descriptors: a count of the ones that build, plus the ones that don't by id
+  // and message. Builders are not listed by name, so vendor ids stay in provider source (descriptors) only.
+  const rows = Object.values(DESCRIPTORS).filter((d) => d !== FAKE_SYSTEMONE).map((d) => {
+    try { httpAdapter(d); return null; } catch (e) { return { provider: d.provider, message: (e as Error).message }; }
   });
+  const constructible = { okCount: rows.filter((r) => r === null).length, failing: rows.filter((r) => r !== null) };
   const req = encodeRequest(triage, JEV, { report: "x" });
   const out = [];
   for (const c of transportCases) {
