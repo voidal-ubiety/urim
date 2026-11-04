@@ -1,11 +1,17 @@
 # Changelog
 
-Release notes for the `urim` packages: `urim` on npm (TypeScript, `packages/urim-ts`) and `urim` on PyPI (Python, `packages/urim-py`). Both share one version.
+Release notes for the `urim` packages: `@voidal-ubiety/urim` on npm (TypeScript, `packages/urim-ts`) and `urim` on PyPI (Python, `packages/urim-py`). Both share one version.
 
 ## Unreleased
 
 ### Added
 - `scripts/dev`: one developer entry point with `setup`, `test [py|ts]`, `check`, `build`, `pack-check`, `clean [--all]` and `help`. `setup` installs the `httpx` extra so no tests skip.
+
+## 0.0.1-alpha.1 (2026-11-04)
+
+- The npm package is `@voidal-ubiety/urim` (import `@voidal-ubiety/urim`, `@voidal-ubiety/urim/adapters`, `/zod`, `/testing`); the CLI command is still `urim`. PyPI stays `urim`.
+
+Alpha of 0.0.1, published to claim the package names: `0.0.1-alpha.1` on npm (dist-tag `alpha`) and `0.0.1a1` on PyPI. The API may change, and it has not been tested against live providers yet. Contents are the 0.0.1 notes below.
 
 ## 0.0.1 (Unreleased)
 

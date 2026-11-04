@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "urim"
-version = "0.0.1"
+version = "0.0.1a1"
 description = "Client library for decision models: define a decision once in code, call it through provider tiers, get typed answers."
 readme = "README.md"
 license = "Apache-2.0"
@@ -14,7 +14,7 @@ authors = [{ name = "David Thomason" }]
 requires-python = ">=3.11"
 dependencies = []
 classifiers = [
-  "Development Status :: 2 - Pre-Alpha",
+  "Development Status :: 3 - Alpha",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.13",

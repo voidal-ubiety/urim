@@ -1,4 +1,4 @@
-// A: real HTTP adapters (opt-in: `import { typesafeJev, openaiDecisions } from "urim/adapters"`).
+// A: real HTTP adapters (opt-in: `import { typesafeJev, openaiDecisions } from "@voidal-ubiety/urim/adapters"`).
 // Nothing here runs unless you import it AND pass it to createClient. The credential arrives from the client,
 // which reads the env var named by `credentialEnv` at send time. It is put in one request header and never
 // logged, stored, or placed in any error message. fetch is injected (ClientDeps.fetch) so tests use a mock.

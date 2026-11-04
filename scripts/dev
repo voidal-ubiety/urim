@@ -85,7 +85,7 @@ cmd_pack_check() {
   if [ "${DEV_DRY_RUN:-}" != 1 ]; then (cd "$tmp/ts" && npm install --silent --no-audit --no-fund "$tmp"/urim-*.tgz); fi
   step "offline example (ts)"
   in_dir "$tmp/ts" node --input-type=module -e '
-    import { canonicalize, sha256, CONFIDENCE_RULE } from "urim";
+    import { canonicalize, sha256, CONFIDENCE_RULE } from "@voidal-ubiety/urim";
     const h = sha256(canonicalize({ b: 1, a: [2, 3] }));
     if (!h.startsWith("sha256:") || !CONFIDENCE_RULE) process.exit(1);
     console.log("ts ok", h);'

@@ -17,7 +17,7 @@ def test_console_script_is_urim() -> None:
 def test_release_metadata() -> None:
     meta = tomllib.loads(PYPROJECT.read_text())
     project = meta["project"]
-    assert project["version"] == "0.0.1"
+    assert project["version"] == "0.0.1a1"
     assert project["license"] == "Apache-2.0"
     assert project["license-files"] == ["LICENSE", "NOTICE"]
     assert project["urls"]["Repository"] == "https://github.com/voidal-ubiety/urim"
