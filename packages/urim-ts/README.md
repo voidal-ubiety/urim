@@ -3,10 +3,10 @@
 A typed client for system-1 decision APIs: define a decision once, call it across providers,
 and get every answer back with its confidence, the tier that served it and a stable envelope.
 
-**Status:** pre-alpha (0.0.1). The API may change. Node.js 23.6 or later.
+**Status:** alpha (0.0.1-alpha.1). The API may change, and it has not been tested against live providers yet. Node.js 23.6 or later.
 
 ```sh
-npm install urim
+npm install @voidal-ubiety/urim@alpha   # alpha: pass the tag
 ```
 
 ## Quickstart (offline)
@@ -14,7 +14,7 @@ npm install urim
 This runs without a network or API key: `fakeProvider` from `urim` scripts the provider's reply.
 
 ```js
-import { createClient, defineDecision, tier, noul, fakeProvider } from "urim";
+import { createClient, defineDecision, tier, noul, fakeProvider } from "@voidal-ubiety/urim";
 
 // OpenAI publishes no model version, so "0.0.0" is a placeholder.
 const openai = tier({ provider: "openai", model: "gpt-6-luna", version: "0.0.0", camp: "decisions", questionTypes: ["noul"] });
@@ -22,14 +22,14 @@ const openai = tier({ provider: "openai", model: "gpt-6-luna", version: "0.0.0",
 const triage = defineDecision({
   contract: "incident-triage@1.0.0",
   tiers: [openai],
-  // Any { parse, toJSONSchema } works; `zodSchema` from "urim/zod" adapts a Zod schema.
+  // Any { parse, toJSONSchema } works; `zodSchema` from "@voidal-ubiety/urim/zod" adapts a Zod schema.
   input: { parse: (value) => ({ ok: true, value }), toJSONSchema: () => ({ type: "object" }) },
   questions: { page: noul("Should someone be paged right now?", { yes: "Active customer impact", no: "No impact" }) },
   failover: { on: ["timeout", "provider_unavailable"] },
   thresholds: {},
 });
 
-// Offline: a scripted provider stands in for the network. For real calls use `openaiDecisions()` from "urim/adapters".
+// Offline: a scripted provider stands in for the network. For real calls use `openaiDecisions()` from "@voidal-ubiety/urim/adapters".
 const provider = fakeProvider({
   [openai.id]: [{ body: { model: "gpt-6-luna", answers: [{ type: "predicate", name: "page", probability: 0.95 }] } }],
 });
@@ -59,8 +59,8 @@ The wire format is chosen by request **body**, not URL path (`src/descriptors.ts
 Two adapters ship, one per request format (`systemone` and `decisions`), and only via the subpath import:
 
 ```ts
-import { createClient } from "urim";
-import { openaiDecisions } from "urim/adapters";
+import { createClient } from "@voidal-ubiety/urim";
+import { openaiDecisions } from "@voidal-ubiety/urim/adapters";
 const client = createClient({ adapters: [openaiDecisions()], env: process.env });
 ```
 

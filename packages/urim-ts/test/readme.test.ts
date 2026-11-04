@@ -10,11 +10,11 @@ const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
 test("README has a JavaScript quickstart that runs offline and prints the answer", () => {
   const block = /```js\n([\s\S]*?)```/.exec(readme)?.[1];
   assert.ok(block !== undefined, "README needs a ```js quickstart block");
-  // Inside the package directory so `import "urim"` resolves by self-reference.
+  // Inside the package directory so `import "@voidal-ubiety/urim"` resolves by self-reference.
   const file = fileURLToPath(new URL("../.readme-quickstart.tmp.mjs", import.meta.url));
   writeFileSync(file, block);
   try {
-    const out = execFileSync(process.execPath, ["--conditions=source", file], { encoding: "utf8", env: {} });
+    const out = execFileSync(process.execPath, ["--conditions=urim-dev-source", file], { encoding: "utf8", env: {} });
     assert.match(out, /value: 'yes'/);
     assert.match(out, /confidence: 0\.9/);
   } finally {
@@ -23,6 +23,6 @@ test("README has a JavaScript quickstart that runs offline and prints the answer
 });
 
 test("README has an install line and no internal build notes", () => {
-  assert.match(readme, /npm install urim/);
+  assert.match(readme, /npm install @voidal-ubiety\/urim@alpha/);
   assert.doesNotMatch(readme, /slice \d|Port of urim/);
 });

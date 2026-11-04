@@ -1,11 +1,9 @@
 {
-  "name": "urim",
-  "version": "0.0.1",
+  "name": "@voidal-ubiety/urim",
+  "version": "0.0.1-alpha.1",
   "description": "Client library for decision models: define a decision once in code, call it through provider tiers, get typed answers.",
   "license": "Apache-2.0",
   "keywords": ["llm", "decisions", "classification", "confidence", "ai"],
-  "homepage": "https://urim.sh",
-  "bugs": { "url": "https://github.com/voidal-ubiety/urim/issues" },
   "author": "David Thomason",
   "homepage": "https://urim.sh",
   "repository": {
@@ -20,27 +18,30 @@
   "engines": {
     "node": ">=23.6"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "urim": "dist/bin/urim.js"
   },
   "exports": {
     ".": {
-      "source": "./src/index.ts",
+      "urim-dev-source": "./src/index.ts",
       "types": "./dist/src/index.d.ts",
       "default": "./dist/src/index.js"
     },
     "./zod": {
-      "source": "./src/zod.ts",
+      "urim-dev-source": "./src/zod.ts",
       "types": "./dist/src/zod.d.ts",
       "default": "./dist/src/zod.js"
     },
     "./testing": {
-      "source": "./src/testing.ts",
+      "urim-dev-source": "./src/testing.ts",
       "types": "./dist/src/testing.d.ts",
       "default": "./dist/src/testing.js"
     },
     "./adapters": {
-      "source": "./src/adapters/index.ts",
+      "urim-dev-source": "./src/adapters/index.ts",
       "types": "./dist/src/adapters/index.d.ts",
       "default": "./dist/src/adapters/index.js"
     }
@@ -54,7 +55,7 @@
     "typecheck": "tsc -p tsconfig.json",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "prepack": "npm run build",
-    "test": "node --conditions=source --test --test-reporter=spec test/*.test.ts"
+    "test": "node --conditions=urim-dev-source --test --test-reporter=spec test/*.test.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

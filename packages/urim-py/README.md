@@ -4,10 +4,10 @@ A typed client for system-1 decision APIs: define a decision once, call it acros
 and get every answer back with its confidence, the tier that served it and a stable envelope.
 The Python package matches the `urim` npm package byte for byte on canonical JSON, contract hashes and envelopes.
 
-**Status:** pre-alpha (0.0.1). The API may change. Python 3.11 or later, no runtime dependencies.
+**Status:** alpha (0.0.1a1). The API may change, and it has not been tested against live providers yet. Python 3.11 or later, no runtime dependencies.
 
 ```sh
-pip install urim            # core
+pip install --pre urim      # core (alpha: needs --pre)
 pip install "urim[httpx]"   # network adapters
 pip install "urim[pydantic]" # Pydantic v2 input schemas
 ```

@@ -25,15 +25,15 @@ Not in v1: YAML authoring, streaming, hedging or fan-out, a circuit breaker, a b
 Nothing is on a registry yet. After the first release:
 
 ```sh
-npm install urim        # Node >= 23.6; zod is an optional peer
-pip install urim        # Python >= 3.11; extras: urim[pydantic], urim[httpx]
+npm install @voidal-ubiety/urim@alpha   # Node >= 23.6; zod is an optional peer
+pip install --pre urim                  # Python >= 3.11; extras: urim[pydantic], urim[httpx]
 ```
 
 Network adapters are opt-in through a subpath, so the core never touches the network:
 
 ```ts
-import { createClient } from "urim";
-import { openaiDecisions } from "urim/adapters";
+import { createClient } from "@voidal-ubiety/urim";
+import { openaiDecisions } from "@voidal-ubiety/urim/adapters";
 const client = createClient({ adapters: [openaiDecisions()], env: process.env });
 ```
 

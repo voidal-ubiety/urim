@@ -1,4 +1,4 @@
-// A (test double): implements the adapter barrier from a script. Imported from "urim/testing" later.
+// A (test double): implements the adapter barrier from a script. Imported from "@voidal-ubiety/urim/testing" later.
 import { UrimError, type ErrorType } from "./errors.ts";
 import type { WireReply, WireRequest } from "./types.ts";
 

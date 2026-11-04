@@ -22,5 +22,5 @@ def test_readme_quickstart_runs_offline(tmp_path: Path) -> None:
 
 
 def test_readme_has_install_line_and_no_internal_notes() -> None:
-    assert "pip install urim" in README
+    assert "pip install --pre urim" in README
     assert not re.search(r"slice \d|Port of the urim-ts", README)
