@@ -13,26 +13,31 @@ Both ports implement the same behavior.
 CI uses Node.js 24 and Python 3.11 and 3.13, so use those versions. The floors are Node 23.6 (the
 TypeScript sources run under Node's type stripping) and Python 3.11.
 
-```sh
-# TypeScript dev dependencies (no install scripts)
-(cd packages/urim-ts && npm ci --ignore-scripts)
+`scripts/dev` is the everyday entry point (plain bash; `scripts/dev help` lists everything):
 
-# One venv per Python version, for example with uv
-for v in 3.11 3.13; do
-  uv venv --python "$v" ".venv/py$v"
-  uv pip install --python ".venv/py$v/bin/python" -e "packages/urim-py[dev,pydantic,httpx]" ruff mypy
-done
+```sh
+scripts/dev setup        # .venv with every extra (dev, pydantic, httpx) plus ruff, mypy, build; npm ci
+scripts/dev test         # both ports' tests; `test py` or `test ts` for one
+scripts/dev check        # the one gate below, using .venv
+scripts/dev build        # npm dist and Python wheel + sdist into packages/urim-*/dist
+scripts/dev pack-check   # install the built packages in a throwaway folder and run an offline example
+scripts/dev clean        # remove build outputs (`clean --all` also removes .venv and node_modules)
 ```
+
+`setup` uses `python3`; set `PYTHON=/path/to/python3.11` to pick another. The `httpx` extra is included,
+so the adapter and transport tests run instead of skipping.
 
 ## The one gate
 
 ```sh
+scripts/dev check
+# or, to test more than one Python:
 PYTHONS=".venv/py3.11/bin/python .venv/py3.13/bin/python" TOOLS=.venv/py3.13/bin bash packages/check.sh
 ```
 
 This runs pytest under each Python, `ruff check`, `ruff format --check`, `mypy --strict`, the Node test
-suite and `tsc --noEmit`. It also checks that nothing under `drafts/` or `research/` is tracked.
-CI (`.github/workflows/ci.yml`) runs the same script.
+suite and `tsc --noEmit`. It also checks that nothing under `drafts/` or `research/` is tracked, and runs
+the tests for `scripts/dev`. CI (`.github/workflows/ci.yml`) runs the same script.
 
 ## Making a change
 

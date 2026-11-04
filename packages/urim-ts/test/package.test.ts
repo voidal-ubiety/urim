@@ -13,8 +13,9 @@ test("`urim` and `urim/adapters` resolve by package name", async () => {
   const core = (await import("urim")) as Record<string, unknown>;
   const adapters = (await import("urim/adapters")) as Record<string, unknown>;
   assert.equal(typeof core.createClient, "function");
-  assert.equal(typeof adapters.typesafeJev, "function");
-  assert.equal(typeof adapters.openaiDecisions, "function");
+  const factories = Object.keys(adapters).filter((k) => k !== "httpAdapter");
+  assert.ok(factories.length >= 2 && factories.includes("openaiDecisions"));
+  for (const k of factories) assert.equal(typeof adapters[k], "function", k);
 });
 
 test("release metadata: 0.0.1, publishable, Apache-2.0, repository", () => {
@@ -37,4 +38,10 @@ test("LICENSE and NOTICE match the repository root", () => {
   for (const f of ["LICENSE", "NOTICE"]) {
     assert.equal(readFileSync(new URL(`../${f}`, import.meta.url), "utf8"), readFileSync(new URL(`../../../${f}`, import.meta.url), "utf8"));
   }
+});
+
+test("registry links and keywords", () => {
+  assert.deepEqual(pkg.bugs, { url: "https://github.com/voidal-ubiety/urim/issues" });
+  assert.equal(pkg.homepage, "https://urim.sh");
+  assert.ok((pkg.keywords as string[]).includes("llm"));
 });

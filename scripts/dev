@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+# Developer entry point for both ports. Plain bash, no extra tools. Run `scripts/dev help`.
+# DEV_DRY_RUN=1 prints each command instead of running it (used by scripts/tests/test_dev.py).
+set -euo pipefail
+root="$(cd "$(dirname "$0")/.." && pwd)"
+py_dir="$root/packages/urim-py"
+ts_dir="$root/packages/urim-ts"
+venv="$root/.venv"
+vpy="$venv/bin/python"
+
+step() { printf '\n== %s\n' "$*"; }
+run() {
+  printf '+ %s\n' "$*"
+  if [ "${DEV_DRY_RUN:-}" != 1 ]; then "$@"; fi
+}
+in_dir() { local d="$1"; shift; printf '+ (cd %s)\n' "$d"; if [ "${DEV_DRY_RUN:-}" != 1 ]; then (cd "$d" && "$@"); else printf '+ %s\n' "$*"; fi; }
+
+usage() {
+  cat <<'USAGE'
+usage: scripts/dev <command>
+
+  setup          create .venv (Python >= 3.11) with every extra (dev, pydantic, httpx) plus ruff, mypy
+                 and build; then npm ci in packages/urim-ts
+  test [py|ts]   run the tests for both ports, or just one
+  check          the full gate (packages/check.sh); PYTHONS and TOOLS default to .venv
+  build          npm dist and Python wheel + sdist into packages/urim-*/dist
+  pack-check     install the built packages in a throwaway folder and run an offline example
+  clean [--all]  remove build outputs (--all also removes .venv and node_modules)
+  help           show this list
+USAGE
+}
+
+cmd_setup() {
+  step "python venv (.venv)"
+  local py="${PYTHON:-python3}"
+  if [ "${DEV_DRY_RUN:-}" != 1 ] && ! "$py" -c 'import sys; sys.exit(sys.version_info < (3, 11))'; then
+    echo "need Python >= 3.11 (set PYTHON=/path/to/python3.11)" >&2; exit 1
+  fi
+  run "$py" -m venv "$venv"
+  run "$vpy" -m pip install -q -e "$py_dir[dev,pydantic,httpx]" ruff mypy build
+  step "npm (packages/urim-ts)"
+  if [ -f "$ts_dir/package-lock.json" ]; then in_dir "$ts_dir" npm ci --ignore-scripts --no-audit --no-fund
+  else in_dir "$ts_dir" npm install --ignore-scripts --no-audit --no-fund; fi
+}
+
+cmd_test() {
+  local which="${1:-both}"
+  case "$which" in py|ts|both) ;; *) echo "test: expected py or ts, got: $which" >&2; exit 2 ;; esac
+  if [ "$which" != ts ]; then step "pytest (urim-py)"; in_dir "$py_dir" "$vpy" -m pytest -q tests; fi
+  if [ "$which" != py ]; then step "npm test (urim-ts)"; in_dir "$ts_dir" npm test --silent; fi
+}
+
+cmd_check() {
+  local pythons="${PYTHONS:-$vpy}" tools="${TOOLS:-$venv/bin}"
+  step "packages/check.sh"
+  printf '+ PYTHONS=%s TOOLS=%s bash packages/check.sh\n' "$pythons" "$tools"
+  if [ "${DEV_DRY_RUN:-}" != 1 ]; then PYTHONS="$pythons" TOOLS="$tools" bash "$root/packages/check.sh"; fi
+}
+
+py_build() {  # $1 = out dir
+  if [ "${DEV_DRY_RUN:-}" = 1 ] || "$vpy" -c 'import build' 2>/dev/null; then
+    run "$vpy" -m build --sdist --wheel --outdir "$1" "$py_dir"
+  else
+    echo "(python 'build' not installed; wheel only via pip; run scripts/dev setup for the sdist)"
+    run "$vpy" -m pip wheel -q --no-deps --wheel-dir "$1" "$py_dir"
+  fi
+}
+
+cmd_build() {
+  step "npm run build (urim-ts -> dist/)"
+  in_dir "$ts_dir" npm run build --silent
+  step "python wheel + sdist (urim-py -> dist/)"
+  run rm -rf "$py_dir/dist"
+  py_build "$py_dir/dist"
+}
+
+cmd_pack_check() {
+  pack_tmp="$(mktemp -d)"; local tmp="$pack_tmp"
+  if [ "${DEV_DRY_RUN:-}" != 1 ]; then trap 'rc=$?; rm -rf "$pack_tmp"; exit $rc' EXIT; fi
+  step "npm pack (urim-ts)"
+  in_dir "$ts_dir" npm pack --silent --pack-destination "$tmp"
+  step "install the tarball in a throwaway folder"
+  run mkdir -p "$tmp/ts"
+  in_dir "$tmp/ts" npm init -y --silent
+  if [ "${DEV_DRY_RUN:-}" != 1 ]; then (cd "$tmp/ts" && npm install --silent --no-audit --no-fund "$tmp"/urim-*.tgz); fi
+  step "offline example (ts)"
+  in_dir "$tmp/ts" node --input-type=module -e '
+    import { canonicalize, sha256, CONFIDENCE_RULE } from "urim";
+    const h = sha256(canonicalize({ b: 1, a: [2, 3] }));
+    if (!h.startsWith("sha256:") || !CONFIDENCE_RULE) process.exit(1);
+    console.log("ts ok", h);'
+  in_dir "$tmp/ts" npx --no-install urim --help
+  step "python wheel"
+  py_build "$tmp/py-dist"
+  step "install the wheel in a throwaway venv"
+  run "$vpy" -m venv "$tmp/venv"
+  if [ "${DEV_DRY_RUN:-}" != 1 ]; then "$tmp/venv/bin/python" -m pip install -q --no-index "$tmp"/py-dist/urim-*.whl; fi
+  step "offline example (py)"
+  in_dir "$tmp" "$tmp/venv/bin/python" -c '
+import urim
+h = urim.sha256(urim.canonicalize({"b": 1, "a": [2, 3]}))
+assert h.startswith("sha256:") and urim.CONFIDENCE_RULE
+print("py ok", h)'
+  in_dir "$tmp" "$tmp/venv/bin/urim" --help
+  step "pack-check passed"
+}
+
+cmd_clean() {
+  case "${1:-}" in ""|--all) ;; *) echo "clean: unknown flag: $1" >&2; exit 2 ;; esac
+  step "remove build outputs"
+  run rm -rf "$ts_dir/dist" "$py_dir/dist" "$py_dir/build" "$ts_dir"/*.tgz
+  if [ "${1:-}" = --all ]; then step "remove .venv and node_modules"; run rm -rf "$venv" "$ts_dir/node_modules"; fi
+}
+
+sub="${1:-help}"; [ $# -gt 0 ] && shift
+case "$sub" in
+  setup) cmd_setup ;;
+  test) cmd_test "$@" ;;
+  check) cmd_check ;;
+  build) cmd_build ;;
+  pack-check) cmd_pack_check ;;
+  clean) cmd_clean "$@" ;;
+  help|-h|--help) usage ;;
+  *) echo "unknown command: $sub" >&2; usage; exit 2 ;;
+esac

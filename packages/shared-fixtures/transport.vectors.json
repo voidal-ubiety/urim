@@ -1,46 +1,17 @@
 {
-  "constructible": [
-    {
-      "provider": "typesafe",
-      "ok": true,
-      "message": null
-    },
-    {
-      "provider": "openai",
-      "ok": true,
-      "message": null
-    },
-    {
-      "provider": "microsoft",
-      "ok": false,
-      "message": "microsoft: descriptor needs URL/auth options this slice does not support"
-    },
-    {
-      "provider": "cloudflare",
-      "ok": false,
-      "message": "cloudflare: descriptor needs URL/auth options this slice does not support"
-    },
-    {
-      "provider": "liquid",
-      "ok": true,
-      "message": null
-    },
-    {
-      "provider": "perplexity",
-      "ok": true,
-      "message": null
-    },
-    {
-      "provider": "fastino",
-      "ok": true,
-      "message": null
-    },
-    {
-      "provider": "inception",
-      "ok": true,
-      "message": null
-    }
-  ],
+  "constructible": {
+    "okCount": 6,
+    "failing": [
+      {
+        "provider": "microsoft",
+        "message": "microsoft: descriptor needs URL/auth options this slice does not support"
+      },
+      {
+        "provider": "cloudflare",
+        "message": "cloudflare: descriptor needs URL/auth options this slice does not support"
+      }
+    ]
+  },
   "cases": [
     {
       "name": "200 json",

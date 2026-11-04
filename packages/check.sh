@@ -18,7 +18,9 @@ if [ -x "$here/../scripts/maintainer-checks.sh" ]; then
 else
   "$here/../scripts/check-internal-paths"
 fi
-"${pythons[0]}" -m pytest -q -p no:cacheprovider "$here/../scripts/tests/test_check_internal_paths.py"
+step "vendor name only in provider source"
+"$here/../scripts/check-provider-names"
+"${pythons[0]}" -m pytest -q -p no:cacheprovider "$here/../scripts/tests/test_check_internal_paths.py" "$here/../scripts/tests/test_check_provider_names.py" "$here/../scripts/tests/test_dev.py"
 
 cd "$here/urim-py"
 for py in "${pythons[@]}"; do

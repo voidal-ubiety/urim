@@ -5,7 +5,9 @@ chain of model tiers, applies confidence cutoffs, and returns a typed result plu
 envelope. Two ports ship with the same behavior: TypeScript (`packages/urim-ts`, npm `urim`) and
 Python (`packages/urim-py`, PyPI `urim`). License: Apache-2.0.
 
-Tool notes: Codex and Cursor read this file directly. `CLAUDE.md` imports it for Claude Code.
+Tool notes: Codex, Cursor and Grok Build read this file automatically. Claude Code reads `CLAUDE.md` and Gemini CLI
+reads `GEMINI.md`; both import this file with `@AGENTS.md`. GitHub Copilot reads `.github/copilot-instructions.md`,
+which points here. Other agents: start with this file.
 Keep the rules here and nowhere else, so they don't drift.
 
 ## Code map

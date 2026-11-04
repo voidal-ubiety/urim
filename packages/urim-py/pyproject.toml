@@ -8,6 +8,7 @@ version = "0.0.1"
 description = "Client library for decision models: define a decision once in code, call it through provider tiers, get typed answers."
 readme = "README.md"
 license = "Apache-2.0"
+keywords = ["llm", "decisions", "classification", "confidence", "ai"]
 license-files = ["LICENSE", "NOTICE"]
 authors = [{ name = "David Thomason" }]
 requires-python = ">=3.11"
@@ -23,6 +24,8 @@ classifiers = [
 [project.urls]
 Homepage = "https://urim.sh"
 Repository = "https://github.com/voidal-ubiety/urim"
+Issues = "https://github.com/voidal-ubiety/urim/issues"
+Changelog = "https://github.com/voidal-ubiety/urim/blob/main/CHANGELOG.md"
 
 [project.scripts]
 urim = "urim.cli:main"

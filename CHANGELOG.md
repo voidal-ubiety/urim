@@ -2,6 +2,11 @@
 
 Release notes for the `urim` packages: `urim` on npm (TypeScript, `packages/urim-ts`) and `urim` on PyPI (Python, `packages/urim-py`). Both share one version.
 
+## Unreleased
+
+### Added
+- `scripts/dev`: one developer entry point with `setup`, `test [py|ts]`, `check`, `build`, `pack-check`, `clean [--all]` and `help`. `setup` installs the `httpx` extra so no tests skip.
+
 ## 0.0.1 (Unreleased)
 
 Nothing has been published yet. This is the first release of the v1 client; the v0.2 `urim check` tool was never published and is not part of it.

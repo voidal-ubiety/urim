@@ -3,13 +3,16 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { decodeReply, tier, classifyVendorReply, DESCRIPTORS, defineDecision } from "../src/index.ts";
 import { triage, severity, JEV, OPENAI, inputSchema } from "./fixtures.ts";
+import { shippedAdapters } from "./shipped-adapters.ts";
 
 const fail = (status: number, body: unknown = {}, headers: Record<string, string> = {}) => ({ status, headers, body, latencyMs: 1 });
 const oaiErr = (code: string) => ({ error: { message: "m", type: "t", code } }); // https://developers.openai.com/api/docs/guides/error-codes.md
 const FASTINO = tier({ provider: "fastino", model: "GLiDE", version: "1", camp: "systemone", questionTypes: ["noul", "choice"] });
 const PPLX = tier({ provider: "perplexity", model: "pplx-decider-latest", version: "v1.2", camp: "systemone", questionTypes: ["noul", "choice"] });
 
-const cases: Array<[string, keyof typeof DESCRIPTORS, number, unknown, string]> = [
+// The shipped systemone-camp adapter's provider id, looked up rather than spelled out in tests.
+const SYSTEMONE = shippedAdapters().find((a) => DESCRIPTORS[a.provider]!.camp === "systemone")!.provider;
+const cases: Array<[string, string, number, unknown, string]> = [
   ["openai 429 credit_balance_exhausted", "openai", 429, oaiErr("credit_balance_exhausted"), "quota_exceeded"],
   ["openai 429 organization_spend_limit_exceeded", "openai", 429, oaiErr("organization_spend_limit_exceeded"), "quota_exceeded"],
   ["openai 429 project_spend_limit_exceeded", "openai", 429, oaiErr("project_spend_limit_exceeded"), "quota_exceeded"],
@@ -18,8 +21,8 @@ const cases: Array<[string, keyof typeof DESCRIPTORS, number, unknown, string]> 
   ["openai 429 no body", "openai", 429, {}, "rate_limited"],
   ["openai 503 server_is_overloaded", "openai", 503, oaiErr("server_is_overloaded"), "provider_unavailable"],
   ["openai 503 service_unavailable_error", "openai", 503, oaiErr("service_unavailable_error"), "provider_unavailable"],
-  ["typesafe 529", "typesafe", 529, {}, "provider_unavailable"],
-  ["typesafe 429", "typesafe", 429, {}, "rate_limited"],
+  ["shipped systemone 529", SYSTEMONE, 529, {}, "provider_unavailable"],
+  ["shipped systemone 429", SYSTEMONE, 429, {}, "rate_limited"],
   ["fastino 402", "fastino", 402, {}, "quota_exceeded"],
   ["fastino 425", "fastino", 425, {}, "provider_unavailable"],
   ["perplexity 429 (code ignored)", "perplexity", 429, oaiErr("credit_balance_exhausted"), "rate_limited"],

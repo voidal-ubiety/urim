@@ -29,3 +29,11 @@ def test_license_files_match_repository_root() -> None:
     here = PYPROJECT.parent
     for name in ("LICENSE", "NOTICE"):
         assert (here / name).read_text() == (here.parents[1] / name).read_text()
+
+
+def test_registry_links_and_keywords() -> None:
+    project = tomllib.loads(PYPROJECT.read_text())["project"]
+    urls = project["urls"]
+    assert urls["Issues"] == "https://github.com/voidal-ubiety/urim/issues"
+    assert urls["Changelog"] == "https://github.com/voidal-ubiety/urim/blob/main/CHANGELOG.md"
+    assert "llm" in project["keywords"]
