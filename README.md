@@ -65,15 +65,6 @@ packages/shared-fixtures cross-port vectors both test suites assert against
 packages/check.sh        the one gate: tests, lint and types for both ports
 ```
 
-## A note on the name
-
-The Urim and Thummim appear in Exodus 28:30, carried in the breastpiece (the *hoshen*) of the high priest. They carry religious significance in Jewish, Christian, and Latter-day Saint traditions. This project borrows only the idea of asking a question and receiving a verdict, and uses the names with respect. No religious claim or affiliation is intended.
-
-## Links
-
-- Homepage: <https://urim.sh>
-- Repository: <https://github.com/voidal-ubiety/urim>
-
 ## Contributing and security
 
 - [CONTRIBUTING.md](CONTRIBUTING.md): setup and how a change is made. From a clone, `scripts/dev setup` then
@@ -82,4 +73,6 @@ The Urim and Thummim appear in Exodus 28:30, carried in the breastpiece (the *ho
 
 ## License
 
-Apache-2.0. See [LICENSE](LICENSE). Copyright 2026 David Thomason and Urim contributors.
+Apache-2.0. See [LICENSE](LICENSE).
+
+Copyright 2026 David Thomason and Urim contributors.
