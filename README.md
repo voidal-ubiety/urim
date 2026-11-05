@@ -1,3 +1,8 @@
+<picture>
+  <source media="(max-width: 600px)" srcset="assets/brand/urim-readme-header-mobile.svg">
+  <img src="assets/brand/urim-readme-header.svg" alt="Urim — Define once. Decide with confidence. A client library for decision models in TypeScript and Python." width="1040">
+</picture>
+
 # Urim
 
 **Urim is a client library for decision models.** You define a decision once in code, call it through a chain of provider tiers, and get typed answers that say where their confidence came from.
