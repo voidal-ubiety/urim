@@ -9,7 +9,7 @@
 
 Decision models take application state plus typed questions (yes/no, choice, score) and return typed answers with probabilities. Vendors expose them through incompatible request bodies and different confidence definitions. Urim keeps the provider's values as they are and derives portable fields next to them.
 
-> **Status: pre-alpha, 0.0.1, not published.** Two ports: TypeScript (npm `urim`) and Python (PyPI `urim`). Two provider adapters exist, one for the `systemone` request format and one for the `decisions` request format (`openaiDecisions`). Both are tested against mocked HTTP only. **No live provider call has been made yet**, so there are no measured accuracy, latency or cost numbers. Six more providers have descriptors (wire format, URL, auth) but no adapter.
+> **Status: alpha — for examination and evaluation only; not production-ready.** The first alpha is available for TypeScript ([npm `@voidal-ubiety/urim` 0.0.1-alpha.1](https://www.npmjs.com/package/@voidal-ubiety/urim/v/0.0.1-alpha.1)) and Python ([PyPI `urim` 0.0.1a1](https://pypi.org/project/urim/0.0.1a1/)). Two provider adapters exist, one for the `systemone` request format and one for the `decisions` request format (`openaiDecisions`). Both are tested against mocked HTTP only. **No live provider call has been made yet**, so there are no measured accuracy, latency or cost numbers. Six more providers have descriptors (wire format, URL, auth) but no adapter.
 
 ## What v1 has
 
@@ -25,9 +25,9 @@ Decision models take application state plus typed questions (yes/no, choice, sco
 
 Not in v1: YAML authoring, streaming, hedging or fan-out, a circuit breaker, a built-in OpenTelemetry profile, caching, and runtime registry fetches.
 
-## Install (once published)
+## Install the alpha
 
-Nothing is on a registry yet. After the first release:
+These packages are intended for examination, experimentation, and feedback. They are not ready for production use.
 
 ```sh
 npm install @voidal-ubiety/urim@alpha   # Node >= 23.6; zod is an optional peer
@@ -59,7 +59,7 @@ Both ports ship the same `urim` command and produce byte-identical canonical JSO
 ## Repository layout
 
 ```
-packages/urim-ts         npm package `urim` (TypeScript, ESM)
+packages/urim-ts         npm package `@voidal-ubiety/urim` (TypeScript, ESM)
 packages/urim-py         PyPI package `urim`
 packages/shared-fixtures cross-port vectors both test suites assert against
 packages/check.sh        the one gate: tests, lint and types for both ports
